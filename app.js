@@ -221,7 +221,7 @@ ${S.lastFrase||"-"}`;
     return html;
   }
 
-function normalizeTemplates(pack, scTitle){
+  function normalizeTemplates(pack, scTitle){
   const frase = pack.frase_poder_2 || pack.frase_poder || "Para acertar, ¿qué te importa más ahora?";
   const micro = pack.micro_accion_refinada || pack.micro_accion || "Agendar 5 minutos para revisar juntos el punto clave.";
   const t = pack.templates || {};

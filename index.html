@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dojo de Polizar</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div id="dojoApp">
+    <div class="card">
+      <header>
+        <div class="brand">
+          <div class="title">Dojo de Polizar</div>
+          <div class="subtitle">Entrenador práctico para profesionales de la venta.</div>
+        </div>
+        <div class="header-controls">
+          <div class="progress"><div class="bar" id="bar"></div></div>
+        </div>
+      </header>
+
+      <nav class="topnav">
+        <button class="navbtn" id="btn-back" type="button">← Volver</button>
+        <button class="navbtn" data-nav="areas" type="button">Áreas</button>
+        <button class="navbtn" data-nav="guia" type="button">Guía</button>
+      </nav>
+
+      <section class="step active" id="p0">
+        <span class="badge">Bienvenida</span>
+        <h1>Vamos a entrenar en serio</h1>
+        <p>Elige un área, tu estilo y un escenario. Obtendrás feedback, segunda ronda y plantillas listas para usar.</p>
+        <div class="grid two">
+          <input id="nombre" class="input" placeholder="Tu nombre (opcional)" />
+          <input id="cliente" class="input" placeholder="Nombre de tu cliente (opcional)" />
+        </div>
+        <div class="group">
+          <button class="btn primary" id="start" type="button">Entrar al Dojo</button>
+        </div>
+      </section>
+
+      <section class="step" id="p1">
+        <span class="badge">Paso 1</span>
+        <h1>Áreas a potenciar</h1>
+        <p class="muted">Elige un área para practicar.</p>
+        <div class="area-grid" id="areas-grid"></div>
+      </section>
+
+      <section class="step" id="p2">
+        <span class="badge">Paso 2</span>
+        <h1>Elige el estilo</h1>
+        <p class="muted">Practicando en: <strong id="ctx-area">—</strong></p>
+        <div class="grid three" id="estilos-grid">
+          <button class="btn" data-style="Calma">Calma</button>
+          <button class="btn" data-style="Curiosidad">Curiosidad</button>
+          <button class="btn" data-style="Claridad">Claridad</button>
+          <button class="btn" data-style="Avance">Avance</button>
+          <button class="btn" data-style="Humor">Humor</button>
+        </div>
+      </section>
+
+      <section class="step" id="p3">
+        <span class="badge">Paso 3</span>
+        <h1>Elige un escenario en <span id="area-title"></span></h1>
+        <div class="sc-grid" id="scen-grid"></div>
+      </section>
+
+      <section class="step" id="p4">
+        <span class="badge" id="esc-badge">Escenario</span>
+        <h1 id="esc-title">Título del Escenario</h1>
+        <p class="muted" id="esc-question">Pregunta del escenario.</p>
+
+        <div class="grid three" id="esc-options"></div>
+
+        <div id="esc-answer" class="fb" style="display:none;"></div>
+
+        <div class="toolkit" id="toolkit" style="display:none;">
+          <div class="tool">
+            <h4>Segunda ronda</h4>
+            <p class="muted" style="font-size:14px; margin:0 0 10px;">Escribe la contra-respuesta del cliente para generar una nueva frase.</p>
+            <div class="group">
+              <input id="rr-text" class="input" placeholder="Ej.: 'Sigue siendo caro'"/>
+              <button class="btn" id="rr-generate" type="button">Generar</button>
+            </div>
+            <div id="rr-output" class="tmpl" style="display:none;"></div>
+          </div>
+
+          <div class="tool">
+            <div id="tmpl-container">
+              <h4>Plantillas</h4>
+              <div class="tabs">
+                <button class="tab active" data-tab="wha" type="button">WhatsApp</button>
+                <button class="tab" data-tab="eml" type="button">Email</button>
+                <button class="tab" data-tab="call" type="button">Llamada</button>
+              </div>
+              <div id="tmpl-box" class="tmpl"></div>
+              <div class="group">
+                <button class="btn" id="btn-copy-tmpl" type="button">Copiar</button>
+                <button class="btn ghost" id="btn-dl-txt" type="button">Descargar .txt</button>
+                <button class="btn" id="btn-share-tmpl" type="button">Compartir</button>
+                <button class="btn ghost" id="btn-copy-all" type="button">Copiar todo</button>
+              </div>
+            </div>
+
+            <h4 style="margin-top:12px;">Frases de poder</h4>
+            <div class="phrases" id="phrases-box"></div>
+          </div>
+        </div>
+
+        <div class="group" id="esc-continue" style="display:none;">
+          <button class="btn primary" id="to-p5" type="button">Continuar</button>
+        </div>
+      </section>
+
+      <section class="step" id="p5">
+        <span class="badge">Paso 4</span>
+        <h1>Define tu micro-acción</h1>
+        <p class="muted">Un paso pequeño y concreto para avanzar con tu cliente.</p>
+        <div class="grid two">
+          <input id="micro" class="input" placeholder="Ej.: Agendar 5 minutos para revisar juntos el punto clave" />
+        </div>
+        <div class="fb">
+          <h3>Tu frase de poder</h3>
+          <p id="p5-frase" class="muted"></p>
+        </div>
+        <div class="group">
+          <button class="btn" id="p5-copy" type="button">Copiar resumen</button>
+          <button class="btn ghost" id="p5-dl" type="button">Descargar .txt</button>
+          <button class="btn" id="btn-wa" type="button">Compartir por WhatsApp</button>
+          <button class="btn primary" id="finish" type="button">Finalizar</button>
+        </div>
+      </section>
+
+      <section class="step" id="p8">
+        <span class="badge">Guía rápida</span>
+        <h1>Consejos prácticos</h1>
+        <ul>
+          <li><strong>Estilo:</strong> Calma baja tensión; Curiosidad descubre razones; Claridad va al punto; Avance cierra micro‑pasos; Humor solo si suma cercanía.</li>
+          <li><strong>Micro‑acción:</strong> pequeña, calendarizable y sin fricción (5 minutos, un audio, un resumen de 1 página).</li>
+          <li><strong>Canal:</strong> WhatsApp para cercanía y velocidad; Email para claridad y registro; Llamada para destrabar en 3–5 min.</li>
+          <li><strong>Segunda ronda:</strong> escribe la contra‑respuesta tal cual te la dirían. La IA ajusta tu frase y la micro‑acción.</li>
+          <li><strong>Resultados:</strong> Copiar, Compartir o Descargar .txt. Nada se guarda aquí.</li>
+        </ul>
+      </section>
+
+      <section class="step" id="p9">
+        <span class="badge">¡Listo!</span>
+        <h1>Gracias, <span id="thanks-name"></span> ✨</h1>
+        <p>Entrenaste en <strong id="thanks-area"></strong>. ¡Gran trabajo!</p>
+        <div class="group">
+          <button class="btn primary" data-nav="areas" type="button">Entrenar otra área</button>
+          <button class="btn ghost" data-nav="guia" type="button">Guía</button>
+        </div>
+      </section>
+
+      <a class="corner-logo" href="https://polizar.com" target="_blank" rel="noopener">
+        <img src="https://polizar.com/wp-content/uploads/2025/04/polizar-logo-b-scaled.webp" alt="Polizar">
+      </a>
+    </div>
+  </div>
+
+  <script src="./app.js" defer></script>
+</body>
+</html>

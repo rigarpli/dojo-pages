@@ -222,17 +222,51 @@ ${S.lastFrase||"-"}`;
   }
 
   function normalizeTemplates(pack, scTitle){
-    const frase = pack.frase_poder_2 || pack.frase_poder || "Para acertar, ¿qué te importa más ahora?";
-    const micro = pack.micro_accion_refinada || pack.micro_accion || "Agendar 5 minutos para revisar juntos el punto clave.";
-    const t = pack.templates || {};
-    let w = t.whatsapp || `Hola {CLIENTE}, soy {MI_NOMBRE}. ${frase}\n${micro}`;
-    let es = (t.email && t.email.subject) || `Sobre: ${scTitle||"tu consulta"}`;
-    let eb = (t.email && t.email.body) || `Hola {CLIENTE},\n\n"${frase}"\n\n${micro}\n\nQuedo atento.\n{MI_NOMBRE}`;
-    let c = t.call || `1) Saludo breve y contexto.\n2) "${frase}"\n3) ${micro}\n4) Cierre amable.`;
-    function ensureContains(str, token){ return !str ? token : (str.includes(token) ? str : (token+"\n"+str)); }
-    const qfr=`"${frase}"`; w=ensureContains(w, frase); eb=ensureContains(eb, qfr); c=ensureContains(c, qfr);
-    return { whatsapp:w, emailSubject:es, emailBody:eb, call:c, frase, micro };
-  }
+  const frase = pack.frase_poder_2 || pack.frase_poder || "Para acertar, ¿qué te importa más ahora?";
+  const micro = pack.micro_accion_refinada || pack.micro_accion || "Agendar 5 minutos para revisar juntos el punto clave.";
+  const t = pack.templates || {};
+
+  let w = t.whatsapp || `Hola {CLIENTE}, soy {MI_NOMBRE}. ${frase}\n${micro}`;
+  let es = (t.email && t.email.subject) || `Sobre: ${scTitle||"tu consulta"}`;
+  let eb = (t.email && t.email.body) || `Hola {CLIENTE},\n\n${frase}\n\n${micro}\n\nQuedo atento.\n{MI_NOMBRE}`;
+  let c  = t.call || `1) Saludo breve y contexto.\n2) ${frase}\n3) ${micro}\n4) Cierre amable.`;
+
+  // Helpers de normalización (ignora comillas, acentos, signos y mayúsculas)
+  const norm = s => (s||"")
+    .toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")   // sin acentos
+    .replace(/["'«»“”]/g,"")                          // sin comillas
+    .replace(/[.,;:!?]/g,"")                          // sin puntuación
+    .replace(/\s+/g," ")                               // espacios
+    .trim();
+
+  const hasPhrase = (text, phrase) => norm(text).includes(norm(phrase));
+
+  const injectOnce = (text, phrase) => {
+    if (!text) return phrase;
+    return hasPhrase(text, phrase) ? text : (phrase + "\n" + text);
+  };
+
+  const dedupLines = (text) => {
+    const seen = new Set();
+    const out = [];
+    text.split(/\n+/).forEach(line => {
+      const key = norm(line);
+      if (!key) return;
+      if (seen.has(key)) return;
+      seen.add(key);
+      out.push(line.trim());
+    });
+    return out.join("\n");
+  };
+
+  // Inyectar SOLO si falta la frase, y deduplicar
+  w  = dedupLines(injectOnce(w,  frase));
+  eb = dedupLines(injectOnce(eb, frase));
+  c  = dedupLines(injectOnce(c,  frase));
+
+  return { whatsapp:w, emailSubject:es, emailBody:eb, call:c, frase, micro };
+}
 
   function renderPhrases(pack, sc){
     const list = Array.isArray(pack.frases_rapidas) && pack.frases_rapidas.length ? pack.frases_rapidas : fallbackPhrases(sc.title, sc.type);

@@ -4,13 +4,16 @@
   const CONTENT_URL = `./content.${plan}.json`;
 
   // Estado
-  const S = { nombre:"", cliente:"", estilo:"", areaId:"", areaTitle:"", scenId:"", pack:null, lastFrase:"", content:null, templates:null };
+  const S = {
+    nombre:"", cliente:"", estilo:"", areaId:"", areaTitle:"",
+    scenId:"", pack:null, lastFrase:"", content:null, templates:null
+  };
 
   // Utils
   const qs=(s,sc=document)=>sc.querySelector(s);
   const qsa=(s,sc=document)=>Array.from(sc.querySelectorAll(s));
   const progress=(id)=>{ const map={p0:0,p1:1,p2:2,p3:3,p4:4,p5:5,p8:8,p9:9}; const pct=Math.max(10,Math.round(((map[id]??0)+1)/10*100)); qs("#bar").style.width=pct+"%"; };
-  const scrollTop=()=>window.scrollTo({top:qs("#dojoApp").offsetTop-10,behavior:"smooth"});
+  const scrollTop=()=>{ const root=qs("#dojoApp"); if(root) window.scrollTo({top:root.offsetTop-10,behavior:"smooth"}); };
   function copy(t){ t=t||""; if(navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(t).then(()=>alert("Copiado")).catch(()=>fallbackCopy(t)); } else fallbackCopy(t); }
   function fallbackCopy(t){ const a=document.createElement("textarea"); a.value=t; a.style.position="fixed"; a.style.left="-9999px"; document.body.appendChild(a); a.select(); try{document.execCommand("copy"); alert("Copiado");}catch(e){alert("No se pudo copiar")} document.body.removeChild(a); }
   function share(t,title){ if(navigator.share){ navigator.share({title:title||"Dojo de Polizar", text:t}).catch(()=>{}); } else { copy(t); window.open("https://wa.me/?text="+encodeURIComponent(t), "_blank"); } }
@@ -21,7 +24,12 @@
 
   // Navegación
   let currentStep="p0", historySteps=["p0"];
-  function go(id){ qsa(".step").forEach(x=>x.classList.remove("active")); qs("#"+id).classList.add("active"); currentStep=id; progress(id); scrollTop(); qs("#btn-back").style.display = (id==="p0")?"none":"inline-flex"; }
+  function go(id){
+    qsa(".step").forEach(x=>x.classList.remove("active"));
+    qs("#"+id).classList.add("active");
+    currentStep=id; progress(id); scrollTop();
+    const back=qs("#btn-back"); if(back) back.style.display = (id==="p0")?"none":"inline-flex";
+  }
   function nav(id){ if(id===currentStep) return; historySteps.push(id); go(id); }
   function shouldConfirmBack(){ return (currentStep==="p4"||currentStep==="p5") && !!S.pack; }
   function goBack(){ if(shouldConfirmBack()){ if(!confirm("¿Volver al paso anterior? Perderás el foco de este escenario. Tus resultados no se guardan aquí.")) return; } if(historySteps.length<=1) return; historySteps.pop(); const prev = historySteps[historySteps.length-1]||"p0"; go(prev); }
@@ -193,10 +201,9 @@ ${S.lastFrase||"-"}`;
       if(!pack || !pack.frase_poder) throw new Error("Pack incompleto");
       S.pack=pack;
       ans.innerHTML=renderPack(pack);
-      const T=normalizeTemplates(pack, sc.title);
-      S.templates=T;
+      S.templates=normalizeTemplates(pack, sc.title);
       renderPhrases(pack, sc);
-      qs("#tmpl-box").textContent=fillPH(T.whatsapp);
+      qs("#tmpl-box").textContent=fillPH(S.templates.whatsapp);
       qs("#toolkit").style.display="grid";
       qs("#esc-continue").style.display="block";
       scrollTop();
@@ -221,67 +228,54 @@ ${S.lastFrase||"-"}`;
     return html;
   }
 
+  // NORMALIZACIÓN ANTI-DUPLICADOS (simple y segura)
   function normalizeTemplates(pack, scTitle){
-  const frase = pack.frase_poder_2 || pack.frase_poder || "Para acertar, ¿qué te importa más ahora?";
-  const micro = pack.micro_accion_refinada || pack.micro_accion || "Agendar 5 minutos para revisar juntos el punto clave.";
-  const t = pack.templates || {};
+    const frase = pack.frase_poder_2 || pack.frase_poder || "Para acertar, ¿qué te importa más ahora?";
+    const micro = pack.micro_accion_refinada || pack.micro_accion || "Agendar 5 minutos para revisar juntos el punto clave.";
+    const t = pack.templates || {};
 
-  let w  = t.whatsapp || `Hola {CLIENTE}, soy {MI_NOMBRE}. ${frase}\n${micro}`;
-  let es = (t.email && t.email.subject) || `Sobre: ${scTitle||"tu consulta"}`;
-  let eb = (t.email && t.email.body)    || `Hola {CLIENTE},\n\n${frase}\n\n${micro}\n\nQuedo atento.\n{MI_NOMBRE}`;
-  let c  = t.call || `1) Saludo breve y contexto.\n2) ${frase}\n3) ${micro}\n4) Cierre amable.`;
+    let w  = t.whatsapp || `Hola {CLIENTE}, soy {MI_NOMBRE}. ${frase}\n${micro}`;
+    let es = (t.email && t.email.subject) || `Sobre: ${scTitle||"tu consulta"}`;
+    let eb = (t.email && t.email.body)    || `Hola {CLIENTE},\n\n${frase}\n\n${micro}\n\nQuedo atento.\n{MI_NOMBRE}`;
+    let c  = t.call || `1) Saludo breve y contexto.\n2) ${frase}\n3) ${micro}\n4) Cierre amable.`;
 
-  // Helpers
-  const norm = s => (s||"")
-    .toLowerCase()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")   // sin acentos
-    .replace(/["'«»“”]/g,"")                          // sin comillas
-    .replace(/[.,;:!?]/g,"")                          // sin puntuación
-    .replace(/\s+/g," ")
-    .trim();
+    // Helpers muy defensivos
+    const norm = s => (s||"").toLowerCase()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+      .replace(/["'«»“”]/g,"").replace(/[.,;:!?]/g,"")
+      .replace(/\s+/g," ").trim();
 
-  const hasPhrase = (text, phrase) => norm(text).includes(norm(phrase));
-  const injectOnce = (text, phrase) => {
-    if (!text) return phrase;
-    return hasPhrase(text, phrase) ? text : (phrase + "\n" + text);
-  };
-  const dedupLines = (text) => {
-    const seen = new Set(); const out = [];
-    (text||"").split(/\n+/).forEach(line=>{
-      const key = norm(line);
-      if(!key) return;
-      if(seen.has(key)) return;
-      seen.add(key);
-      out.push(line.trim());
-    });
-    return out.join("\n");
-  };
-  const escapeRegExp = s => (s||"").replace(/[.*+?^${}()|[```\```/g, "\\$&");
-  // Mantener solo la primera aparición de la frase; borrar las siguientes (sin romper el resto)
-  const limitOccurrences = (text, phrase) => {
-    if(!text) return "";
-    const pat = new RegExp(`[\"«»“”']?${escapeRegExp(phrase)}[\"«»“”']?`, "gi");
-    let seen = false;
-    const cleaned = text.replace(pat, (m)=>{
-      if(seen) return ""; // quita repeticiones
-      seen = true;
-      return m; // conserva la primera
-    });
-    return cleaned
-      .replace(/[ ]{2,}/g," ")
-      .replace(/\n[ \t]+\n/g,"\n\n")
-      .replace(/\n{3,}/g,"\n\n")
-      .trim();
-  };
-  const tidy = (text) => (text||"").replace(/[ \t]+\n/g,"\n").replace(/\n{3,}/g,"\n\n").trim();
+    const hasPhrase = (text, phrase) => norm(text).includes(norm(phrase));
+    const injectOnce = (text, phrase) => (!text ? phrase : (hasPhrase(text,phrase) ? text : (phrase+"\n"+text)));
+    const dedupLines = (text) => {
+      const seen = new Set(); const out=[];
+      (text||"").split(/\n+/).forEach(line=>{
+        const key = norm(line);
+        if(!key) return;
+        if(seen.has(key)) return;
+        seen.add(key);
+        out.push(line.trim());
+      });
+      return out.join("\n");
+    };
+    const escapeRegExp = s => (s||"").replace(/[-\/\\^$*+?.()|[```{}]/g, '\\$&');
+    const keepFirstRemoveRest = (text, phrase) => {
+      if(!text) return "";
+      const pat = new RegExp(escapeRegExp(frase), "gi");
+      let seen=false;
+      const cleaned = text.replace(pat, (m)=>{ if(seen) return ""; seen=true; return m; });
+      return cleaned.replace(/[ \t]+\n/g,"\n").replace(/\n{3,}/g,"\n\n").replace(/[ ]{2,}/g," ").trim();
+    };
+    const tidy = (text) => (text||"").replace(/[ \t]+\n/g,"\n").replace(/\n{3,}/g,"\n\n").trim();
 
-  // Inyectar SOLO si falta; luego deduplicar líneas; luego limitar a 1 ocurrencia total
-  w  = tidy( dedupLines( injectOnce(w,  frase) ) );
-  eb = tidy( limitOccurrences( dedupLines( injectOnce(eb, frase) ), frase ) );
-  c  = tidy( limitOccurrences( dedupLines( injectOnce(c,  frase) ), frase ) );
+    // WhatsApp: garantizamos frase 1 vez (inyecta si falta)
+    w  = tidy( dedupLines( injectOnce(w,  frase) ) );
+    // Email y llamada: NO forzamos inyección; solo limpiamos duplicados y dejamos como mucho 1 aparición
+    eb = tidy( keepFirstRemoveRest( dedupLines(eb), frase ) );
+    c  = tidy( keepFirstRemoveRest( dedupLines(c),  frase ) );
 
-  return { whatsapp:w, emailSubject:es, emailBody:eb, call:c, frase, micro };
-}
+    return { whatsapp:w, emailSubject:es, emailBody:eb, call:c, frase, micro };
+  }
 
   function renderPhrases(pack, sc){
     const list = Array.isArray(pack.frases_rapidas) && pack.frases_rapidas.length ? pack.frases_rapidas : fallbackPhrases(sc.title, sc.type);
@@ -341,8 +335,7 @@ ${S.lastFrase||"-"}`;
       if(pack && pack.frase_poder){
         S.pack=pack;
         qs("#esc-answer").innerHTML=renderPack(pack);
-        const T=normalizeTemplates(pack, scTitle);
-        S.templates=T;
+        S.templates=normalizeTemplates(pack, scTitle);
         renderPhrases(pack, sc || {title: scTitle, type:'in-conversation'});
         const micro=pack.micro_accion_refinada || pack.micro_accion;
         if(micro) qs("#micro").value = fillPH(micro);
@@ -354,5 +347,8 @@ ${S.lastFrase||"-"}`;
       out.textContent="No pudimos conectar con la IA ahora. Intenta de nuevo en unos segundos.";
     }
   }
+
+  // Inicial
+  go("p0");
 
 })();

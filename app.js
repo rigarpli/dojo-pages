@@ -221,49 +221,64 @@ ${S.lastFrase||"-"}`;
     return html;
   }
 
-  function normalizeTemplates(pack, scTitle){
+function normalizeTemplates(pack, scTitle){
   const frase = pack.frase_poder_2 || pack.frase_poder || "Para acertar, ¿qué te importa más ahora?";
   const micro = pack.micro_accion_refinada || pack.micro_accion || "Agendar 5 minutos para revisar juntos el punto clave.";
   const t = pack.templates || {};
 
-  let w = t.whatsapp || `Hola {CLIENTE}, soy {MI_NOMBRE}. ${frase}\n${micro}`;
+  let w  = t.whatsapp || `Hola {CLIENTE}, soy {MI_NOMBRE}. ${frase}\n${micro}`;
   let es = (t.email && t.email.subject) || `Sobre: ${scTitle||"tu consulta"}`;
-  let eb = (t.email && t.email.body) || `Hola {CLIENTE},\n\n${frase}\n\n${micro}\n\nQuedo atento.\n{MI_NOMBRE}`;
+  let eb = (t.email && t.email.body)    || `Hola {CLIENTE},\n\n${frase}\n\n${micro}\n\nQuedo atento.\n{MI_NOMBRE}`;
   let c  = t.call || `1) Saludo breve y contexto.\n2) ${frase}\n3) ${micro}\n4) Cierre amable.`;
 
-  // Helpers de normalización (ignora comillas, acentos, signos y mayúsculas)
+  // Helpers
   const norm = s => (s||"")
     .toLowerCase()
     .normalize("NFD").replace(/[\u0300-\u036f]/g,"")   // sin acentos
     .replace(/["'«»“”]/g,"")                          // sin comillas
     .replace(/[.,;:!?]/g,"")                          // sin puntuación
-    .replace(/\s+/g," ")                               // espacios
+    .replace(/\s+/g," ")
     .trim();
 
   const hasPhrase = (text, phrase) => norm(text).includes(norm(phrase));
-
   const injectOnce = (text, phrase) => {
     if (!text) return phrase;
     return hasPhrase(text, phrase) ? text : (phrase + "\n" + text);
   };
-
   const dedupLines = (text) => {
-    const seen = new Set();
-    const out = [];
-    text.split(/\n+/).forEach(line => {
+    const seen = new Set(); const out = [];
+    (text||"").split(/\n+/).forEach(line=>{
       const key = norm(line);
-      if (!key) return;
-      if (seen.has(key)) return;
+      if(!key) return;
+      if(seen.has(key)) return;
       seen.add(key);
       out.push(line.trim());
     });
     return out.join("\n");
   };
+  const escapeRegExp = s => (s||"").replace(/[.*+?^${}()|[```\```/g, "\\$&");
+  // Mantener solo la primera aparición de la frase; borrar las siguientes (sin romper el resto)
+  const limitOccurrences = (text, phrase) => {
+    if(!text) return "";
+    const pat = new RegExp(`[\"«»“”']?${escapeRegExp(phrase)}[\"«»“”']?`, "gi");
+    let seen = false;
+    const cleaned = text.replace(pat, (m)=>{
+      if(seen) return ""; // quita repeticiones
+      seen = true;
+      return m; // conserva la primera
+    });
+    return cleaned
+      .replace(/[ ]{2,}/g," ")
+      .replace(/\n[ \t]+\n/g,"\n\n")
+      .replace(/\n{3,}/g,"\n\n")
+      .trim();
+  };
+  const tidy = (text) => (text||"").replace(/[ \t]+\n/g,"\n").replace(/\n{3,}/g,"\n\n").trim();
 
-  // Inyectar SOLO si falta la frase, y deduplicar
-  w  = dedupLines(injectOnce(w,  frase));
-  eb = dedupLines(injectOnce(eb, frase));
-  c  = dedupLines(injectOnce(c,  frase));
+  // Inyectar SOLO si falta; luego deduplicar líneas; luego limitar a 1 ocurrencia total
+  w  = tidy( dedupLines( injectOnce(w,  frase) ) );
+  eb = tidy( limitOccurrences( dedupLines( injectOnce(eb, frase) ), frase ) );
+  c  = tidy( limitOccurrences( dedupLines( injectOnce(c,  frase) ), frase ) );
 
   return { whatsapp:w, emailSubject:es, emailBody:eb, call:c, frase, micro };
 }

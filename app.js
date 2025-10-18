@@ -58,11 +58,11 @@
 
   // Mostrar topnav solo desde p2
   const topnav = qs(".topnav");
-  if (topnav) topnav.style.display = (id==="p0" || id==="p1" || id==="p2") ? "none" : "flex";
+  if (topnav) topnav.style.display = (id==="p0" || id==="p1") ? "none" : "flex";
 
   // Botón "← Volver" solo desde p2
   const backBtn = qs("#btn-back");
-  if (backBtn) backBtn.style.display = (id==="p0" || id==="p1" || id==="p2" || id==="p3") ? "none" : "inline-flex";
+  if (backBtn) backBtn.style.display = (id==="p0" || id==="p1") ? "none" : "inline-flex";
 
   // Botón "Áreas" solo desde p3
   const areasBtn = qs('[data-nav="areas"]');

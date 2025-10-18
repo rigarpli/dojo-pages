@@ -43,33 +43,35 @@
 
   // Navegación
   let currentStep="p0", historySteps=["p0"];
+
   function go(id){
-  // Mostrar solo la vista activa
+  // Activar la vista
   qsa(".step").forEach(x=>x.classList.remove("active"));
   const stepEl = qs("#"+id);
-  if(stepEl) stepEl.classList.add("active");
+  if (stepEl) stepEl.classList.add("active");
 
-  // Estado y UI
+  // Estado y scroll
   currentStep = id;
   progress(id);
   const root = qs("#dojoApp");
-  if(root) window.scrollTo({top:root.offsetTop-10, behavior:"smooth"});
+  if (root) window.scrollTo({ top: root.offsetTop - 10, behavior: "smooth" });
 
-  // Mostrar/ocultar barra de botones a partir de p2
+  // Mostrar topnav solo desde p2
   const topnav = qs(".topnav");
   if (topnav) topnav.style.display = (id==="p0" || id==="p1" || id==="p2") ? "none" : "flex";
 
   // Botón "← Volver" solo desde p2
   const backBtn = qs("#btn-back");
-  if (backBtn) backBtn.style.display = (id==="p0" || id==="p1") ? "none" : "inline-flex";
+  if (backBtn) backBtn.style.display = (id==="p0" || id==="p1" || id==="p2" || id==="p3") ? "none" : "inline-flex";
 
-    /// Botón "Áreas" solo desde p3
+  // Botón "Áreas" solo desde p3
   const areasBtn = qs('[data-nav="areas"]');
   if (areasBtn) {
     const stepNum = parseInt((id || "p0").slice(1), 10) || 0;
     areasBtn.style.display = stepNum >= 3 ? "inline-flex" : "none";
   }
 }
+  
   function nav(id){ if(id===currentStep) return; historySteps.push(id); go(id); }
   function shouldConfirmBack(){ return (currentStep==="p4"||currentStep==="p5") && !!S.pack; }
   function goBack(){

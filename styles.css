@@ -10,6 +10,12 @@
 }
 body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
 #dojoApp{max-width:1080px;margin:0 auto;padding:24px}
+#dojoApp .grid, #dojoApp .grid.two, #dojoApp .grid.three { min-width: 0; }
+#dojoApp .input { box-sizing: border-box; max-width: 100%; width: 100%; }
+#dojoApp .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 520px){
+  #dojoApp .grid.two { grid-template-columns: 1fr; }
+}
 .card{position:relative;background:linear-gradient(180deg,var(--glass1),var(--glass2));border:1px solid var(--stroke);border-radius:18px;padding:24px;padding-bottom:calc(24px + var(--logo-block));box-shadow:0 10px 30px rgba(0,0,0,0.25)}
 header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:10px}
 .title{font-weight:800;font-size:22px;letter-spacing:.2px}

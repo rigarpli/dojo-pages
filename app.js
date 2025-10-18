@@ -1,9 +1,11 @@
+// build: dojo-app 2025-10-18
+
 (function(){
-  const API = "https://dojo-coach.rgarciaplicet.workers.dev/"; // tu Worker
+  const API = "https://dojo-coach.rgarciaplicet.workers.dev/"; // Worker de Cloudflare
   const plan = new URLSearchParams(location.search).get("plan") || "full";
   const CONTENT_URL = `./content.${plan}.json`;
 
-  // Plantillas: modo "auto" usa IA si pasa chequeo; si no, usa blindadas
+  // Plantillas: "auto" usa IA si pasa QA; "always" usa blindadas siempre
   const SAFE_TEMPLATES_MODE = "auto"; // "auto" | "always"
 
   // Estado
@@ -15,34 +17,50 @@
   // Utils
   const qs=(s,sc=document)=>sc.querySelector(s);
   const qsa=(s,sc=document)=>Array.from(sc.querySelectorAll(s));
-  const progress=(id)=>{ const map={p0:0,p1:1,p2:2,p3:3,p4:4,p5:5,p8:8,p9:9}; const pct=Math.max(10,Math.round(((map[id]??0)+1)/10*100)); qs("#bar").style.width=pct+"%"; };
+  const progress=(id)=>{ const map={p0:0,p1:1,p2:2,p3:3,p4:4,p5:5,p8:8,p9:9}; const pct=Math.max(10,Math.round(((map[id]??0)+1)/10*100)); const b=qs("#bar"); if(b) b.style.width=pct+"%"; };
   const scrollTop=()=>{ const root=qs("#dojoApp"); if(root) window.scrollTo({top:root.offsetTop-10,behavior:"smooth"}); };
   function copy(t){ t=t||""; if(navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(t).then(()=>alert("Copiado")).catch(()=>fallbackCopy(t)); } else fallbackCopy(t); }
   function fallbackCopy(t){ const a=document.createElement("textarea"); a.value=t; a.style.position="fixed"; a.style.left="-9999px"; document.body.appendChild(a); a.select(); try{document.execCommand("copy"); alert("Copiado");}catch(e){alert("No se pudo copiar")} document.body.removeChild(a); }
   function share(t,title){ if(navigator.share){ navigator.share({title:title||"Dojo de Polizar", text:t}).catch(()=>{}); } else { copy(t); window.open("https://wa.me/?text="+encodeURIComponent(t), "_blank"); } }
   function downloadTxt(name, t){ const blob=new Blob([t||""],{type:"text/plain;charset=utf-8"}); const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download=name||"dojo.txt"; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(url); a.remove();},0); }
   function slug(s){ s=s||""; try{s=s.normalize("NFD").replace(/[\u0300-\u036f]/g,"")}catch(e){} return s.toLowerCase().replace(/[^\w]+/g,"-").replace(/-+/g,"-").replace(/^-|-$/g,""); }
+
+  // Reemplazo robusto de placeholders en cualquier texto
   function fillPH(t){
-  if(!t) return "";
-  const cli = (S.cliente && S.cliente.trim()) ? S.cliente.trim() : "cliente";
-  const yo  = (S.nombre && S.nombre.trim()) ? S.nombre.trim()  : "yo";
-  return t
-    .replace(/\{\s*CLIENTE\s*\}/gi, cli)
-    .replace(/\{\s*MI[_\s]*NOMBRE\s*\}/gi, yo);
-}
-  async function ai(payload){ const r=await fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)}); if(!r.ok) throw new Error("IA"); return await r.json(); }
+    if(!t) return "";
+    const cli = (S.cliente && S.cliente.trim()) ? S.cliente.trim() : "cliente";
+    const yo  = (S.nombre && S.nombre.trim()) ? S.nombre.trim()  : "yo";
+    return t
+      .replace(/\{\s*CLIENTE\s*\}/gi, cli)
+      .replace(/\{\s*MI[_\s]*NOMBRE\s*\}/gi, yo);
+  }
+
+  async function ai(payload){
+    const r=await fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+    if(!r.ok) throw new Error("IA");
+    return await r.json();
+  }
 
   // Navegación
   let currentStep="p0", historySteps=["p0"];
   function go(id){
     qsa(".step").forEach(x=>x.classList.remove("active"));
-    qs("#"+id).classList.add("active");
+    const stepEl=qs("#"+id); if(stepEl) stepEl.classList.add("active");
     currentStep=id; progress(id); scrollTop();
     const back=qs("#btn-back"); if(back) back.style.display = (id==="p0")?"none":"inline-flex";
   }
   function nav(id){ if(id===currentStep) return; historySteps.push(id); go(id); }
   function shouldConfirmBack(){ return (currentStep==="p4"||currentStep==="p5") && !!S.pack; }
-  function goBack(){ if(shouldConfirmBack()){ if(!confirm("¿Volver al paso anterior? Perderás el foco de este escenario. Tus resultados no se guardan aquí.")) return; } if(historySteps.length<=1) return; historySteps.pop(); const prev = historySteps[historySteps.length-1]||"p0"; go(prev); }
+  function goBack(){
+    if(shouldConfirmBack()){
+      const ok = confirm("¿Volver al paso anterior? Perderás el foco de este escenario. Tus resultados no se guardan aquí.");
+      if(!ok) return;
+    }
+    if(historySteps.length<=1) return;
+    historySteps.pop();
+    const prev = historySteps[historySteps.length-1]||"p0";
+    go(prev);
+  }
 
   // Carga de contenido y arranque
   fetch(CONTENT_URL).then(r=>{ if(!r.ok) throw new Error("content"); return r.json(); })
@@ -51,54 +69,72 @@
 
   function init(){
     // Bienvenida
-    qs("#start").onclick=()=>{ S.nombre=(qs("#nombre").value||"").trim(); S.cliente=(qs("#cliente").value||"").trim(); buildAreas(); nav("p1"); };
+    const startBtn=qs("#start");
+    if(startBtn){
+      startBtn.onclick=()=>{ S.nombre=(qs("#nombre")?.value||"").trim(); S.cliente=(qs("#cliente")?.value||"").trim(); buildAreas(); nav("p1"); };
+    }
 
     // Delegación de clicks
     document.addEventListener("click", (e)=>{
       const t=e.target;
-      if(t.closest("#btn-back")) goBack();
-      else if(t.closest("[data-nav]")){
+      if(t.closest("#btn-back")) {
+        goBack();
+
+      } else if(t.closest("[data-nav]")){
         const where=t.closest("[data-nav]").dataset.nav;
         if(where==="areas"){ buildAreas(); nav("p1"); }
         if(where==="guia"){ nav("p8"); }
+
       } else if(t.closest(".area-card .btn")){
         const id=t.closest(".area-card .btn").dataset.area;
-        const area=S.content.areas.find(a=>a.id===id)||{};
-        S.areaId=id; S.areaTitle=area.title||""; qs("#ctx-area").textContent=S.areaTitle||"—"; nav("p2");
+        const area=(S.content.areas||[]).find(a=>a.id===id)||{};
+        S.areaId=id; S.areaTitle=area.title||""; const ctx=qs("#ctx-area"); if(ctx) ctx.textContent=S.areaTitle||"—"; nav("p2");
+
       } else if(t.closest("[data-style]")){
         S.estilo=t.closest("[data-style]").dataset.style; buildScenarios(); nav("p3");
+
       } else if(t.closest("[data-scenario]")){
         const id=t.closest("[data-scenario]").dataset.scenario; S.scenId=id; buildScenarioView(id); nav("p4");
+
       } else if(t.closest(".tab")){
         qsa(".tab").forEach(x=>x.classList.remove("active"));
         t.closest(".tab").classList.add("active");
         const key=t.closest(".tab").dataset.tab; const TB=qs("#tmpl-box");
-        if(key==="wha") TB.textContent = fillPH(S.templates.whatsapp);
-        if(key==="eml") TB.textContent = fillPH(S.templates.emailBody);
-        if(key==="call") TB.textContent = fillPH(S.templates.call);
+        if(S.templates){
+          if(key==="wha") TB.textContent = fillPH(S.templates.whatsapp);
+          if(key==="eml") TB.textContent = fillPH(S.templates.emailBody);
+          if(key==="call") TB.textContent = fillPH(S.templates.call);
+        }
+
       } else if(t.closest("#btn-copy-tmpl")){
         copy(qs("#tmpl-box").textContent||"");
+
       } else if(t.closest("#btn-dl-txt")){
         const key=(qs(".tab.active")?.dataset.tab)||"wha"; let content="";
         if(key==="wha") content=fillPH(S.templates.whatsapp);
         if(key==="eml") content="Asunto: "+fillPH(S.templates.emailSubject)+"\n\n"+fillPH(S.templates.emailBody);
         if(key==="call") content=fillPH(S.templates.call);
         downloadTxt("dojo-"+slug(S.areaId||"area")+"-"+slug(S.scenId||"escenario")+"-"+key+".txt", content);
+
       } else if(t.closest("#btn-share-tmpl")){
         const key=(qs(".tab.active")?.dataset.tab)||"wha"; let content="";
         if(key==="wha") content=fillPH(S.templates.whatsapp);
         if(key==="eml") content=fillPH(S.templates.emailSubject)+"\n\n"+fillPH(S.templates.emailBody);
         if(key==="call") content=fillPH(S.templates.call);
         share(content, "Dojo — "+(S.areaTitle||""));
+
       } else if(t.closest(".phrase button")){
         const text=t.closest(".phrase").querySelector("div")?.textContent||""; copy(text);
+
       } else if(t.id==="rr-generate"){
         roundTwo();
+
       } else if(t.closest("#to-p5")){
         qs("#p5-frase").textContent = S.lastFrase || "Aún no has generado una frase.";
         const micro=(S.pack && (S.pack.micro_accion_refinada||S.pack.micro_accion))||"";
         if(micro) qs("#micro").value = fillPH(micro);
         nav("p5");
+
       } else if(t.closest("#btn-wa")){
         const msg = `Dojo de Polizar — ${S.areaTitle}
 Escenario: ${qs('#esc-title').textContent}
@@ -111,6 +147,7 @@ ${(qs('#micro')?.value||'________')}
 Frase de poder:
 ${S.lastFrase||"-"}`;
         window.open("https://wa.me/?text="+encodeURIComponent(msg),"_blank");
+
       } else if(t.closest("#p5-copy")){
         const txt = `Dojo de Polizar — ${S.areaTitle}
 Escenario: ${qs('#esc-title').textContent}
@@ -123,6 +160,7 @@ ${(qs('#micro')?.value||'________')}
 Frase de poder:
 ${S.lastFrase||"-"}`;
         copy(txt);
+
       } else if(t.closest("#p5-dl")){
         const txt = `Dojo de Polizar — ${S.areaTitle}
 Escenario: ${qs('#esc-title').textContent}
@@ -135,6 +173,7 @@ ${(qs('#micro')?.value||'________')}
 Frase de poder:
 ${S.lastFrase||"-"}`;
         downloadTxt("dojo-"+slug(S.areaId||'area')+"-"+slug(S.scenId||'escenario')+"-resumen.txt", txt);
+
       } else if(t.closest("#finish")){
         qs("#thanks-name").textContent = S.nombre || "Pro";
         qs("#thanks-area").textContent = S.areaTitle || "tu área";
@@ -144,14 +183,14 @@ ${S.lastFrase||"-"}`;
 
     document.addEventListener("keydown",(e)=>{
       const a=document.activeElement; const typing=a && (a.tagName==="INPUT"||a.tagName==="TEXTAREA"||a.isContentEditable);
-      if(e.key==="Enter"&&(a?.id==="nombre"||a?.id==="cliente")){ e.preventDefault(); qs("#start").click(); }
+      if(e.key==="Enter"&&(a?.id==="nombre"||a?.id==="cliente")){ e.preventDefault(); const st=qs("#start"); if(st) st.click(); }
       if(e.key==="Escape" && !typing){ e.preventDefault(); goBack(); }
     });
   }
 
   // Vistas
   function buildAreas(){
-    const grid=qs("#areas-grid"); grid.innerHTML="";
+    const grid=qs("#areas-grid"); if(!grid) return; grid.innerHTML="";
     (S.content.areas||[]).forEach(a=>{
       const d=document.createElement("div");
       d.className="area-card";
@@ -162,8 +201,8 @@ ${S.lastFrase||"-"}`;
 
   function buildScenarios(){
     const list=(S.content.scenarios||[]).filter(x=>x.areaId===S.areaId);
-    qs("#area-title").textContent=S.areaTitle||"";
-    const grid=qs("#scen-grid"); grid.innerHTML="";
+    const titleEl=qs("#area-title"); if(titleEl) titleEl.textContent=S.areaTitle||"";
+    const grid=qs("#scen-grid"); if(!grid) return; grid.innerHTML="";
     list.forEach(sc=>{
       const q= sc.question || ("Cliente: " + sc.title + ". ¿Cómo respondes?");
       const d=document.createElement("div");
@@ -179,7 +218,7 @@ ${S.lastFrase||"-"}`;
     qs("#esc-badge").textContent="Escenario — " + (S.areaTitle||"");
     qs("#esc-title").textContent=sc.title;
     qs("#esc-question").textContent= sc.question || ("Cliente: " + sc.title + ". ¿Cómo respondes?");
-    const box=qs("#esc-options"); box.innerHTML="";
+    const box=qs("#esc-options"); if(!box) return; box.innerHTML="";
     const jugadas = Array.isArray(sc.jugadas) && sc.jugadas.length ? sc.jugadas : defaultJugadas(sc.type);
     jugadas.forEach(label=>{
       const b=document.createElement("button");
@@ -196,11 +235,54 @@ ${S.lastFrase||"-"}`;
     return type==="follow-up" ? ["Resumen + micro‑acción","Confirmar prioridad","Recordatorio con fecha"] : ["Validar + pregunta","Reencuadre de valor","Micro‑paso"];
   }
 
+  // Sanitiza TODO el pack de la IA reemplazando placeholders
+  function sanitizePack(pack){
+    const safe = v => (typeof v === "string" ? fillPH(v) : v);
+    const p = { ...pack };
+
+    p.titulo_jugada = safe(p.titulo_jugada);
+    p.validacion_estrategica = safe(p.validacion_estrategica);
+    p.perspectiva_cliente = safe(p.perspectiva_cliente);
+
+    if (p.mejora_potenciadora) {
+      p.mejora_potenciadora = {
+        ...p.mejora_potenciadora,
+        concepto: safe(p.mejora_potenciadora.concepto),
+        frase_mejorada: safe(p.mejora_potenciadora.frase_mejorada)
+      };
+    }
+
+    p.frase_poder   = safe(p.frase_poder);
+    p.frase_poder_2 = safe(p.frase_poder_2);
+    p.micro_accion  = safe(p.micro_accion);
+    p.micro_accion_refinada = safe(p.micro_accion_refinada);
+
+    if (Array.isArray(p.frases_rapidas)) {
+      p.frases_rapidas = p.frases_rapidas.map(safe);
+    }
+
+    if (p.templates) {
+      p.templates = { ...p.templates };
+      p.templates.whatsapp = safe(p.templates.whatsapp);
+      p.templates.call     = safe(p.templates.call);
+      if (p.templates.email) {
+        p.templates.email = {
+          ...p.templates.email,
+          subject: safe(p.templates.email.subject),
+          body:    safe(p.templates.email.body)
+        };
+      }
+    }
+
+    return p;
+  }
+
+  // Ejecuta jugada
   async function runPlay(sc, label){
     const ans=qs("#esc-answer");
     ans.style.display="block"; ans.innerHTML=`<p class="muted">Generando tu guía…</p>`;
     try{
-      const pack = await ai({
+      const raw = await ai({
         nombre: S.nombre||"Pro",
         estilo: S.estilo||"Neutral",
         area: S.areaTitle,
@@ -208,12 +290,16 @@ ${S.lastFrase||"-"}`;
         pregunta: sc.question || ("Cliente: " + sc.title + ". ¿Cómo respondes?"),
         eleccion: label
       });
-      if(!pack || !pack.frase_poder) throw new Error("Pack incompleto");
+      if(!raw || !raw.frase_poder) throw new Error("Pack incompleto");
+
+      // Limpiar placeholders en todo el paquete
+      const pack = sanitizePack(raw);
       S.pack=pack;
-      ans.innerHTML=renderPack(pack);
-      S.templates=pickTemplates(pack, sc.title, sc.type, S.estilo);
-      renderPhrases(pack, sc);
-      qs("#tmpl-box").textContent=fillPH(S.templates.whatsapp);
+
+      ans.innerHTML=renderPack(S.pack);
+      S.templates=pickTemplates(S.pack, sc.title, sc.type, S.estilo);
+      renderPhrases(S.pack, sc);
+      const TB=qs("#tmpl-box"); if(TB) TB.textContent=fillPH(S.templates.whatsapp);
       qs("#toolkit").style.display="grid";
       qs("#esc-continue").style.display="block";
       scrollTop();
@@ -222,23 +308,30 @@ ${S.lastFrase||"-"}`;
     }
   }
 
+  // Render feedback principal (aplica fillPH y guarda última frase)
   function renderPack(pack){
-    const titulo=pack.titulo_jugada||"Tu Mejor Siguiente Paso";
-    const valid=pack.validacion_estrategica;
-    const pers=pack.perspectiva_cliente;
-    const conc=pack.mejora_potenciadora?.concepto;
-    const fraseMej=pack.mejora_potenciadora?.frase_mejorada;
-    const frase = pack.frase_poder || "Para acertar, ¿qué te importa más ahora?";
-    S.lastFrase = fillPH(frase);
+    const titulo   = fillPH(pack.titulo_jugada || "Tu Mejor Siguiente Paso");
+    const valid    = fillPH(pack.validacion_estrategica || "");
+    const pers     = fillPH(pack.perspectiva_cliente || "");
+    const conc     = fillPH((pack.mejora_potenciadora && pack.mejora_potenciadora.concepto) || "");
+    const fraseMej = fillPH((pack.mejora_potenciadora && pack.mejora_potenciadora.frase_mejorada) || "");
+    const frase    = pack.frase_poder || "Para acertar, ¿qué te importa más ahora?";
+    S.lastFrase    = fillPH(frase);
+
     let html=`<h3>${titulo}</h3>`;
-    if(valid) html+=`<div class="fb-sec"><div class="sec-title">¡Bien Jugado! El Acierto Estratégico</div><p>${valid}</p></div>`;
-    if(pers) html+=`<div class="fb-sec"><div class="sec-title">En la Mente del Cliente</div><p>${pers}</p></div>`;
-    if(conc && fraseMej) html+=`<div class="fb-sec"><div class="sec-title">Potencia Tu Jugada</div><p><strong>El Principio Detrás:</strong> ${conc}</p><p><strong>Frase Mejorada:</strong> ${fraseMej}</p></div>`;
+    if(valid.trim()) html+=`<div class="fb-sec"><div class="sec-title">¡Bien Jugado! El Acierto Estratégico</div><p>${valid}</p></div>`;
+    if(pers.trim())  html+=`<div class="fb-sec"><div class="sec-title">En la Mente del Cliente</div><p>${pers}</p></div>`;
+    if(conc.trim() || fraseMej.trim()){
+      html+=`<div class="fb-sec"><div class="sec-title">Potencia Tu Jugada</div>`;
+      if(conc.trim())     html+=`<p><strong>El Principio Detrás:</strong> ${conc}</p>`;
+      if(fraseMej.trim()) html+=`<p><strong>Frase Mejorada:</strong> ${fraseMej}</p>`;
+      html+=`</div>`;
+    }
     html+=`<div class="fb-sec"><div class="sec-title">Tu Nueva Frase de Poder</div><p><strong>${S.lastFrase}</strong></p></div>`;
     return html;
   }
 
-  // ============ Plantillas Blindadas + QA ============
+  // ====== Plantillas Blindadas + QA ======
 
   function norm(s){
     return (s||"")
@@ -263,13 +356,10 @@ ${S.lastFrase||"-"}`;
   }
   function keepFirstPhrase(text, frase){
     if(!text) return "";
-    const re=new RegExp(frase.replace(/[-\/\\^$*+?.()|[```{}]/g, '\\$&'), "i");
+    const esc = frase.replace(/[-\/\\^$*+?.()|[```{}]/g, '\\$&');
     let found=false;
-    return text.replace(new RegExp(frase.replace(/[-\/\\^$*+?.()|[```{}]/g, '\\$&'), "gi"), (m)=>{
-      if(found) return "";
-      found=true;
-      return m;
-    }).replace(/[ \t]+\n/g,"\n").replace(/\n{3,}/g,"\n\n").replace(/[ ]{2,}/g," ").trim();
+    return (text||"").replace(new RegExp(esc,"gi"), (m)=>{ if(found) return ""; found=true; return m; })
+      .replace(/[ \t]+\n/g,"\n").replace(/\n{3,}/g,"\n\n").replace(/[ ]{2,}/g," ").trim();
   }
 
   // Estilo aplicado (matices suaves por canal)
@@ -278,15 +368,12 @@ ${S.lastFrase||"-"}`;
     let t=text;
 
     if(estilo==="Calma"){
-      t = t
-        .replace(/\bPropongo:\b/gi, "Si te parece, propongo:")
-        .replace(/\bPropuesta:\b/gi, "Si te parece, propuesta:");
+      t = t.replace(/\bPropongo:?\b/gi, "Si te parece, propongo:");
       if(channel==="call") t = t.replace(/\?$/,". Cuando te funcione, lo vemos.");
     }
     if(estilo==="Curiosidad"){
       const extraQ = "¿Qué te haría sentir seguro para avanzar?";
-      if(channel!=="call" && !contains(t, extraQ)) t = t + "\n" + extraQ;
-      if(channel==="call" && !contains(t, extraQ)) t = t + "\n" + extraQ;
+      if(!contains(t, extraQ)) t = t + "\n" + extraQ;
     }
     if(estilo==="Claridad"){
       t = t.replace(/\bEn resumen:?\b/gi,"Lo esencial:").replace(/\s{2,}/g," ");
@@ -321,7 +408,7 @@ ${S.lastFrase||"-"}`;
     ].join("\n");
 
     // Llamada (3–4 líneas, natural)
-    let callLines = [];
+    let callLines;
     if(tipo==="follow-up"){
       callLines = [
         `Hola {CLIENTE}, soy {MI_NOMBRE}. ¿Tienes 2 minutos?`,
@@ -369,15 +456,12 @@ ${S.lastFrase||"-"}`;
     let eb = (t.email && t.email.body)    || "";
     let c  = t.call || "";
 
-    // Opción: usar IA si pasa QA y estamos en modo auto
     if(SAFE_TEMPLATES_MODE==="auto"){
       const okIA = passesQA(w,frase,micro) && passesQA(eb,frase,micro) && passesQA(c,frase,micro);
       if(okIA){
-        // Limpiar duplicados y dejar 1 sola aparición de la frase
         w  = dedupLines(w);
         eb = keepFirstPhrase(dedupLines(eb), frase);
         c  = keepFirstPhrase(dedupLines(c),  frase);
-        // Aplicar estilo ligero
         w  = applyTone("wha",  w,  estilo);
         eb = applyTone("eml",  eb, estilo);
         c  = applyTone("call", c, estilo);
@@ -418,7 +502,7 @@ ${S.lastFrase||"-"}`;
 
   function renderPhrases(pack, sc){
     const list = Array.isArray(pack.frases_rapidas) && pack.frases_rapidas.length ? pack.frases_rapidas : fallbackPhrases(sc.title, sc.type);
-    const box=qs("#phrases-box"); box.innerHTML="";
+    const box=qs("#phrases-box"); if(!box) return; box.innerHTML="";
     list.forEach(text=>{
       const row=document.createElement("div");
       row.className="phrase";
@@ -427,18 +511,20 @@ ${S.lastFrase||"-"}`;
     });
   }
 
+  // Segunda ronda
   async function roundTwo(){
-    const out=qs("#rr-output");
-    if(!out) return;
+    const out=qs("#rr-output"); if(!out) return;
     const input=(qs("#rr-text")?.value||"").trim();
     out.style.display="block";
     if(!input){ out.textContent="Escribe lo que diría el cliente y generamos la contra‑respuesta."; return; }
     out.textContent="Pensando contigo…";
+
     const sc=(S.content.scenarios||[]).find(x=>x.areaId===S.areaId && x.id===S.scenId);
     const scTitle=sc?.title || qs("#esc-title")?.textContent || "";
-    const scType=sc?.type || 'in-conversation';
+    const scType = sc?.type  || "in-conversation";
+
     try{
-      const pack=await ai({
+      const raw = await ai({
         nombre:S.nombre||"Pro",
         estilo:S.estilo||"Neutral",
         area:S.areaTitle,
@@ -446,13 +532,17 @@ ${S.lastFrase||"-"}`;
         pregunta:"Segunda ronda",
         eleccion:"Contra-respuesta a: " + input
       });
-      if(pack && pack.frase_poder){
+      if(raw && raw.frase_poder){
+        const pack = sanitizePack(raw);
         S.pack=pack;
-        qs("#esc-answer").innerHTML=renderPack(pack);
-        S.templates=pickTemplates(pack, scTitle, scType, S.estilo);
-        renderPhrases(pack, sc || {title: scTitle, type:'in-conversation'});
-        const micro=pack.micro_accion_refinada || pack.micro_accion;
+
+        qs("#esc-answer").innerHTML=renderPack(S.pack);
+        S.templates=pickTemplates(S.pack, scTitle, scType, S.estilo);
+        renderPhrases(S.pack, sc || { title: scTitle, type: scType });
+
+        const micro=S.pack.micro_accion_refinada || S.pack.micro_accion;
         if(micro) qs("#micro").value = fillPH(micro);
+
         out.textContent = `Actualizado.\n\nFrase de poder:\n${S.lastFrase}\n\nSugerencia de micro‑acción:\n${fillPH(micro||'—')}`;
       }else{
         out.textContent="No se pudo refinar ahora. Intenta nuevamente.";

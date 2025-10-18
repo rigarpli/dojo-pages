@@ -1,4 +1,4 @@
-// build: dojo-app 2025-10-18
+// build: dojo-app FAB guia + nav control 2025-10-18
 
 (function(){
   const API = "https://dojo-coach.rgarciaplicet.workers.dev/"; // Worker de Cloudflare
@@ -43,41 +43,40 @@
 
   // Navegación
   let currentStep="p0", historySteps=["p0"];
-
   function go(id){
-  // Activar la vista
-  qsa(".step").forEach(x=>x.classList.remove("active"));
-  const stepEl = qs("#"+id);
-  if (stepEl) stepEl.classList.add("active");
+    // Activar vista
+    qsa(".step").forEach(x=>x.classList.remove("active"));
+    const stepEl=qs("#"+id); if(stepEl) stepEl.classList.add("active");
 
-  // Estado y scroll
-  currentStep = id;
-  progress(id);
-  const root = qs("#dojoApp");
-  if (root) window.scrollTo({ top: root.offsetTop - 10, behavior: "smooth" });
+    // Estado y scroll
+    currentStep=id; progress(id);
+    const root=qs("#dojoApp"); if(root) window.scrollTo({top:root.offsetTop-10,behavior:"smooth"});
 
-  // Mostrar topnav solo desde p2
-  const topnav = qs(".topnav");
-  if (topnav) topnav.style.display = (id==="p0" || id==="p1") ? "none" : "flex";
+    // Topnav visible solo desde p2
+    const topnav = qs(".topnav");
+    if (topnav) topnav.style.display = (id==="p0" || id==="p1") ? "none" : "flex";
 
-  // Botón "← Volver" solo desde p2
-  const backBtn = qs("#btn-back");
-  if (backBtn) backBtn.style.display = (id==="p0" || id==="p1") ? "none" : "inline-flex";
+    // Ocultar el botón "Guía" de la barra superior (por si existe)
+    const guiaTop = qs('[data-nav="guia"]');
+    if (guiaTop) guiaTop.style.display = "none";
 
-  // Botón "Áreas" solo desde p3
-  const areasBtn = qs('[data-nav="areas"]');
-  if (areasBtn) {
-    const stepNum = parseInt((id || "p0").slice(1), 10) || 0;
-    areasBtn.style.display = stepNum >= 3 ? "inline-flex" : "none";
+    // "← Volver" solo desde p2
+    const backBtn = qs("#btn-back");
+    if (backBtn) backBtn.style.display = (id==="p0" || id==="p1") ? "none" : "inline-flex";
+
+    // "Áreas" solo desde p3
+    const areasBtn = qs('[data-nav="areas"]');
+    if (areasBtn) {
+      const stepNum = parseInt((id || "p0").slice(1), 10) || 0;
+      areasBtn.style.display = stepNum >= 3 ? "inline-flex" : "none";
+    }
+
+    // FAB "Guía" solo desde p2
+    const guideFab = qs("#btn-guide-fab");
+    if (guideFab) {
+      guideFab.style.display = (id==="p0" || id==="p1") ? "none" : "inline-flex";
+    }
   }
-
-  // FAB "Guía" solo desde p2
-  const guideFab = qs("#btn-guide-fab");
-  if (guideFab) {
-    guideFab.style.display = (id==="p0" || id==="p1") ? "none" : "inline-flex";
-  }
-}
-  
   function nav(id){ if(id===currentStep) return; historySteps.push(id); go(id); }
   function shouldConfirmBack(){ return (currentStep==="p4"||currentStep==="p5") && !!S.pack; }
   function goBack(){
@@ -91,41 +90,51 @@
     go(prev);
   }
 
+  // Crea el FAB "Guía" (esquina inferior izquierda)
+  function ensureGuideFab(){
+    const card = document.querySelector("#dojoApp .card");
+    if (!card) return;
+    if (!document.querySelector("#btn-guide-fab")) {
+      const btn = document.createElement("button");
+      btn.id = "btn-guide-fab";
+      btn.className = "corner-guide";
+      btn.type = "button";
+      btn.textContent = "Guía";
+      btn.style.display = "none";
+      card.appendChild(btn);
+    }
+  }
+
   // Carga de contenido y arranque
   fetch(CONTENT_URL).then(r=>{ if(!r.ok) throw new Error("content"); return r.json(); })
     .then(data=>{ S.content=data; init(); })
     .catch(()=>{ alert("No se pudo cargar el contenido."); });
 
-  function ensureGuideFab(){
-  const card = document.querySelector("#dojoApp .card");
-  if (!card) return;
-  if (!document.querySelector("#btn-guide-fab")) {
-    const btn = document.createElement("button");
-    btn.id = "btn-guide-fab";
-    btn.className = "corner-guide";
-    btn.type = "button";
-    btn.textContent = "Guía";
-    card.appendChild(btn);
-  }
-}
-  
   function init(){
+    // FAB guía
+    ensureGuideFab();
+
     // Bienvenida
     const startBtn=qs("#start");
     if(startBtn){
       startBtn.onclick=()=>{ S.nombre=(qs("#nombre")?.value||"").trim(); S.cliente=(qs("#cliente")?.value||"").trim(); buildAreas(); nav("p1"); };
-    ensureGuideFab();
     }
 
     // Delegación de clicks
     document.addEventListener("click", (e)=>{
       const t=e.target;
+
       if(t.closest("#btn-back")) {
         goBack();
-        
+
+      } else if(t.closest("#btn-guide-fab")) {
+        nav("p8");
+
       } else if(t.closest("[data-nav]")){
         const where=t.closest("[data-nav]").dataset.nav;
         if(where==="areas"){ buildAreas(); nav("p1"); }
+
+        // El de "guia" de la topnav está oculto, pero por si acaso:
         if(where==="guia"){ nav("p8"); }
 
       } else if(t.closest(".area-card .btn")){
@@ -179,12 +188,7 @@
         nav("p5");
 
       } else if(t.closest("#btn-wa")){
-        const msg = `Dojo de Polizar — ${S.areaTitle
-                                       
-      } else if (t.closest("#btn-guide-fab")) {
-  nav("p8");
-  }
-        
+        const msg = `Dojo de Polizar — ${S.areaTitle}
 Escenario: ${qs('#esc-title').textContent}
 Estilo: ${S.estilo||"-"}
 Cliente: ${S.cliente||"-"}

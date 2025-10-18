@@ -3,6 +3,9 @@
   const plan = new URLSearchParams(location.search).get("plan") || "full";
   const CONTENT_URL = `./content.${plan}.json`;
 
+  // Plantillas: modo "auto" usa IA si pasa chequeo; si no, usa blindadas
+  const SAFE_TEMPLATES_MODE = "auto"; // "auto" | "always"
+
   // Estado
   const S = {
     nombre:"", cliente:"", estilo:"", areaId:"", areaTitle:"",
@@ -124,7 +127,7 @@ ${(qs('#micro')?.value||'________')}
 
 Frase de poder:
 ${S.lastFrase||"-"}`;
-        downloadTxt("dojo-"+slug(S.areaId||"area")+"-"+slug(S.scenId||"escenario")+"-resumen.txt", txt);
+        downloadTxt("dojo-"+slug(S.areaId||'area')+"-"+slug(S.scenId||'escenario')+"-resumen.txt", txt);
       } else if(t.closest("#finish")){
         qs("#thanks-name").textContent = S.nombre || "Pro";
         qs("#thanks-area").textContent = S.areaTitle || "tu área";
@@ -201,7 +204,7 @@ ${S.lastFrase||"-"}`;
       if(!pack || !pack.frase_poder) throw new Error("Pack incompleto");
       S.pack=pack;
       ans.innerHTML=renderPack(pack);
-      S.templates=normalizeTemplates(pack, sc.title);
+      S.templates=pickTemplates(pack, sc.title, sc.type, S.estilo);
       renderPhrases(pack, sc);
       qs("#tmpl-box").textContent=fillPH(S.templates.whatsapp);
       qs("#toolkit").style.display="grid";
@@ -228,66 +231,158 @@ ${S.lastFrase||"-"}`;
     return html;
   }
 
-  // NORMALIZACIÓN ANTI-DUPLICADOS (simple y segura)
-  function normalizeTemplates(pack, scTitle){
+  // ============ Plantillas Blindadas + QA ============
+
+  function norm(s){
+    return (s||"")
+      .toLowerCase()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+      .replace(/["'«»“”]/g,"")
+      .replace(/[.,;:!?]/g,"")
+      .replace(/\s+/g," ")
+      .trim();
+  }
+  function contains(text, snippet){ return norm(text).includes(norm(snippet)); }
+  function dedupLines(text){
+    const seen=new Set(), out=[];
+    (text||"").split(/\n+/).forEach(line=>{
+      const k=norm(line);
+      if(!k) return;
+      if(seen.has(k)) return;
+      seen.add(k);
+      out.push(line.trim());
+    });
+    return out.join("\n");
+  }
+  function keepFirstPhrase(text, frase){
+    if(!text) return "";
+    const re=new RegExp(frase.replace(/[-\/\\^$*+?.()|[```{}]/g, '\\$&'), "i");
+    let found=false;
+    return text.replace(new RegExp(frase.replace(/[-\/\\^$*+?.()|[```{}]/g, '\\$&'), "gi"), (m)=>{
+      if(found) return "";
+      found=true;
+      return m;
+    }).replace(/[ \t]+\n/g,"\n").replace(/\n{3,}/g,"\n\n").replace(/[ ]{2,}/g," ").trim();
+  }
+
+  // Estilo aplicado (matices suaves por canal)
+  function applyTone(channel, text, estilo){
+    if(!text) return "";
+    let t=text;
+
+    if(estilo==="Calma"){
+      t = t
+        .replace(/\bPropongo:\b/gi, "Si te parece, propongo:")
+        .replace(/\bPropuesta:\b/gi, "Si te parece, propuesta:");
+      if(channel==="call") t = t.replace(/\?$/,". Cuando te funcione, lo vemos.");
+    }
+    if(estilo==="Curiosidad"){
+      const extraQ = "¿Qué te haría sentir seguro para avanzar?";
+      if(channel!=="call" && !contains(t, extraQ)) t = t + "\n" + extraQ;
+      if(channel==="call" && !contains(t, extraQ)) t = t + "\n" + extraQ;
+    }
+    if(estilo==="Claridad"){
+      t = t.replace(/\bEn resumen:?\b/gi,"Lo esencial:").replace(/\s{2,}/g," ");
+    }
+    if(estilo==="Avance"){
+      t = t.replace(/\bPropuesta:\b/gi,"Propuesta:").replace(/\bPropongo\b/gi,"Te propongo");
+    }
+    if(estilo==="Humor"){
+      const wink = (channel==="call") ? "Prometo ser breve." : "Prometo ser breve 🙂";
+      if(!contains(t, "prometo ser breve")) t = t + "\n" + wink;
+    }
+    return t.trim();
+  }
+
+  function buildSafeTemplates(frase, micro, scTitle, tipo, estilo){
+    // WhatsApp (3–5 líneas)
+    let wa = [
+      `Hola {CLIENTE}, soy {MI_NOMBRE}.`,
+      frase,
+      (tipo==="follow-up" ? micro : "Propongo: " + micro),
+      "¿Te va bien?"
+    ].join("\n");
+
+    // Email (≤10 líneas)
+    const subj = `Sobre “${scTitle}”`;
+    let eb = [
+      `Hola {CLIENTE},`,
+      frase,
+      (tipo==="follow-up" ? micro : "Propuesta: " + micro),
+      `Quedo atento.`,
+      `{MI_NOMBRE}`
+    ].join("\n");
+
+    // Llamada (3–4 líneas, natural)
+    let callLines = [];
+    if(tipo==="follow-up"){
+      callLines = [
+        `Hola {CLIENTE}, soy {MI_NOMBRE}. ¿Tienes 2 minutos?`,
+        `Sobre “${scTitle}”. ${frase}`,
+        `${micro}`,
+        `¿Te funciona o prefieres otro momento?`
+      ];
+    }else{
+      callLines = [
+        `Hola {CLIENTE}, soy {MI_NOMBRE}.`,
+        `${frase}`,
+        `¿Qué te gustaría revisar primero para decidir con calma?`,
+        `${micro}`
+      ];
+    }
+    let call = callLines.join("\n");
+
+    // Aplicar estilo por canal
+    wa   = applyTone("wha",  wa,   estilo);
+    eb   = applyTone("eml",  eb,   estilo);
+    call = applyTone("call", call, estilo);
+
+    return {
+      whatsapp: wa,
+      emailSubject: subj,
+      emailBody: eb,
+      call: call,
+      frase, micro
+    };
+  }
+
+  // Chequeo de coherencia de IA: debe contener frase y la micro (al menos su inicio)
+  function passesQA(tpl, frase, micro){
+    if(!tpl) return false;
+    const shortMicro = (micro||"").split(/\s+/).slice(0,5).join(" ");
+    return contains(tpl, frase) && (shortMicro ? contains(tpl, shortMicro) : true);
+  }
+
+  function pickTemplates(pack, scTitle, tipo, estilo){
     const frase = pack.frase_poder_2 || pack.frase_poder || "Para acertar, ¿qué te importa más ahora?";
     const micro = pack.micro_accion_refinada || pack.micro_accion || "Agendar 5 minutos para revisar juntos el punto clave.";
     const t = pack.templates || {};
+    let w  = t.whatsapp || "";
+    let es = (t.email && t.email.subject) || `Sobre “${scTitle||"tu consulta"}”`;
+    let eb = (t.email && t.email.body)    || "";
+    let c  = t.call || "";
 
-    let w  = t.whatsapp || `Hola {CLIENTE}, soy {MI_NOMBRE}. ${frase}\n${micro}`;
-    let es = (t.email && t.email.subject) || `Sobre: ${scTitle||"tu consulta"}`;
-    let eb = (t.email && t.email.body)    || `Hola {CLIENTE},\n\n${frase}\n\n${micro}\n\nQuedo atento.\n{MI_NOMBRE}`;
-    let c  = t.call || `1) Saludo breve y contexto.\n2) ${frase}\n3) ${micro}\n4) Cierre amable.`;
+    // Opción: usar IA si pasa QA y estamos en modo auto
+    if(SAFE_TEMPLATES_MODE==="auto"){
+      const okIA = passesQA(w,frase,micro) && passesQA(eb,frase,micro) && passesQA(c,frase,micro);
+      if(okIA){
+        // Limpiar duplicados y dejar 1 sola aparición de la frase
+        w  = dedupLines(w);
+        eb = keepFirstPhrase(dedupLines(eb), frase);
+        c  = keepFirstPhrase(dedupLines(c),  frase);
+        // Aplicar estilo ligero
+        w  = applyTone("wha",  w,  estilo);
+        eb = applyTone("eml",  eb, estilo);
+        c  = applyTone("call", c, estilo);
+        return { whatsapp:w, emailSubject:es, emailBody:eb, call:c, frase, micro };
+      }
+    }
 
-    // Helpers muy defensivos
-    const norm = s => (s||"").toLowerCase()
-      .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
-      .replace(/["'«»“”]/g,"").replace(/[.,;:!?]/g,"")
-      .replace(/\s+/g," ").trim();
-
-    const hasPhrase = (text, phrase) => norm(text).includes(norm(phrase));
-    const injectOnce = (text, phrase) => (!text ? phrase : (hasPhrase(text,phrase) ? text : (phrase+"\n"+text)));
-    const dedupLines = (text) => {
-      const seen = new Set(); const out=[];
-      (text||"").split(/\n+/).forEach(line=>{
-        const key = norm(line);
-        if(!key) return;
-        if(seen.has(key)) return;
-        seen.add(key);
-        out.push(line.trim());
-      });
-      return out.join("\n");
-    };
-    const escapeRegExp = s => (s||"").replace(/[-\/\\^$*+?.()|[```{}]/g, '\\$&');
-    const keepFirstRemoveRest = (text, phrase) => {
-      if(!text) return "";
-      const pat = new RegExp(escapeRegExp(frase), "gi");
-      let seen=false;
-      const cleaned = text.replace(pat, (m)=>{ if(seen) return ""; seen=true; return m; });
-      return cleaned.replace(/[ \t]+\n/g,"\n").replace(/\n{3,}/g,"\n\n").replace(/[ ]{2,}/g," ").trim();
-    };
-    const tidy = (text) => (text||"").replace(/[ \t]+\n/g,"\n").replace(/\n{3,}/g,"\n\n").trim();
-
-    // WhatsApp: garantizamos frase 1 vez (inyecta si falta)
-    w  = tidy( dedupLines( injectOnce(w,  frase) ) );
-    // Email y llamada: NO forzamos inyección; solo limpiamos duplicados y dejamos como mucho 1 aparición
-    eb = tidy( keepFirstRemoveRest( dedupLines(eb), frase ) );
-    c  = tidy( keepFirstRemoveRest( dedupLines(c),  frase ) );
-
-    return { whatsapp:w, emailSubject:es, emailBody:eb, call:c, frase, micro };
+    // Si no pasa QA (o modo "always"): blindadas
+    return buildSafeTemplates(frase, micro, scTitle, tipo, estilo);
   }
 
-  function renderPhrases(pack, sc){
-    const list = Array.isArray(pack.frases_rapidas) && pack.frases_rapidas.length ? pack.frases_rapidas : fallbackPhrases(sc.title, sc.type);
-    const box=qs("#phrases-box"); box.innerHTML="";
-    list.forEach(text=>{
-      const row=document.createElement("div");
-      row.className="phrase";
-      row.innerHTML=`<div>${fillPH(text)}</div><button class="btn" type="button">Copiar</button>`;
-      box.appendChild(row);
-    });
-  }
-
+  // Frases rápidas (IA o fallback local)
   function fallbackPhrases(title,type){
     const t=(title||"").toLowerCase();
     if(type==='in-conversation'){
@@ -314,6 +409,17 @@ ${S.lastFrase||"-"}`;
     ];
   }
 
+  function renderPhrases(pack, sc){
+    const list = Array.isArray(pack.frases_rapidas) && pack.frases_rapidas.length ? pack.frases_rapidas : fallbackPhrases(sc.title, sc.type);
+    const box=qs("#phrases-box"); box.innerHTML="";
+    list.forEach(text=>{
+      const row=document.createElement("div");
+      row.className="phrase";
+      row.innerHTML=`<div>${fillPH(text)}</div><button class="btn" type="button">Copiar</button>`;
+      box.appendChild(row);
+    });
+  }
+
   async function roundTwo(){
     const out=qs("#rr-output");
     if(!out) return;
@@ -323,6 +429,7 @@ ${S.lastFrase||"-"}`;
     out.textContent="Pensando contigo…";
     const sc=(S.content.scenarios||[]).find(x=>x.areaId===S.areaId && x.id===S.scenId);
     const scTitle=sc?.title || qs("#esc-title")?.textContent || "";
+    const scType=sc?.type || 'in-conversation';
     try{
       const pack=await ai({
         nombre:S.nombre||"Pro",
@@ -335,7 +442,7 @@ ${S.lastFrase||"-"}`;
       if(pack && pack.frase_poder){
         S.pack=pack;
         qs("#esc-answer").innerHTML=renderPack(pack);
-        S.templates=normalizeTemplates(pack, scTitle);
+        S.templates=pickTemplates(pack, scTitle, scType, S.estilo);
         renderPhrases(pack, sc || {title: scTitle, type:'in-conversation'});
         const micro=pack.micro_accion_refinada || pack.micro_accion;
         if(micro) qs("#micro").value = fillPH(micro);

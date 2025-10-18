@@ -22,7 +22,14 @@
   function share(t,title){ if(navigator.share){ navigator.share({title:title||"Dojo de Polizar", text:t}).catch(()=>{}); } else { copy(t); window.open("https://wa.me/?text="+encodeURIComponent(t), "_blank"); } }
   function downloadTxt(name, t){ const blob=new Blob([t||""],{type:"text/plain;charset=utf-8"}); const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download=name||"dojo.txt"; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(url); a.remove();},0); }
   function slug(s){ s=s||""; try{s=s.normalize("NFD").replace(/[\u0300-\u036f]/g,"")}catch(e){} return s.toLowerCase().replace(/[^\w]+/g,"-").replace(/-+/g,"-").replace(/^-|-$/g,""); }
-  function fillPH(t){ if(!t) return ""; return t.replace(/\{CLIENTE\}/g,S.cliente||"cliente").replace(/\{MI_NOMBRE\}/g,S.nombre||"yo"); }
+  function fillPH(t){
+  if(!t) return "";
+  const cli = (S.cliente && S.cliente.trim()) ? S.cliente.trim() : "cliente";
+  const yo  = (S.nombre && S.nombre.trim()) ? S.nombre.trim()  : "yo";
+  return t
+    .replace(/\{\s*CLIENTE\s*\}/gi, cli)
+    .replace(/\{\s*MI[_\s]*NOMBRE\s*\}/gi, yo);
+}
   async function ai(payload){ const r=await fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)}); if(!r.ok) throw new Error("IA"); return await r.json(); }
 
   // Navegación

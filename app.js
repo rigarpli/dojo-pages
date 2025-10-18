@@ -44,11 +44,25 @@
   // Navegación
   let currentStep="p0", historySteps=["p0"];
   function go(id){
-    qsa(".step").forEach(x=>x.classList.remove("active"));
-    const stepEl=qs("#"+id); if(stepEl) stepEl.classList.add("active");
-    currentStep=id; progress(id); scrollTop();
-    const back=qs("#btn-back"); if(back) back.style.display = (id==="p0")?"none":"inline-flex";
-  }
+  // Mostrar solo la vista activa
+  qsa(".step").forEach(x=>x.classList.remove("active"));
+  const stepEl = qs("#"+id);
+  if(stepEl) stepEl.classList.add("active");
+
+  // Estado y UI
+  currentStep = id;
+  progress(id);
+  const root = qs("#dojoApp");
+  if(root) window.scrollTo({top:root.offsetTop-10, behavior:"smooth"});
+
+  // Mostrar/ocultar barra de botones a partir de p2
+  const topnav = qs(".topnav");
+  if (topnav) topnav.style.display = (id==="p0" || id==="p1") ? "none" : "flex";
+
+  // Botón "← Volver" solo desde p2
+  const backBtn = qs("#btn-back");
+  if (backBtn) backBtn.style.display = (id==="p0" || id==="p1") ? "none" : "inline-flex";
+}
   function nav(id){ if(id===currentStep) return; historySteps.push(id); go(id); }
   function shouldConfirmBack(){ return (currentStep==="p4"||currentStep==="p5") && !!S.pack; }
   function goBack(){

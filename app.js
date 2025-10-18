@@ -70,6 +70,12 @@
     const stepNum = parseInt((id || "p0").slice(1), 10) || 0;
     areasBtn.style.display = stepNum >= 3 ? "inline-flex" : "none";
   }
+
+  // FAB "Guía" solo desde p2
+  const guideFab = qs("#btn-guide-fab");
+  if (guideFab) {
+    guideFab.style.display = (id==="p0" || id==="p1") ? "none" : "inline-flex";
+  }
 }
   
   function nav(id){ if(id===currentStep) return; historySteps.push(id); go(id); }
@@ -90,11 +96,25 @@
     .then(data=>{ S.content=data; init(); })
     .catch(()=>{ alert("No se pudo cargar el contenido."); });
 
+  function ensureGuideFab(){
+  const card = document.querySelector("#dojoApp .card");
+  if (!card) return;
+  if (!document.querySelector("#btn-guide-fab")) {
+    const btn = document.createElement("button");
+    btn.id = "btn-guide-fab";
+    btn.className = "corner-guide";
+    btn.type = "button";
+    btn.textContent = "Guía";
+    card.appendChild(btn);
+  }
+}
+  
   function init(){
     // Bienvenida
     const startBtn=qs("#start");
     if(startBtn){
       startBtn.onclick=()=>{ S.nombre=(qs("#nombre")?.value||"").trim(); S.cliente=(qs("#cliente")?.value||"").trim(); buildAreas(); nav("p1"); };
+    ensureGuideFab();
     }
 
     // Delegación de clicks
@@ -102,7 +122,7 @@
       const t=e.target;
       if(t.closest("#btn-back")) {
         goBack();
-
+        
       } else if(t.closest("[data-nav]")){
         const where=t.closest("[data-nav]").dataset.nav;
         if(where==="areas"){ buildAreas(); nav("p1"); }
@@ -159,7 +179,12 @@
         nav("p5");
 
       } else if(t.closest("#btn-wa")){
-        const msg = `Dojo de Polizar — ${S.areaTitle}
+        const msg = `Dojo de Polizar — ${S.areaTitle
+                                       
+      } else if (t.closest("#btn-guide-fab")) {
+  nav("p8");
+  }
+        
 Escenario: ${qs('#esc-title').textContent}
 Estilo: ${S.estilo||"-"}
 Cliente: ${S.cliente||"-"}

@@ -66,3 +66,30 @@ p{color:#dfe6e8;line-height:1.6}
   .corner-logo img{height:36px}
   :root{--logo-block:70px}
 }
+
+/* Ocultar "Guía" de la barra superior */
+#dojoApp .topnav [data-nav="guia"] { display: none !important; }
+
+/* Botón "Guía" flotante (espejo del sello) */
+#btn-guide-fab.corner-guide{
+  position: absolute;
+  left: 50px;
+  bottom: 14px;
+  z-index: 50;
+  background: rgba(0,0,0,0.12);
+  margin-top: 20px;
+  padding: 5px 35px 5px 35px;
+  border-radius: 10px;
+  border: 1px solid var(--stroke);
+  color: var(--text);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  display: none; /* se muestra desde p2 en JS */
+  transition: transform .18s ease, border-color .18s ease;
+}
+#btn-guide-fab.corner-guide:hover{ transform: translateY(-1px); border-color: var(--stroke-2); }
+
+@media (max-width: 820px){
+  #btn-guide-fab.corner-guide{ bottom: 12px; left: 12px; padding: 7px 10px; font-size: 12px; }
+}

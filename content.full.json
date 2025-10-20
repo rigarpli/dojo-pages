@@ -1,13 +1,13 @@
 {
   "meta": { "plan": "full" },
   "areas": [
-    { "id": "objeciones", "title": "Manejo de objeciones", "desc": "Escuchar, entender y responder dudas sin fricción." },
-    { "id": "confianza", "title": "Generación de confianza", "desc": "Relaciones sinceras con profesionalismo y empatía." },
-    { "id": "beneficios", "title": "Presentación de beneficios", "desc": "Contar lo que cambia para el cliente, no solo funciones." },
-    { "id": "responder_no", "title": "Responder al “No”", "desc": "Convertir un rechazo en oportunidad real." },
-    { "id": "persuasion", "title": "Comunicación persuasiva", "desc": "Mensajes claros que invitan a responder." },
-    { "id": "cierre", "title": "Cierre efectivo de ventas", "desc": "Avanzar hacia un sí sin presión innecesaria." },
-    { "id": "seguimiento", "title": "Seguimiento y fidelización", "desc": "Volver con sentido y convertir en referidos." },
+    { "id": "objeciones", "title": "Manejo de objeciones", "desc": "Domina el arte de transformar dudas en un diálogo con propósito." },
+    { "id": "confianza", "title": "Generación de confianza", "desc": "Transmite con naturalidad credibilidad y empatía. Humaniza al profesional." },
+    { "id": "beneficios", "title": "Presentación de beneficios", "desc": "Formula la experiencia positiva que obtendrá tu cliente con el cambio." },
+    { "id": "responder_no", "title": "Transforma la reacción del cliente en tu próxima acción de oportunidad." },
+    { "id": "persuasion", "title": "Comunicación efectiva", "desc": "Domina la estructura de tus mensajes para expresar persuasión con naturalidad." },
+    { "id": "cierre", "title": "Cierre de ventas", "desc": "Potencia tu habilidad para guiar con enfoque hacia una decisión positiva." },
+    { "id": "seguimiento", "title": "Seguimiento efectivo", "desc": "Diseña secuencias de contacto que construyan valor y mantengan el interés vivo." },
     { "id": "gestion_tiempo", "title": "Gestión del tiempo y agenda", "desc": "Organizar tu día para rendir mejor." },
     { "id": "adaptacion", "title": "Adaptación y personalización", "desc": "Ajustar tu mensaje a cada persona." },
     { "id": "autoconfianza", "title": "Autoconfianza y motivación", "desc": "Cuidar tu mentalidad para no aflojar." }

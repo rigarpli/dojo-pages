@@ -1,26 +1,53 @@
-// build: dojo-app WOW v1.3 — fix botones inicio + applyTone + saneo — 2025-10-18
+// build: dojo-app WOW v2 — Principios Potenciados + Aplicarlo ahora — 2025-10-22
 
 (function(){
-  const API = "https://dojo-coach.rgarciaplicet.workers.dev/"; // tu Worker
+  "use strict";
+
+  const API = "https://dojo-coach.rgarciaplicet.workers.dev/"; // tu Worker (cámbialo si usas staging)
   const plan = new URLSearchParams(location.search).get("plan") || "full";
   const CONTENT_URL = `./content.${plan}.json`;
 
   // Estado
   const S = {
     nombre:"", cliente:"", estilo:"", areaId:"", areaTitle:"",
-    scenId:"", pack:null, lastFrase:"", content:null, templates:null
+    scenId:"", pack:null, lastFrase:"", lastJugada:"", content:null, templates:null
   };
   let contentReady = false;
 
   // ===== Utils base =====
   const qs=(s,sc=document)=>sc.querySelector(s);
   const qsa=(s,sc=document)=>Array.from(sc.querySelectorAll(s));
-  const progress=(id)=>{ const map={p0:0,p1:1,p2:2,p3:3,p4:4,p5:5,p8:8,p9:9}; const pct=Math.max(10,Math.round(((map[id]??0)+1)/10*100)); const b=qs("#bar"); if(b) b.style.width=pct+"%"; };
+
+  const progress=(id)=>{
+    const map={p0:0,p1:1,p2:2,p3:3,p4:4,p5:5,p8:8,p9:9};
+    const pct=Math.max(10,Math.round(((map[id]??0)+1)/10*100));
+    const b=qs("#bar"); if(b) b.style.width=pct+"%";
+  };
   const scrollTop=()=>{ const root=qs("#dojoApp"); if(root) window.scrollTo({top:root.offsetTop-10,behavior:"smooth"}); };
-  function copy(t){ t=t||""; if(navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(t).then(()=>alert("Copiado")).catch(()=>fallbackCopy(t)); } else fallbackCopy(t); }
-  function fallbackCopy(t){ const a=document.createElement("textarea"); a.value=t; a.style.position="fixed"; a.style.left="-9999px"; document.body.appendChild(a); a.select(); try{document.execCommand("copy"); alert("Copiado");}catch(e){alert("No se pudo copiar")} document.body.removeChild(a); }
-  function share(t,title){ if(navigator.share){ navigator.share({title:title||"Dojo de Polizar", text:t}).catch(()=>{}); } else { copy(t); window.open("https://wa.me/?text="+encodeURIComponent(t), "_blank"); } }
-  function downloadTxt(name, t){ const blob=new Blob([t||""],{type:"text/plain;charset=utf-8"}); const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download=name||"dojo.txt"; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(url); a.remove();},0); }
+
+  function copy(t){
+    t=t||"";
+    if(navigator.clipboard && window.isSecureContext){
+      navigator.clipboard.writeText(t).then(()=>alert("Copiado")).catch(()=>fallbackCopy(t));
+    } else fallbackCopy(t);
+  }
+  function fallbackCopy(t){
+    const a=document.createElement("textarea");
+    a.value=t; a.style.position="fixed"; a.style.left="-9999px";
+    document.body.appendChild(a); a.select();
+    try{document.execCommand("copy"); alert("Copiado");}catch(e){alert("No se pudo copiar")}
+    document.body.removeChild(a);
+  }
+  function share(t,title){
+    if(navigator.share){ navigator.share({title:title||"Dojo de Polizar", text:t}).catch(()=>{}); }
+    else { copy(t); window.open("https://wa.me/?text="+encodeURIComponent(t), "_blank"); }
+  }
+  function downloadTxt(name, t){
+    const blob=new Blob([t||""],{type:"text/plain;charset=utf-8"});
+    const url=URL.createObjectURL(blob); const a=document.createElement("a");
+    a.href=url; a.download=name||"dojo.txt"; document.body.appendChild(a);
+    a.click(); setTimeout(()=>{URL.revokeObjectURL(url); a.remove();},0);
+  }
   function slug(s){ s=s||""; try{s=s.normalize("NFD").replace(/[\u0300-\u036f]/g,"")}catch(e){} return s.toLowerCase().replace(/[^\w]+/g,"-").replace(/-+/g,"-").replace(/^-|-$/g,""); }
 
   // Placeholders {CLIENTE}/{MI_NOMBRE}
@@ -33,17 +60,26 @@
       .replace(/\{\s*MI[_\s]*NOMBRE\s*\}/gi, yo);
   }
 
-  // Saneo de lenguaje y signos
-  const FRONT_BLACKLIST = [
-    "sin presión","sin presion","con calma","y hablamos luego","no te preocupes","es normal",
-    "le entiendo","te entiendo","debes ","tienes que ","si no aporta","lo dejamos ahí",
-    "decidimos tranquilos","tranquilo","tranquilos","tranquila","tranquilamente",
-    "no pierdo nada","no vale la pena","culpa","culpable","culpar","autentic"
+  // Saneo de lenguaje y signos — seguro (no destructivo)
+  const FRONT_RULES = [
+    { re: /\b(le|te)\s+entiendo\b/gi, to: "tiene sentido" },
+    { re: /\b(tienes que|debes|usted debe)\b/gi, to: "si le sirve" },
+    { re: /\btranquil[oa]s?\b/gi, to: "" },
+    { re: /\bno te preocupes\b/gi, to: "" },
+    { re: /\b(claramente|obvio)\b/gi, to: "" },
+    { re: /\b(y hablamos luego)\b/gi, to: "" },
+    { re: /\bculpa(s|ble|r)?\b/gi, to: "" }
+  ];
+  const CLOSER_RULES = [
+    { re: /\bsi no cuadra(,)? (lo )?dejamos\.?/gi, to: "Avanzamos cuando el valor quede claro; si falta, ajusto." },
+    { re: /\bsi no encaja(,)? (no )?avanzamos\.?/gi, to: "Seguimos cuando encaje con sus prioridades; si algo falta, lo ajusto." },
+    { re: /\bsi no funciona(,)? (lo )?dejamos\.?/gi, to: "Avanzamos cuando funcione para usted; si falta, lo ajusto." }
   ];
   function cleanTextLocal(s){
     if(!s || typeof s!=="string") return s;
     let out = s;
-    FRONT_BLACKLIST.forEach(b=>{ out = out.replace(new RegExp(b,"gi"),"").trim(); });
+    FRONT_RULES.forEach(r=>{ out = out.replace(r.re,r.to); });
+    CLOSER_RULES.forEach(r=>{ out = out.replace(r.re,r.to); });
     out = out
       .replace(/[ \t]+\n/g,"\n")
       .replace(/[ ]{2,}/g," ")
@@ -54,9 +90,11 @@
       .replace(/([¿¡])\s+/g,"$1")
       .replace(/\s+([,;:])/g,"$1")
       .trim();
+    if(out.length>1400) out = out.slice(0,1380)+"…";
     return out;
   }
   function sanitizeStr(t){ return cleanTextLocal(fillPH(t||"")); }
+  function esc(s){ return (s||"").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]); }
 
   async function ai(payload){
     const r=await fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
@@ -77,7 +115,7 @@
     const topnav = qs(".topnav");
     if (topnav) topnav.style.display = (id==="p0" || id==="p1") ? "none" : "flex";
 
-    // Ocultar "Guía" en topnav (por si existe) y usar FAB
+    // Ocultar "Guía" en topnav (se usa FAB)
     const guiaTop = qs('[data-nav="guia"]');
     if (guiaTop) guiaTop.style.display = "none";
 
@@ -115,7 +153,7 @@
     }
   }
 
-  // ===== Wire de eventos (antes de cargar contenido) =====
+  // ===== Wire de eventos =====
   function setStartState(loading){
     const startBtn = qs("#start");
     if(!startBtn) return;
@@ -135,16 +173,19 @@
     if(startBtn){
       startBtn.addEventListener("click", ()=>{
         if(!contentReady){
-          // Espera a que el contenido llegue, y entra solo
           setStartState(true);
-          const onReady = ()=>{ setStartState(false); S.nombre=(qs("#nombre")?.value||"").trim(); S.cliente=(qs("#cliente")?.value||"").trim(); buildAreas(); nav("p1"); window.removeEventListener("dojo:contentReady", onReady); };
+          const onReady = ()=>{
+            setStartState(false);
+            S.nombre=(qs("#nombre")?.value||"").trim();
+            S.cliente=(qs("#cliente")?.value||"").trim();
+            buildAreas(); nav("p1"); window.removeEventListener("dojo:contentReady", onReady);
+          };
           window.addEventListener("dojo:contentReady", onReady);
           return;
         }
         S.nombre=(qs("#nombre")?.value||"").trim();
         S.cliente=(qs("#cliente")?.value||"").trim();
-        buildAreas();
-        nav("p1");
+        buildAreas(); nav("p1");
       });
     }
 
@@ -173,16 +214,19 @@
       else if(t.closest(".jugada-btn")){
         const btn=t.closest(".jugada-btn");
         const label=btn.dataset.jugada||btn.textContent||"Lógica";
-        const sc=getCurrentScenario(); if(sc) runPlay(sc,label);
+        const sc=getCurrentScenario();
+        if(sc){ S.lastJugada = label; runPlay(sc,label); }
       }
       else if(t.closest(".tab")){
         qsa(".tab").forEach(x=>x.classList.remove("active"));
-        t.closest(".tab").classList.add("active");
-        const key=t.closest(".tab").dataset.tab; const TB=qs("#tmpl-box");
+        const tabBtn = t.closest(".tab");
+        tabBtn.classList.add("active");
+        const key=tabBtn.dataset.tab;
+        const TB=qs("#tmpl-box");
         if(S.templates && TB){
-          if(key==="wha") TB.textContent = fillPH(S.templates.whatsapp);
-          if(key==="eml") TB.textContent = fillPH(S.templates.emailBody);
-          if(key==="call") TB.textContent = fillPH(S.templates.call);
+          if(key==="wha") TB.textContent = fillPH(S.templates.whatsapp||"");
+          if(key==="eml") TB.textContent = fillPH(S.templates.emailBody||"");
+          if(key==="call") TB.textContent = fillPH(S.templates.call||"");
         }
       }
       else if(t.closest("#btn-copy-tmpl")){
@@ -192,9 +236,9 @@
         const TB=qs("#tmpl-box"); if(!TB) return;
         const key=(qs(".tab.active")?.dataset.tab)||"wha"; let content="";
         if(S.templates){
-          if(key==="wha") content=fillPH(S.templates.whatsapp);
-          if(key==="eml") content=fillPH(S.templates.emailSubject)+"\n\n"+fillPH(S.templates.emailBody);
-          if(key==="call") content=fillPH(S.templates.call);
+          if(key==="wha") content=fillPH(S.templates.whatsapp||"");
+          if(key==="eml") content=(fillPH(S.templates.emailSubject||S.templates.email_subject||"")+"\n\n"+fillPH(S.templates.emailBody||S.templates.email_body||"")).trim();
+          if(key==="call") content=fillPH(S.templates.call||"");
         } else {
           content = TB.textContent||"";
         }
@@ -204,20 +248,38 @@
         const TB=qs("#tmpl-box"); if(!TB) return;
         const key=(qs(".tab.active")?.dataset.tab)||"wha"; let content=TB.textContent||"";
         if(S.templates){
-          if(key==="wha") content=fillPH(S.templates.whatsapp);
-          if(key==="eml") content=fillPH(S.templates.emailSubject)+"\n\n"+fillPH(S.templates.emailBody);
-          if(key==="call") content=fillPH(S.templates.call);
+          if(key==="wha") content=fillPH(S.templates.whatsapp||"");
+          if(key==="eml") content=(fillPH(S.templates.emailSubject||S.templates.email_subject||"")+"\n\n"+fillPH(S.templates.emailBody||S.templates.email_body||"")).trim();
+          if(key==="call") content=fillPH(S.templates.call||"");
         }
         share(content, "Dojo — "+(S.areaTitle||""));
       }
-      else if(t.closest(".phrase button")){
-        const text=t.closest(".phrase").querySelector("div")?.textContent||""; copy(text);
+      else if(t.closest("#btn-copy-all")){
+        const title = `Dojo de Polizar — ${S.areaTitle||"-"}`;
+        const esc = `Escenario: ${qs('#esc-title')?.textContent||"-"}`;
+        const estilo = `Estilo: ${S.estilo||"-"}`;
+        const cliente = `Cliente: ${S.cliente||"-"}`;
+
+        const frase = `Frase activadora:\n${S.lastFrase||"-"}`;
+        const micro = `Micro‑acción:\n${fillPH((qs('#micro')?.value||getMicro(S.pack)||'-'))}`;
+
+        let wha = "", eml = "", call = "";
+        if(S.templates){
+          wha = `\n\nWhatsApp:\n${fillPH(S.templates.whatsapp||"")}`;
+          const subj = fillPH(S.templates.emailSubject||S.templates.email_subject||"");
+          const body = fillPH(S.templates.emailBody||S.templates.email_body||"");
+          eml = `\n\nEmail:\nAsunto: ${subj}\n${body}`;
+          call = `\n\nLlamada:\n${fillPH(S.templates.call||"")}`;
+        }
+
+        const full = [title, esc, estilo, cliente, "", frase, "", micro, wha, eml, call].join("\n");
+        copy(full.trim());
       }
       else if(t.id==="rr-generate"){
         roundTwo();
       }
       else if(t.closest("#to-p5")){
-        qs("#p5-frase").textContent = S.lastFrase || "Aún no ha generado una frase.";
+        qs("#p5-frase").textContent = S.lastFrase || "Aún no se ha generado la frase activadora.";
         const micro=(S.pack && (getMicro(S.pack)))||"";
         if(micro) qs("#micro").value = fillPH(micro);
         nav("p5");
@@ -231,7 +293,7 @@ Cliente: ${S.cliente||"-"}
 Micro‑acción:
 ${(qs('#micro')?.value||'________')}
 
-Frase de poder:
+Frase activadora:
 ${S.lastFrase||"-"}`;
         window.open("https://wa.me/?text="+encodeURIComponent(msg),"_blank");
       }
@@ -244,7 +306,7 @@ Cliente: ${S.cliente||"-"}
 Micro‑acción:
 ${(qs('#micro')?.value||'________')}
 
-Frase de poder:
+Frase activadora:
 ${S.lastFrase||"-"}`;
         copy(txt);
       }
@@ -257,7 +319,7 @@ Cliente: ${S.cliente||"-"}
 Micro‑acción:
 ${(qs('#micro')?.value||'________')}
 
-Frase de poder:
+Frase activadora:
 ${S.lastFrase||"-"}`;
         downloadTxt("dojo-"+slug(S.areaId||'area')+"-"+slug(S.scenId||'escenario')+"-resumen.txt", txt);
       }
@@ -269,8 +331,10 @@ ${S.lastFrase||"-"}`;
     });
 
     document.addEventListener("keydown",(e)=>{
-      const a=document.activeElement; const typing=a && (a.tagName==="INPUT"||a.tagName==="TEXTAREA"||a.isContentEditable);
+      const a=document.activeElement;
+      const typing=a && (a.tagName==="INPUT"||a.tagName==="TEXTAREA"||a.isContentEditable);
       if(e.key==="Enter"&&(a?.id==="nombre"||a?.id==="cliente")){ e.preventDefault(); const st=qs("#start"); if(st) st.click(); }
+      if(e.key==="Enter" && a?.id==="rr-text"){ e.preventDefault(); const g=qs("#rr-generate"); if(g) g.click(); }
       if(e.key==="Escape" && !typing){ e.preventDefault(); goBack(); }
     });
   }
@@ -282,7 +346,7 @@ ${S.lastFrase||"-"}`;
     areas.forEach(a=>{
       const d=document.createElement("div");
       d.className="area-card";
-      d.innerHTML=`<div class="area-title">${a.title}</div><p class="area-desc">${a.desc||""}</p><div class="group"><button class="btn primary" data-area="${a.id}" type="button">Entrar</button></div>`;
+      d.innerHTML=`<div class="area-title">${esc(a.title)}</div><p class="area-desc">${esc(a.desc||"")}</p><div class="group"><button class="btn primary" data-area="${esc(a.id)}" type="button">Entrar</button></div>`;
       grid.appendChild(d);
     });
   }
@@ -295,7 +359,7 @@ ${S.lastFrase||"-"}`;
       const q= sc.question || ("Cliente: " + sc.title + ". ¿Cómo responde?");
       const d=document.createElement("div");
       d.className="sc-card"; d.setAttribute("data-scenario", sc.id);
-      d.innerHTML=`<div class="sc-title">${sc.title}</div><p class="sc-desc">${q}</p>`;
+      d.innerHTML=`<div class="sc-title">${esc(sc.title)}</div><p class="sc-desc">${esc(q)}</p>`;
       grid.appendChild(d);
     });
   }
@@ -317,7 +381,7 @@ ${S.lastFrase||"-"}`;
     });
 
     qs("#esc-answer").style.display="none";
-    // Toolkit visible más adelante según tipo; aquí no se toca
+    qs("#toolkit").style.display="none";
     qs("#esc-continue").style.display="none";
   }
 
@@ -334,6 +398,7 @@ ${S.lastFrase||"-"}`;
         estilo: S.estilo||"Neutral",
         area: S.areaTitle,
         escenario: sc.title,
+        type: sc.type || "in-conversation",
         pregunta: sc.question || ("Cliente: " + sc.title + ". ¿Cómo responde?"),
         eleccion: jugadaLabel
       });
@@ -342,12 +407,8 @@ ${S.lastFrase||"-"}`;
       ans.innerHTML = renderWow(S.pack);
 
       const type = sc.type || "in-conversation";
-      if (type === "follow-up") {
-        S.templates = composeTemplates(S.pack, sc.title, type, S.estilo);
-        showTemplatesUI(S.templates);
-      } else {
-        hideTemplatesUI(); // no guion ni plantillas en vivo
-      }
+      S.templates = composeTemplatesFromPack(S.pack, sc.title, type, S.estilo);
+      showTemplatesUI(S.templates, type);
 
       renderPhrases(S.pack, sc);
       qs("#esc-continue").style.display="block";
@@ -357,39 +418,29 @@ ${S.lastFrase||"-"}`;
     }
   }
 
-  // ===== Potenciador forzado =====
-  function ensurePotenciador(p){
-    const principle = (p.el_principio || "").toLowerCase();
-    const conceptMap = [
-      { key: "coherencia", concept: "Claridad antes de compromiso", phrase: "Primero acordemos lo esencial para decidir con claridad." },
-      { key: "compromiso", concept: "Claridad antes de compromiso", phrase: "Primero acordemos lo esencial para decidir con claridad." },
-      { key: "reciprocidad", concept: "Dar valor antes de pedir", phrase: "Le comparto valor primero; luego vemos si tiene sentido avanzar." },
-      { key: "anclaje", concept: "Definir un marco claro", phrase: "Definamos el marco y decidimos con seguridad." },
-      { key: "ambigüedad", concept: "Hacer explícitos los criterios", phrase: "Hagamos visibles los criterios y decidimos con confianza." },
-      { key: "aversión a la pérdida", concept: "Proteger lo valioso", phrase: "Cuidemos lo valioso y avancemos con criterio." }
-    ];
-    const mapped = conceptMap.find(m => principle.includes(m.key)) || { concept: "Claridad antes de compromiso", phrase: "Primero acordemos lo esencial para decidir con claridad." };
-
-    p.potenciador_cognitivo = p.potenciador_cognitivo || {};
-    if (!p.potenciador_cognitivo.concepto_nuclear || !p.potenciador_cognitivo.concepto_nuclear.trim()) {
-      p.potenciador_cognitivo.concepto_nuclear = mapped.concept;
+  // ===== Principios potentes (fallbacks locales) =====
+  function ensurePrincipiosLocal(p){
+    p.principios_potenciados = p.principios_potenciados || {};
+    // si viene del worker legacy:
+    if(!p.principios_potenciados.regla && p.potenciador_cognitivo?.concepto_nuclear){
+      p.principios_potenciados.regla = p.potenciador_cognitivo.concepto_nuclear;
     }
-    if (!p.potenciador_cognitivo.frase_de_poder || !p.potenciador_cognitivo.frase_de_poder.trim()) {
-      p.potenciador_cognitivo.frase_de_poder = mapped.phrase;
+    if(!p.principios_potenciados.frase_activadora && p.potenciador_cognitivo?.frase_de_poder){
+      p.principios_potenciados.frase_activadora = p.potenciador_cognitivo.frase_de_poder;
     }
-    if (!p.frase_poder || !p.frase_poder.trim()) {
-      p.frase_poder = p.potenciador_cognitivo.frase_de_poder;
+    if(!p.potenciador_cognitivo){
+      p.potenciador_cognitivo = {
+        concepto_nuclear: p.principios_potenciados.regla || "Claridad antes de compromiso",
+        frase_de_poder: p.principios_potenciados.frase_activadora || "Primero lo esencial visible; avanzamos cuando le sirva; si falta, ajusto."
+      };
     }
-    if (!p.siguiente_movimiento) p.siguiente_movimiento = {};
-    if (!p.siguiente_movimiento.accion_estrategica || !p.siguiente_movimiento.accion_estrategica.trim()) {
-      p.siguiente_movimiento.accion_estrategica = "Enviar un resumen claro y validarlo juntos.";
+    if(!p.potenciador_cognitivo.concepto_nuclear){
+      p.potenciador_cognitivo.concepto_nuclear = p.principios_potenciados.regla || "Claridad antes de compromiso";
     }
-    if (!Array.isArray(p.siguiente_movimiento.frases_de_apoyo) || !p.siguiente_movimiento.frases_de_apoyo.length) {
-      p.siguiente_movimiento.frases_de_apoyo = [
-        "Vayamos a lo esencial y que todo quede visible.",
-        "Acordemos criterios y luego decidimos con claridad."
-      ];
+    if(!p.potenciador_cognitivo.frase_de_poder){
+      p.potenciador_cognitivo.frase_de_poder = p.principios_potenciados.frase_activadora || "Le comparto lo esencial y avanzamos cuando le sirva; si falta, ajusto.";
     }
+    if(!p.frase_poder) p.frase_poder = p.potenciador_cognitivo.frase_de_poder;
     return p;
   }
 
@@ -397,38 +448,55 @@ ${S.lastFrase||"-"}`;
     const clone = JSON.parse(JSON.stringify(p||{}));
     const walk=(obj)=>{ for(const k in obj){ if(!Object.prototype.hasOwnProperty.call(obj,k)) continue; if(typeof obj[k]==="string") obj[k]=sanitizeStr(obj[k]); else if(obj[k] && typeof obj[k]==="object") walk(obj[k]); } };
     walk(clone);
-    ensurePotenciador(clone);
-    const fp = clone.potenciador_cognitivo?.frase_de_poder || clone.frase_poder || "";
+    ensurePrincipiosLocal(clone);
+    const fp = clone.principios_potenciados?.frase_activadora || clone.potenciador_cognitivo?.frase_de_poder || clone.frase_poder || "";
     S.lastFrase = sanitizeStr(fp);
     return clone;
   }
 
-  // Render WOW (epifanía)
+  // Render WOW (epifanía) con PRINCIPIOS POTENCIADOS + bloques extendidos
   function renderWow(p){
-    const titulo = sanitizeStr(p.titulo_estrategia || "Estrategia");
-    const revelacion = sanitizeStr(p.la_revelacion || "");
-    const principio = sanitizeStr(p.el_principio || "");
-    const concepto = sanitizeStr(p.potenciador_cognitivo?.concepto_nuclear || p.mejora_potenciadora?.concepto || "");
-    const frasePoder = sanitizeStr(p.potenciador_cognitivo?.frase_de_poder || p.frase_poder || "");
+    const titulo = esc(sanitizeStr(p.titulo_estrategia || "Estrategia"));
+    const revelacion = esc(sanitizeStr(p.la_revelacion || ""));
+    const principio = esc(sanitizeStr(p.el_principio || ""));
+    const regla = esc(sanitizeStr(p.principios_potenciados?.regla || p.potenciador_cognitivo?.concepto_nuclear || ""));
+    const como = esc(sanitizeStr(p.principios_potenciados?.como_potencia || ""));
+    const fraseAct = esc(sanitizeStr(p.principios_potenciados?.frase_activadora || p.potenciador_cognitivo?.frase_de_poder || ""));
+    const mini = esc(sanitizeStr(p.principios_potenciados?.mini_evidencia || ""));
+    const espejo = esc(sanitizeStr(p.espejo_sin_juicio || p.espejo || ""));
+    const micro = esc(sanitizeStr(p.micro_ajuste || ""));
+    const re15 = esc(sanitizeStr(p.reescritura_15s || p.reescritura || ""));
+    const senal = esc(sanitizeStr(p.senal_a_detectar || p.senal || ""));
+    const score = typeof p.score==="number" ? String(Math.round(p.score*10)/10) : "";
 
     let html=`<h3>${titulo}</h3>`;
-    if(revelacion) html += `<div class="fb-sec"><div class="sec-title">La Revelación</div><p>${revelacion}</p></div>`;
+    if(revelacion) html += `<div class="fb-sec"><div class="sec-title">Revelación</div><p>${revelacion}</p></div>`;
     if(principio) html += `<div class="fb-sec"><div class="sec-title">Principio</div><p>${principio}</p></div>`;
-    html += `<div class="fb-sec"><div class="sec-title">Potenciador Cognitivo</div>`;
-    if(concepto) html += `<p><strong>Regla:</strong> ${concepto}</p>`;
-    if(frasePoder) html += `<p><strong>Frase de poder:</strong> ${frasePoder}</p>`;
+
+    html += `<div class="fb-sec"><div class="sec-title">PRINCIPIOS POTENCIADOS</div>`;
+    if(regla) html += `<p><strong>Regla:</strong> ${regla}</p>`;
+    if(como) html += `<p><strong>Cómo potencia su jugada:</strong> ${como}</p>`;
+    if(fraseAct) html += `<p><strong>Frase activadora:</strong> ${fraseAct}</p>`;
+    if(mini) html += `<p><strong>Mini‑evidencia:</strong> ${mini}</p>`;
     html += `</div>`;
+
+    if(re15) html += `<div class="fb-sec"><div class="sec-title">Versión 15s</div><p>${re15}</p></div>`;
+    if(espejo) html += `<div class="fb-sec"><div class="sec-title">Espejo (sin juicio)</div><p>${espejo}</p></div>`;
+    if(micro) html += `<div class="fb-sec"><div class="sec-title">Micro‑ajuste</div><p>${micro}</p></div>`;
+    if(senal) html += `<div class="fb-sec"><div class="sec-title">Señal a detectar</div><p>${senal}</p></div>`;
+    if(score) html += `<div class="fb-sec"><div class="sec-title">Score</div><p>${score}/10</p></div>`;
+
     return html;
   }
 
-  // ===== Motor de cierres (solo follow-up) =====
+  // ===== Motor de cierres (fallback) y tono =====
   function norm(s){ return (s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\s+/g," ").trim(); }
   function contains(text, snippet){ return norm(text).includes(norm(snippet)); }
   function seedInt(str){ let h=0; for(let i=0;i<str.length;i++){ h=((h<<5)-h)+str.charCodeAt(i); h|=0; } return Math.abs(h); }
 
   function pickArchetype(scenId, jugada, estilo){
     const archetypes = ["propuesta_directa","sugerencia_accion","oferta_apoyo","invitacion_abierta"];
-    const seed = seedInt((scenId||"")+":"+jugada+":"+estilo);
+    const seed = seedInt((scenId||"")+":"+(jugada||"")+":"+(estilo||""));
     return archetypes[seed % archetypes.length];
   }
   const DELIVERABLES = [
@@ -460,7 +528,7 @@ ${S.lastFrase||"-"}`;
 
     if(estilo==="Calma"){
       t = t.replace(/\bLe propongo\b/gi, "Si le parece, le propongo");
-      if(!/[?]$/.test(t)) t = t;
+      if(!/[?？]$/.test(t.trim())) t = t.trim() + " ¿Le funciona?";
     }
     if(estilo==="Curiosidad"){
       const q = "¿Qué punto le ayudaría a decidir mejor?";
@@ -480,23 +548,45 @@ ${S.lastFrase||"-"}`;
     return cleanTextLocal(t.trim());
   }
 
-  function getFrasePoder(p){ return p.potenciador_cognitivo?.frase_de_poder || p.frase_poder || "Vayamos a lo esencial."; }
-  function getMicro(p){ return p.siguiente_movimiento?.accion_estrategica || p.micro_accion || "Enviar un resumen claro y validarlo juntos."; }
+  function getFrasePoder(p){
+    return p?.principios_potenciados?.frase_activadora
+      || p?.potenciador_cognitivo?.frase_de_poder
+      || p?.frase_poder
+      || "Le comparto lo esencial y avanzamos cuando le sirva; si falta, ajusto.";
+  }
+  function getMicro(p){
+    return p?.siguiente_movimiento?.accion_estrategica
+      || p?.micro_accion
+      || "Enviar 3 puntos claros y acordar el siguiente paso.";
+  }
 
-  // Plantillas (solo follow-up)
-  function composeTemplates(pack, scTitle, tipo, estilo){
+  // Aplicarlo ahora (leer del Worker o componer fallback)
+  function composeTemplatesFromPack(pack, scTitle, tipo, estilo){
+    const aa = pack?.aplicarlo_ahora || null;
+    if(aa){
+      return {
+        whatsapp: sanitizeStr(aa.whatsapp||""),
+        emailSubject: sanitizeStr(aa.email_subject||`Sobre “${scTitle}”`),
+        emailBody: sanitizeStr(aa.email_body||""),
+        call: sanitizeStr(aa.call||""),
+        frase: sanitizeStr(getFrasePoder(pack)),
+        micro: sanitizeStr(getMicro(pack))
+      };
+    }
+
+    // Fallback (por si el Worker no lo envía)
     const frase = sanitizeStr(getFrasePoder(pack));
     const micro = sanitizeStr(getMicro(pack));
     const seed = seedInt((S.scenId||"")+":"+(pack.titulo_estrategia||"")+":"+(S.estilo||""));
-    const archetype = pickArchetype(S.scenId||"", ("Proactiva"), S.estilo||"");
+    const archetype = pickArchetype(S.scenId||"", (S.lastJugada||"Proactiva"), S.estilo||"");
     const deliverable = pickDeliverable(seed);
     const cierre = composeClosure(archetype, deliverable);
 
     let wa = [
       `Hola {CLIENTE}, soy {MI_NOMBRE}.`,
       `${frase}`,
-      `${micro}.`,
-      `${cierre}`
+      `${micro}`,
+      `¿Le funciona?`
     ].join("\n");
     wa = applyTone("wha", wa, estilo||"");
 
@@ -504,8 +594,8 @@ ${S.lastFrase||"-"}`;
     let eb = [
       `Hola {CLIENTE},`,
       `${frase}`,
-      `${micro}.`,
-      `${cierre}`,
+      `${micro}`,
+      `¿Se lo comparto hoy?`,
       `{MI_NOMBRE}`
     ].join("\n");
     eb = applyTone("eml", eb, estilo||"");
@@ -513,8 +603,8 @@ ${S.lastFrase||"-"}`;
     let call = [
       `Hola {CLIENTE}, soy {MI_NOMBRE}.`,
       `${frase}`,
-      `Sobre “${scTitle}”, enfoquemos lo importante.`,
-      `${cierre}`
+      `${micro.replace(/\.$/, "")}.`,
+      `¿Lo vemos juntos?`
     ].join("\n");
     call = applyTone("call", call, estilo||"");
 
@@ -536,7 +626,7 @@ ${S.lastFrase||"-"}`;
     list.forEach(text=>{
       const row=document.createElement("div");
       row.className="phrase";
-      row.innerHTML=`<div>${sanitizeStr(text)}</div><button class="btn" type="button">Copiar</button>`;
+      row.innerHTML=`<div>${esc(sanitizeStr(text))}</div><button class="btn" type="button">Copiar</button>`;
       box.appendChild(row);
     });
   }
@@ -558,24 +648,41 @@ ${S.lastFrase||"-"}`;
     if(t.includes("info")||t.includes("envíe")||t.includes("envia")||t.includes("envíeme")) return [
       "Le envío un resumen claro y lo validamos juntos.",
       "¿Prefiere 3 puntos clave o un comparativo breve?",
-      "Comparto lo esencial y lo vemos en breve."
+      "Comparto lo esencial y lo vemos pronto."
     ];
     return [
       "Vayamos a lo esencial y decidamos con claridad.",
       "Primero claridad, luego el siguiente paso.",
-      "Si esto le sirve, avanzamos de a poco."
+      "Si esto le sirve, avanzamos paso a paso."
     ];
   }
 
-  function showTemplatesUI(templates){
+  function showTemplatesUI(templates, type){
     const tk=qs("#toolkit"); const tabs=qs(".tabs"); const titleEl=qs("#tmpl-container h4"); const tmpl=qs("#tmpl-container");
-    if(titleEl) titleEl.textContent = "Plantillas";
+    if(titleEl) titleEl.textContent = "Aplicarlo ahora";
     if(tabs) tabs.style.display="flex";
     if(tmpl) tmpl.style.display="block";
     if(tk) tk.style.display="grid";
-    qsa(".tab").forEach(x=>x.classList.remove("active"));
-    const whaTab = qs('.tab[data-tab="wha"]'); if(whaTab) whaTab.classList.add("active");
-    const TB=qs("#tmpl-box"); if(TB) TB.textContent=fillPH(templates.whatsapp);
+
+    // Mostrar/ocultar tabs según tipo
+    const tabW=qs('.tab[data-tab="wha"]');
+    const tabE=qs('.tab[data-tab="eml"]');
+    const tabC=qs('.tab[data-tab="call"]');
+    if(type==="follow-up"){
+      if(tabW) tabW.style.display="inline-flex";
+      if(tabE) tabE.style.display="inline-flex";
+      if(tabC) tabC.style.display="inline-flex";
+      qsa(".tab").forEach(x=>x.classList.remove("active"));
+      if(tabW) tabW.classList.add("active");
+      const TB=qs("#tmpl-box"); if(TB) TB.textContent=fillPH(templates.whatsapp||"");
+    }else{
+      if(tabW) tabW.style.display="none";
+      if(tabE) tabE.style.display="none";
+      if(tabC) tabC.style.display="inline-flex";
+      qsa(".tab").forEach(x=>x.classList.remove("active"));
+      if(tabC) tabC.classList.add("active");
+      const TB=qs("#tmpl-box"); if(TB) TB.textContent=fillPH(templates.call||"");
+    }
   }
   function hideTemplatesUI(){
     const tk=qs("#toolkit"); const tabs=qs(".tabs"); const tmpl=qs("#tmpl-container"); const TB=qs("#tmpl-box");
@@ -603,6 +710,7 @@ ${S.lastFrase||"-"}`;
         estilo:S.estilo||"Neutral",
         area:S.areaTitle,
         escenario:scTitle,
+        type: scType,
         pregunta:"Segunda ronda",
         eleccion:"Contra-respuesta: " + input
       });
@@ -610,19 +718,15 @@ ${S.lastFrase||"-"}`;
         S.pack = sanitizePackLocal(pack);
         qs("#esc-answer").innerHTML = renderWow(S.pack);
 
-        if (scType === "follow-up") {
-          S.templates = composeTemplates(S.pack, scTitle, scType, S.estilo);
-          showTemplatesUI(S.templates);
-        } else {
-          hideTemplatesUI();
-        }
+        S.templates = composeTemplatesFromPack(S.pack, scTitle, scType, S.estilo);
+        showTemplatesUI(S.templates, scType);
 
         renderPhrases(S.pack, sc || { title: scTitle, type: scType });
 
         const micro=getMicro(S.pack);
         if(micro) qs("#micro").value = fillPH(micro);
 
-        out.textContent = `Actualizado.\n\nFrase de poder:\n${S.lastFrase}\n\nSugerencia:\n${fillPH(micro||'—')}`;
+        out.textContent = `Actualizado.\n\nFrase activadora:\n${S.lastFrase}\n\nSugerencia:\n${fillPH(micro||'—')}`;
       }else{
         out.textContent="No se pudo refinar ahora. Intente nuevamente.";
       }

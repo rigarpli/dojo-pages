@@ -1,4 +1,4 @@
-// build: dojo-app WOW v1.2 — sin guion en vivo + plantillas solo follow-up — 2025-10-18
+// build: dojo-app WOW v1.3 — fix botones inicio + applyTone + saneo — 2025-10-18
 
 (function(){
   const API = "https://dojo-coach.rgarciaplicet.workers.dev/"; // tu Worker
@@ -10,6 +10,7 @@
     nombre:"", cliente:"", estilo:"", areaId:"", areaTitle:"",
     scenId:"", pack:null, lastFrase:"", content:null, templates:null
   };
+  let contentReady = false;
 
   // ===== Utils base =====
   const qs=(s,sc=document)=>sc.querySelector(s);
@@ -32,7 +33,7 @@
       .replace(/\{\s*MI[_\s]*NOMBRE\s*\}/gi, yo);
   }
 
-  // Saneo adicional en el front (palabras prohibidas + signos raros)
+  // Saneo de lenguaje y signos
   const FRONT_BLACKLIST = [
     "sin presión","sin presion","con calma","y hablamos luego","no te preocupes","es normal",
     "le entiendo","te entiendo","debes ","tienes que ","si no aporta","lo dejamos ahí",
@@ -63,7 +64,7 @@
     return await r.json();
   }
 
-  // ===== Navegación y visibilidad =====
+  // ===== Nav / visibilidad =====
   let currentStep="p0", historySteps=["p0"];
   function go(id){
     qsa(".step").forEach(x=>x.classList.remove("active"));
@@ -114,19 +115,40 @@
     }
   }
 
-  // ===== Carga de contenido y arranque =====
-  fetch(CONTENT_URL).then(r=>{ if(!r.ok) throw new Error("content"); return r.json(); })
-    .then(data=>{ S.content=data; init(); })
-    .catch(()=>{ alert("No se pudo cargar el contenido."); });
+  // ===== Wire de eventos (antes de cargar contenido) =====
+  function setStartState(loading){
+    const startBtn = qs("#start");
+    if(!startBtn) return;
+    if(loading){
+      startBtn.disabled = true;
+      startBtn.textContent = "Cargando…";
+    }else{
+      startBtn.disabled = false;
+      startBtn.textContent = "Entrar al Dojo";
+    }
+  }
 
-  function init(){
+  function wireEvents(){
     ensureGuideFab();
+    // Start
+    const startBtn = qs("#start");
+    if(startBtn){
+      startBtn.addEventListener("click", ()=>{
+        if(!contentReady){
+          // Espera a que el contenido llegue, y entra solo
+          setStartState(true);
+          const onReady = ()=>{ setStartState(false); S.nombre=(qs("#nombre")?.value||"").trim(); S.cliente=(qs("#cliente")?.value||"").trim(); buildAreas(); nav("p1"); window.removeEventListener("dojo:contentReady", onReady); };
+          window.addEventListener("dojo:contentReady", onReady);
+          return;
+        }
+        S.nombre=(qs("#nombre")?.value||"").trim();
+        S.cliente=(qs("#cliente")?.value||"").trim();
+        buildAreas();
+        nav("p1");
+      });
+    }
 
-    // Bienvenida
-    const startBtn=qs("#start");
-    if(startBtn){ startBtn.onclick=()=>{ S.nombre=(qs("#nombre")?.value||"").trim(); S.cliente=(qs("#cliente")?.value||"").trim(); buildAreas(); nav("p1"); }; }
-
-    // Delegación de eventos
+    // Delegación de clicks global
     document.addEventListener("click", (e)=>{
       const t=e.target;
 
@@ -139,7 +161,7 @@
       }
       else if(t.closest(".area-card .btn")){
         const id=t.closest(".area-card .btn").dataset.area;
-        const area=(S.content.areas||[]).find(a=>a.id===id)||{};
+        const area=((S.content&&S.content.areas)||[]).find(a=>a.id===id)||{};
         S.areaId=id; S.areaTitle=area.title||""; const ctx=qs("#ctx-area"); if(ctx) ctx.textContent=S.areaTitle||"—"; nav("p2");
       }
       else if(t.closest("[data-style]")){
@@ -171,7 +193,7 @@
         const key=(qs(".tab.active")?.dataset.tab)||"wha"; let content="";
         if(S.templates){
           if(key==="wha") content=fillPH(S.templates.whatsapp);
-          if(key==="eml") content="Asunto: "+fillPH(S.templates.emailSubject)+"\n\n"+fillPH(S.templates.emailBody);
+          if(key==="eml") content=fillPH(S.templates.emailSubject)+"\n\n"+fillPH(S.templates.emailBody);
           if(key==="call") content=fillPH(S.templates.call);
         } else {
           content = TB.textContent||"";
@@ -256,7 +278,8 @@ ${S.lastFrase||"-"}`;
   // ===== Vistas =====
   function buildAreas(){
     const grid=qs("#areas-grid"); if(!grid) return; grid.innerHTML="";
-    (S.content.areas||[]).forEach(a=>{
+    const areas = (S.content && S.content.areas) ? S.content.areas : [];
+    areas.forEach(a=>{
       const d=document.createElement("div");
       d.className="area-card";
       d.innerHTML=`<div class="area-title">${a.title}</div><p class="area-desc">${a.desc||""}</p><div class="group"><button class="btn primary" data-area="${a.id}" type="button">Entrar</button></div>`;
@@ -265,7 +288,7 @@ ${S.lastFrase||"-"}`;
   }
 
   function buildScenarios(){
-    const list=(S.content.scenarios||[]).filter(x=>x.areaId===S.areaId);
+    const list=((S.content&&S.content.scenarios)||[]).filter(x=>x.areaId===S.areaId);
     const titleEl=qs("#area-title"); if(titleEl) titleEl.textContent=S.areaTitle||"";
     const grid=qs("#scen-grid"); if(!grid) return; grid.innerHTML="";
     list.forEach(sc=>{
@@ -294,11 +317,11 @@ ${S.lastFrase||"-"}`;
     });
 
     qs("#esc-answer").style.display="none";
-    // Toolkit se maneja al mostrar resultados (según tipo)
+    // Toolkit visible más adelante según tipo; aquí no se toca
     qs("#esc-continue").style.display="none";
   }
 
-  function getScenarioById(id){ return (S.content.scenarios||[]).find(x=>x.areaId===S.areaId && x.id===id); }
+  function getScenarioById(id){ return ((S.content&&S.content.scenarios)||[]).find(x=>x.areaId===S.areaId && x.id===id); }
   function getCurrentScenario(){ return getScenarioById(S.scenId); }
 
   // ===== Lógica de IA (WOW) =====
@@ -323,8 +346,7 @@ ${S.lastFrase||"-"}`;
         S.templates = composeTemplates(S.pack, sc.title, type, S.estilo);
         showTemplatesUI(S.templates);
       } else {
-        // in-conversation: NO mostrar plantillas ni guion; solo “Segunda ronda” y “Frases de apoyo”
-        hideTemplatesUI();
+        hideTemplatesUI(); // no guion ni plantillas en vivo
       }
 
       renderPhrases(S.pack, sc);
@@ -335,7 +357,7 @@ ${S.lastFrase||"-"}`;
     }
   }
 
-  // Sanitiza pack (placeholders + blacklist local) y asegura Potenciador
+  // ===== Potenciador forzado =====
   function ensurePotenciador(p){
     const principle = (p.el_principio || "").toLowerCase();
     const conceptMap = [
@@ -381,7 +403,7 @@ ${S.lastFrase||"-"}`;
     return clone;
   }
 
-  // Render WOW (epifanía) siempre con Potenciador visible
+  // Render WOW (epifanía)
   function renderWow(p){
     const titulo = sanitizeStr(p.titulo_estrategia || "Estrategia");
     const revelacion = sanitizeStr(p.la_revelacion || "");
@@ -399,7 +421,7 @@ ${S.lastFrase||"-"}`;
     return html;
   }
 
-  // ===== Motor de cierres por arquetipo (solo follow-up) =====
+  // ===== Motor de cierres (solo follow-up) =====
   function norm(s){ return (s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\s+/g," ").trim(); }
   function contains(text, snippet){ return norm(text).includes(norm(snippet)); }
   function seedInt(str){ let h=0; for(let i=0;i<str.length;i++){ h=((h<<5)-h)+str.charCodeAt(i); h|=0; } return Math.abs(h); }
@@ -432,6 +454,32 @@ ${S.lastFrase||"-"}`;
     }
   }
 
+  function applyTone(channel, text, estilo){
+    if(!text) return "";
+    let t=text;
+
+    if(estilo==="Calma"){
+      t = t.replace(/\bLe propongo\b/gi, "Si le parece, le propongo");
+      if(!/[?]$/.test(t)) t = t;
+    }
+    if(estilo==="Curiosidad"){
+      const q = "¿Qué punto le ayudaría a decidir mejor?";
+      if(!contains(t,q)) t = t + "\n" + q;
+    }
+    if(estilo==="Claridad"){
+      t = t.replace(/\bEn breve\b/gi, "pronto").replace(/\s{2,}/g," ");
+    }
+    if(estilo==="Avance"){
+      t = t.replace(/\bUsted me dice\b/gi, "Luego confirmamos")
+           .replace(/\bPodemos empezar\b/gi, "Empecemos con");
+    }
+    if(estilo==="Humor"){
+      const wink = (channel==="call") ? "Prometo ser breve." : "Prometo ser breve 🙂";
+      if(!contains(t,"prometo ser breve")) t = t + "\n" + wink;
+    }
+    return cleanTextLocal(t.trim());
+  }
+
   function getFrasePoder(p){ return p.potenciador_cognitivo?.frase_de_poder || p.frase_poder || "Vayamos a lo esencial."; }
   function getMicro(p){ return p.siguiente_movimiento?.accion_estrategica || p.micro_accion || "Enviar un resumen claro y validarlo juntos."; }
 
@@ -462,7 +510,6 @@ ${S.lastFrase||"-"}`;
     ].join("\n");
     eb = applyTone("eml", eb, estilo||"");
 
-    // No generamos guion de llamada en follow-up; se mantiene solo para envío si el usuario lo quiere copiar
     let call = [
       `Hola {CLIENTE}, soy {MI_NOMBRE}.`,
       `${frase}`,
@@ -481,7 +528,6 @@ ${S.lastFrase||"-"}`;
     };
   }
 
-  // Frases de apoyo
   function renderPhrases(pack, sc){
     const list = Array.isArray(pack.siguiente_movimiento?.frases_de_apoyo) && pack.siguiente_movimiento.frases_de_apoyo.length
       ? pack.siguiente_movimiento.frases_de_apoyo
@@ -495,7 +541,6 @@ ${S.lastFrase||"-"}`;
     });
   }
 
-  // Fallback frases
   function fallbackPhrases(title,type){
     const t=(title||"").toLowerCase();
     if(type==='in-conversation'){
@@ -522,7 +567,6 @@ ${S.lastFrase||"-"}`;
     ];
   }
 
-  // UI helpers
   function showTemplatesUI(templates){
     const tk=qs("#toolkit"); const tabs=qs(".tabs"); const titleEl=qs("#tmpl-container h4"); const tmpl=qs("#tmpl-container");
     if(titleEl) titleEl.textContent = "Plantillas";
@@ -533,13 +577,12 @@ ${S.lastFrase||"-"}`;
     const whaTab = qs('.tab[data-tab="wha"]'); if(whaTab) whaTab.classList.add("active");
     const TB=qs("#tmpl-box"); if(TB) TB.textContent=fillPH(templates.whatsapp);
   }
-
   function hideTemplatesUI(){
     const tk=qs("#toolkit"); const tabs=qs(".tabs"); const tmpl=qs("#tmpl-container"); const TB=qs("#tmpl-box");
     if(tabs) tabs.style.display="none";
     if(tmpl) tmpl.style.display="none";
     if(TB) TB.textContent = "";
-    if(tk) tk.style.display="grid"; // mantenemos “Segunda ronda” y “Frases de poder”
+    if(tk) tk.style.display="grid"; // mantenemos 2ª ronda + frases
   }
 
   // Segunda ronda
@@ -588,5 +631,19 @@ ${S.lastFrase||"-"}`;
     }
   }
 
-  // Inicial
+  // ===== Arranque =====
+  wireEvents();
+  setStartState(true);
+  fetch(CONTENT_URL)
+    .then(r=>{ if(!r.ok) throw new Error("content"); return r.json(); })
+    .then(data=>{
+      S.content=data;
+      contentReady = true;
+      setStartState(false);
+      window.dispatchEvent(new Event("dojo:contentReady"));
+    })
+    .catch(()=>{ alert("No se pudo cargar el contenido."); });
+
   go("p0");
+
+})();

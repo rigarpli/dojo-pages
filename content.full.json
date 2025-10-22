@@ -1,56 +1,56 @@
 {
-  "meta": { "plan": "full" },
+  "meta": { "plan": "full", "version": "wow-v1" },
   "areas": [
-    { "id": "objeciones", "title": "Manejo de objeciones", "desc": "Domina el arte de transformar dudas en un diálogo con propósito." },
-    { "id": "confianza", "title": "Generación de confianza", "desc": "Transmite con naturalidad credibilidad y empatía. Humaniza al profesional." },
-    { "id": "beneficios", "title": "Presentación de beneficios", "desc": "Formula la experiencia positiva que obtendrá tu cliente con el cambio." },
-    { "id": "responder_no", "title": "Responder al No", "desc": "Transforma la reacción del cliente en tu próxima acción de oportunidad." },
-    { "id": "persuasion", "title": "Comunicación efectiva", "desc": "Domina la estructura de tus mensajes para expresar persuasión con naturalidad." },
-    { "id": "cierre", "title": "Cierre de ventas", "desc": "Potencia tu habilidad para guiar con enfoque hacia una decisión positiva." },
-    { "id": "seguimiento", "title": "Seguimiento efectivo", "desc": "Diseña secuencias de contacto que construyan valor y mantengan el interés vivo." },
-    { "id": "gestion_tiempo", "title": "Gestión del tiempo y agenda", "desc": "Organizar tu día para rendir mejor." },
-    { "id": "adaptacion", "title": "Adaptación y personalización", "desc": "Ajustar tu mensaje a cada persona." },
-    { "id": "autoconfianza", "title": "Autoconfianza y motivación", "desc": "Cuidar tu mentalidad para no aflojar." }
+    { "id": "objeciones", "title": "Manejo de objeciones", "desc": "Responder con claridad y avanzar sin fricción." },
+    { "id": "confianza", "title": "Generación de confianza", "desc": "Cuidar vínculo y profesionalismo en cada interacción." },
+    { "id": "beneficios", "title": "Presentación de beneficios", "desc": "Enfocar en resultados, no solo en funciones." },
+    { "id": "responder_no", "title": "Responder al “No”", "desc": "Transformar un rechazo en oportunidad futura." },
+    { "id": "persuasion", "title": "Comunicación persuasiva", "desc": "Mensajes simples que invitan a responder." },
+    { "id": "cierre", "title": "Cierre efectivo de ventas", "desc": "Llevar a decisiones claras con respeto." },
+    { "id": "seguimiento", "title": "Seguimiento y fidelización", "desc": "Volver con sentido y sostener el valor." },
+    { "id": "gestion_tiempo", "title": "Gestión del tiempo y agenda", "desc": "Proteger foco y prioridades con el cliente." },
+    { "id": "adaptacion", "title": "Adaptación y personalización", "desc": "Ajustar el mensaje a cada persona." },
+    { "id": "autoconfianza", "title": "Autoconfianza y motivación", "desc": "Entrar fuerte a conversaciones clave." }
   ],
   "scenarios": [
-    { "areaId":"objeciones","id":"precio_alto","type":"in-conversation","title":"“El precio es alto”","question":"Cliente: “El precio es alto”. ¿Cómo respondes?","jugadas":["Explorar qué hace valioso","Comparar retorno","Ajuste de alcance"] },
-    { "areaId":"objeciones","id":"internet_barato","type":"in-conversation","title":"“En internet está más barato”","question":"Cliente: “En internet está más barato”. ¿Cómo respondes?","jugadas":["Entender comparativo","Diferenciar por resultado","Probar en pequeño"] },
-    { "areaId":"objeciones","id":"enviame_info","type":"follow-up","title":"“Envíame info y lo veo”","question":"Cliente: “Envíame info y lo veo”. ¿Cómo respondes?","jugadas":["Resumen 1 página","5 min para dudas","Qué info decide"] },
-    { "areaId":"objeciones","id":"dejame_pensarlo","type":"follow-up","title":"“Déjame pensarlo / lo consulto”","question":"Cliente: “Déjame pensarlo / lo consulto”. ¿Cómo respondes?","jugadas":["Fecha de revisión","Criterio de decisión","Síntesis clave"] },
-    { "areaId":"objeciones","id":"ya_tengo_proveedor","type":"in-conversation","title":"“Ya trabajo con alguien”","question":"Cliente: “Ya trabajo con alguien”. ¿Cómo respondes?","jugadas":["Respetar y explorar gaps","Complemento, no reemplazo","Caso corto de impacto"] },
+    { "areaId": "objeciones", "id": "precio_alto", "type": "in-conversation", "title": "“El precio es alto”", "question": "Cliente: “El precio es alto”. ¿Cómo responde?" },
+    { "areaId": "objeciones", "id": "internet_barato", "type": "in-conversation", "title": "“En internet está más barato”", "question": "Cliente: “En internet está más barato”. ¿Cómo responde?" },
+    { "areaId": "objeciones", "id": "enviame_info", "type": "follow-up", "title": "“Envíeme información y lo veo”", "question": "Cliente: “Envíeme información y lo veo”. ¿Cómo responde?" },
+    { "areaId": "objeciones", "id": "dejame_pensarlo", "type": "follow-up", "title": "“Déjeme pensarlo / lo consulto”", "question": "Cliente: “Déjeme pensarlo / lo consulto”. ¿Cómo responde?" },
+    { "areaId": "objeciones", "id": "ya_tengo_proveedor", "type": "in-conversation", "title": "“Ya trabajo con alguien”", "question": "Cliente: “Ya trabajo con alguien”. ¿Cómo responde?" },
 
-    { "areaId":"confianza","id":"primera_llamada","type":"in-conversation","title":"Primera llamada de 5 minutos","question":"Cliente: Primera llamada breve. ¿Cómo abres y enfocas?","jugadas":["Objetivo claro","2 preguntas de contexto","Paso suave"] },
-    { "areaId":"confianza","id":"mala_experiencia","type":"in-conversation","title":"Mala experiencia previa","question":"Cliente: tuvo mala experiencia. ¿Cómo continúas?","jugadas":["Reconocer y aislar daño","Reglas transparentes","Prueba controlada"] },
-    { "areaId":"confianza","id":"no_confia_en_esto","type":"in-conversation","title":"“No creo en esto”","question":"Cliente: “No creo en esto”. ¿Cómo respondes?","jugadas":["Validar escepticismo","Beneficio tangible","Prueba mínima"] },
-    { "areaId":"confianza","id":"referido_no_conozco","type":"in-conversation","title":"Llega por referido pero no te conoce","question":"Cliente: llegó por referido. ¿Cómo avanzas?","jugadas":["Anclar al referente","Ser breve","Micro‑valor inmediato"] },
-    { "areaId":"confianza","id":"reprograma","type":"follow-up","title":"Reprogramó varias veces","question":"Cliente: reprogramó varias veces. ¿Qué haces?","jugadas":["Confirmar conveniencia","Ventana corta","Formato asíncrono"] },
+    { "areaId": "confianza", "id": "primera_llamada", "type": "in-conversation", "title": "Primera llamada de 5 minutos", "question": "Cliente: primera llamada breve. ¿Cómo abre y enfoca?" },
+    { "areaId": "confianza", "id": "mala_experiencia", "type": "in-conversation", "title": "“Ya tuve mala experiencia, no quiero repetir ese error.”", "question": "Cliente: “Ya tuve mala experiencia, no quiero repetir ese error.” ¿Cómo responde?" },
+    { "areaId": "confianza", "id": "no_confia_en_esto", "type": "in-conversation", "title": "“No creo en esto”", "question": "Cliente: “No creo en esto”. ¿Cómo responde?" },
+    { "areaId": "confianza", "id": "referido_no_conozco", "type": "in-conversation", "title": "Llega por referido pero no le conoce", "question": "Cliente llega por referido pero no le conoce. ¿Cómo avanza?" },
+    { "areaId": "confianza", "id": "reprograma", "type": "follow-up", "title": "Reprogramó varias veces", "question": "Cliente: reprogramó varias veces. ¿Qué hace?" },
 
-    { "areaId":"beneficios","id":"que_incluye","type":"in-conversation","title":"“¿Qué incluye?”","question":"Cliente: “¿Qué incluye?”. ¿Cómo respondes?","jugadas":["Empezar por resultado","Mapa simple","Paquete mínimo que resuelve"] },
-    { "areaId":"beneficios","id":"diferencia_competencia","type":"in-conversation","title":"“¿En qué eres diferente a X?”","question":"Cliente: “¿En qué eres diferente a X?”. ¿Cómo respondes?","jugadas":["Caso de uso","Trade‑offs claros","Prueba breve"] },
-    { "areaId":"beneficios","id":"no_entiende_funciona","type":"in-conversation","title":"“No entiendo cómo funciona”","question":"Cliente: “No entiendo cómo funciona”. ¿Cómo respondes?","jugadas":["Analogía simple","Demo 2 minutos","Una cosa que cambia hoy"] },
-    { "areaId":"beneficios","id":"no_tengo_tiempo","type":"in-conversation","title":"“No tengo tiempo”","question":"Cliente: “No tengo tiempo”. ¿Cómo respondes?","jugadas":["Reducir a 5 minutos","Opción asíncrona","Priorizar por impacto"] },
-    { "areaId":"beneficios","id":"cual_es_el_retorno","type":"in-conversation","title":"“Cuál es el retorno?”","question":"Cliente: “¿Cuál es el retorno?”. ¿Cómo respondes?","jugadas":["Qué mide valor","Caso comparable","Primer hito medible"] },
+    { "areaId": "beneficios", "id": "que_incluye", "type": "in-conversation", "title": "“¿Qué incluye?”", "question": "Cliente: “¿Qué incluye?”. ¿Cómo responde?" },
+    { "areaId": "beneficios", "id": "diferencia_competencia", "type": "in-conversation", "title": "“¿En qué es diferente a X?”", "question": "Cliente: “¿En qué es diferente a X?”. ¿Cómo responde?" },
+    { "areaId": "beneficios", "id": "no_entiende_funciona", "type": "in-conversation", "title": "“No entiendo cómo funciona”", "question": "Cliente: “No entiendo cómo funciona”. ¿Cómo responde?" },
+    { "areaId": "beneficios", "id": "no_tengo_tiempo", "type": "in-conversation", "title": "“No tengo tiempo”", "question": "Cliente: “No tengo tiempo”. ¿Cómo responde?" },
+    { "areaId": "beneficios", "id": "cual_es_el_retorno", "type": "in-conversation", "title": "“¿Cuál es el retorno?”", "question": "Cliente: “¿Cuál es el retorno?”. ¿Cómo responde?" },
 
-    { "areaId":"responder_no","id":"no_gracias","type":"in-conversation","title":"“No, gracias”","question":"Cliente: “No, gracias”. ¿Cómo respondes?","jugadas":["Cerrar con aprendizaje","Puerta a futuro","Condición de relevancia"] },
-    { "areaId":"responder_no","id":"no_prioridad","type":"in-conversation","title":"“No es prioridad ahora”","question":"Cliente: “No es prioridad ahora”. ¿Cómo respondes?","jugadas":["Entender prioridades","Recordatorio con fecha","Recurso clave"] },
-    { "areaId":"responder_no","id":"no_presupuesto","type":"in-conversation","title":"“No tengo presupuesto”","question":"Cliente: “No tengo presupuesto”. ¿Cómo respondes?","jugadas":["Rango realista","Etapas/alcance","ROI mínimo"] },
-    { "areaId":"responder_no","id":"no_cambio","type":"in-conversation","title":"“Prefiero seguir como estoy”","question":"Cliente: “Prefiero seguir como estoy”. ¿Cómo respondes?","jugadas":["Reconocer statu quo","Criterio de mejora","Micro‑mejora sin riesgo"] },
-    { "areaId":"responder_no","id":"no_otro","type":"in-conversation","title":"“Ya lo veo con otro”","question":"Cliente: “Ya lo veo con otro”. ¿Cómo respondes?","jugadas":["Respetar relación","Diferencia puntual","Plan B si falla"] },
+    { "areaId": "responder_no", "id": "no_gracias", "type": "in-conversation", "title": "“No, gracias”", "question": "Cliente: “No, gracias”. ¿Cómo responde?" },
+    { "areaId": "responder_no", "id": "no_prioridad", "type": "in-conversation", "title": "“No es prioridad ahora”", "question": "Cliente: “No es prioridad ahora”. ¿Cómo responde?" },
+    { "areaId": "responder_no", "id": "no_presupuesto", "type": "in-conversation", "title": "“No tengo presupuesto”", "question": "Cliente: “No tengo presupuesto”. ¿Cómo responde?" },
+    { "areaId": "responder_no", "id": "no_cambio", "type": "in-conversation", "title": "“Prefiero seguir como estoy”", "question": "Cliente: “Prefiero seguir como estoy”. ¿Cómo responde?" },
+    { "areaId": "responder_no", "id": "no_otro", "type": "in-conversation", "title": "“Ya lo veo con otro”", "question": "Cliente: “Ya lo veo con otro”. ¿Cómo responde?" },
 
-    { "areaId":"persuasion","id":"propuesta_valor","type":"in-conversation","title":"Propuesta irresistible","question":"Construir propuesta irresistible. ¿Cómo la presentas?","jugadas":["Enfocar en cambio deseado","3 bullets esenciales","CTA de micro‑paso"] },
+    { "areaId": "persuasion", "id": "propuesta_valor", "type": "in-conversation", "title": "Propuesta irresistible", "question": "Construir una propuesta irresistible. ¿Cómo la presenta?" },
 
-    { "areaId":"cierre","id":"interes_no_decide","type":"follow-up","title":"Interés, pero no decide","question":"Cliente con interés pero sin decisión. ¿Qué haces?","jugadas":["Clarificar bloqueo","Dos opciones concretas","Fecha suave"] },
-    { "areaId":"cierre","id":"varios_decisores","type":"follow-up","title":"Varios decisores","question":"Hay varios decisores. ¿Cómo avanzas?","jugadas":["Identificar decisores","Consenso en 3 puntos","Documento 1 página"] },
-    { "areaId":"cierre","id":"precio_vs_valor_cierre","type":"in-conversation","title":"Cierre con precio vs valor","question":"Cerrar enfocando en valor. ¿Cómo lo planteas?","jugadas":["Reencuadre a valor final","Descomponer inversión","Paso previo sin compromiso"] },
-    { "areaId":"cierre","id":"fecha_limite_suave","type":"follow-up","title":"Fecha límite suave","question":"Fecha límite suave. ¿Cómo la comunicas?","jugadas":["Por qué la fecha","Alternativa equivalente","¿Qué se perdería?"] },
-    { "areaId":"cierre","id":"post_demo","type":"follow-up","title":"Después de demo/prueba","question":"Post demo: concretar siguiente paso. ¿Qué haces?","jugadas":["Resumen en 3 puntos","Evaluación concreta","Siguiente paso mínimo"] },
+    { "areaId": "cierre", "id": "interes_no_decide", "type": "follow-up", "title": "Interés, pero no decide", "question": "Cliente con interés, sin decisión. ¿Qué hace?" },
+    { "areaId": "cierre", "id": "varios_decisores", "type": "follow-up", "title": "Varios decisores", "question": "Varios decisores. ¿Cómo avanza?" },
+    { "areaId": "cierre", "id": "precio_vs_valor_cierre", "type": "in-conversation", "title": "Cierre con precio vs valor", "question": "Cerrar enfocando en valor. ¿Cómo lo plantea?" },
+    { "areaId": "cierre", "id": "fecha_limite_suave", "type": "follow-up", "title": "Fecha límite suave", "question": "Fecha límite suave. ¿Cómo la comunica?" },
+    { "areaId": "cierre", "id": "post_demo", "type": "follow-up", "title": "Después de demo/prueba", "question": "Post demo: concretar siguiente paso. ¿Qué hace?" },
 
-    { "areaId":"seguimiento","id":"despues_reunion","type":"follow-up","title":"Seguimiento post-reunión","question":"Después de la reunión. ¿Cómo haces seguimiento?","jugadas":["Resumen y acuerdos","Micro‑paso y horario","Confirmar valor"] },
+    { "areaId": "seguimiento", "id": "despues_reunion", "type": "follow-up", "title": "Seguimiento post-reunión", "question": "Después de la reunión. ¿Cómo hace seguimiento?" },
 
-    { "areaId":"gestion_tiempo","id":"priorizar_tareas","type":"in-conversation","title":"Cliente pide algo urgente","question":"Piden algo urgente que rompe agenda. ¿Qué haces?","jugadas":["Validar urgencia","Intercambiar prioridades","Alternativa asíncrona"] },
+    { "areaId": "gestion_tiempo", "id": "priorizar_tareas", "type": "in-conversation", "title": "Cliente pide algo urgente", "question": "Piden algo urgente que rompe su agenda. ¿Qué hace?" },
 
-    { "areaId":"adaptacion","id":"diferentes_personalidades","type":"in-conversation","title":"Analítico vs emocional","question":"Adaptar mensaje por personalidad. ¿Cómo lo haces?","jugadas":["Enfoque analítico","Enfoque emocional","¿Qué estilo prefieres?"] },
+    { "areaId": "adaptacion", "id": "diferentes_personalidades", "type": "in-conversation", "title": "Analítico vs emocional", "question": "Adaptar el mensaje por personalidad. ¿Cómo lo hace?" },
 
-    { "areaId":"autoconfianza","id":"mal_dia","type":"in-conversation","title":"Mal día antes de llamada","question":"Venías de un rechazo. ¿Cómo te preparas?","jugadas":["Recentrar propósito","Micro‑ritual de foco","Empezar con pregunta amable"] }
+    { "areaId": "autoconfianza", "id": "mal_dia", "type": "in-conversation", "title": "Mal día antes de llamada", "question": "Venía de un rechazo. ¿Cómo se prepara?" }
   ]
 }

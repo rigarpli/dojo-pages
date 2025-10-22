@@ -3,7 +3,7 @@
 (function(){
   "use strict";
 
-  const API = "https://index.rgarciaplicet.workers.dev/"; // tu Worker (cámbialo si usas staging)
+  const API = "https://dojo-coach.rgarciaplicet.workers.dev/"; // tu Worker (cámbialo si usas staging)
   const plan = new URLSearchParams(location.search).get("plan") || "full";
   const CONTENT_URL = `./content.${plan}.json`;
 

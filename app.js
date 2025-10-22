@@ -1,12 +1,9 @@
-// build: dojo-app WOW v1 — 4 jugadas + cierres por arquetipo — 2025-10-18
+// build: dojo-app WOW v1.1 — 4 jugadas + cierres por arquetipo + saneo — 2025-10-18
 
 (function(){
   const API = "https://dojo-coach.rgarciaplicet.workers.dev/"; // tu Worker
   const plan = new URLSearchParams(location.search).get("plan") || "full";
   const CONTENT_URL = `./content.${plan}.json`;
-
-  // Plantillas: ensamblado siempre en el front (coherencia garantizada)
-  const SAFE_TEMPLATES_MODE = "always"; // "always" (recomendado con WOW v1)
 
   // Estado
   const S = {
@@ -14,7 +11,7 @@
     scenId:"", pack:null, lastFrase:"", content:null, templates:null
   };
 
-  // Utils
+  // ===== Utils base =====
   const qs=(s,sc=document)=>sc.querySelector(s);
   const qsa=(s,sc=document)=>Array.from(sc.querySelectorAll(s));
   const progress=(id)=>{ const map={p0:0,p1:1,p2:2,p3:3,p4:4,p5:5,p8:8,p9:9}; const pct=Math.max(10,Math.round(((map[id]??0)+1)/10*100)); const b=qs("#bar"); if(b) b.style.width=pct+"%"; };
@@ -25,7 +22,7 @@
   function downloadTxt(name, t){ const blob=new Blob([t||""],{type:"text/plain;charset=utf-8"}); const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download=name||"dojo.txt"; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(url); a.remove();},0); }
   function slug(s){ s=s||""; try{s=s.normalize("NFD").replace(/[\u0300-\u036f]/g,"")}catch(e){} return s.toLowerCase().replace(/[^\w]+/g,"-").replace(/-+/g,"-").replace(/^-|-$/g,""); }
 
-  // Placeholders {CLIENTE}/{MI_NOMBRE} en todo texto
+  // Placeholders {CLIENTE}/{MI_NOMBRE}
   function fillPH(t){
     if(!t) return "";
     const cli = (S.cliente && S.cliente.trim()) ? S.cliente.trim() : "cliente";
@@ -35,13 +32,38 @@
       .replace(/\{\s*MI[_\s]*NOMBRE\s*\}/gi, yo);
   }
 
+  // Saneo adicional en el front (por seguridad)
+  const FRONT_BLACKLIST = [
+    "sin presión","sin presion","con calma","y hablamos luego","no te preocupes","es normal",
+    "le entiendo","te entiendo","debes ","tienes que ","si no aporta","lo dejamos ahí",
+    "decidimos tranquilos","tranquilo","tranquilos","tranquila","tranquilamente"
+  ];
+  function cleanTextLocal(s){
+    if(!s || typeof s!=="string") return s;
+    let out = s;
+    FRONT_BLACKLIST.forEach(b=>{ out = out.replace(new RegExp(b,"gi"),"").trim(); });
+    // Normalizar signos y espacios
+    out = out
+      .replace(/[ \t]+\n/g,"\n")
+      .replace(/[ ]{2,}/g," ")
+      .replace(/\?\./g,"?")
+      .replace(/\. \?/g,"?")
+      .replace(/([!?\.]){2,}/g,"$1")
+      .replace(/\s+([!?\.])/g,"$1")
+      .replace(/([¿¡])\s+/g,"$1")
+      .replace(/\s+([,;:])/g,"$1")
+      .trim();
+    return out;
+  }
+  function sanitizeStr(t){ return cleanTextLocal(fillPH(t||"")); }
+
   async function ai(payload){
     const r=await fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
     if(!r.ok) throw new Error("IA");
     return await r.json();
   }
 
-  // Navegación + visibilidad de botones
+  // ===== Navegación y visibilidad =====
   let currentStep="p0", historySteps=["p0"];
   function go(id){
     qsa(".step").forEach(x=>x.classList.remove("active"));
@@ -54,7 +76,7 @@
     const topnav = qs(".topnav");
     if (topnav) topnav.style.display = (id==="p0" || id==="p1") ? "none" : "flex";
 
-    // Ocultar "Guía" en topnav (si existiera) y usar FAB
+    // Ocultar "Guía" en topnav (por si existe) y usar FAB
     const guiaTop = qs('[data-nav="guia"]');
     if (guiaTop) guiaTop.style.display = "none";
 
@@ -77,7 +99,7 @@
   function shouldConfirmBack(){ return (currentStep==="p4"||currentStep==="p5") && !!S.pack; }
   function goBack(){ if(shouldConfirmBack()){ if(!confirm("¿Volver al paso anterior? Perderá el foco de este escenario. Sus resultados no se guardan aquí.")) return; } if(historySteps.length<=1) return; historySteps.pop(); const prev = historySteps[historySteps.length-1]||"p0"; go(prev); }
 
-  // FAB Guía (inferior izquierda)
+  // FAB “Guía”
   function ensureGuideFab(){
     const card = document.querySelector("#dojoApp .card");
     if (!card) return;
@@ -92,7 +114,7 @@
     }
   }
 
-  // Carga de contenido
+  // ===== Carga de contenido y arranque =====
   fetch(CONTENT_URL).then(r=>{ if(!r.ok) throw new Error("content"); return r.json(); })
     .then(data=>{ S.content=data; init(); })
     .catch(()=>{ alert("No se pudo cargar el contenido."); });
@@ -109,35 +131,28 @@
       const t=e.target;
 
       if(t.closest("#btn-back")) { goBack(); }
-
       else if(t.closest("#btn-guide-fab")) { nav("p8"); }
-
       else if(t.closest("[data-nav]")){
         const where=t.closest("[data-nav]").dataset.nav;
         if(where==="areas"){ buildAreas(); nav("p1"); }
-        if(where==="guia"){ nav("p8"); } // por si existe en topnav
+        if(where==="guia"){ nav("p8"); }
       }
-
       else if(t.closest(".area-card .btn")){
         const id=t.closest(".area-card .btn").dataset.area;
         const area=(S.content.areas||[]).find(a=>a.id===id)||{};
         S.areaId=id; S.areaTitle=area.title||""; const ctx=qs("#ctx-area"); if(ctx) ctx.textContent=S.areaTitle||"—"; nav("p2");
       }
-
       else if(t.closest("[data-style]")){
         S.estilo=t.closest("[data-style]").dataset.style; buildScenarios(); nav("p3");
       }
-
       else if(t.closest("[data-scenario]")){
         const id=t.closest("[data-scenario]").dataset.scenario; S.scenId=id; buildScenarioView(id); nav("p4");
       }
-
       else if(t.closest(".jugada-btn")){
         const btn=t.closest(".jugada-btn");
         const label=btn.dataset.jugada||btn.textContent||"Lógica";
         const sc=getCurrentScenario(); if(sc) runPlay(sc,label);
       }
-
       else if(t.closest(".tab")){
         qsa(".tab").forEach(x=>x.classList.remove("active"));
         t.closest(".tab").classList.add("active");
@@ -148,11 +163,9 @@
           if(key==="call") TB.textContent = fillPH(S.templates.call);
         }
       }
-
       else if(t.closest("#btn-copy-tmpl")){
         copy(qs("#tmpl-box").textContent||"");
       }
-
       else if(t.closest("#btn-dl-txt")){
         const key=(qs(".tab.active")?.dataset.tab)||"wha"; let content="";
         if(key==="wha") content=fillPH(S.templates.whatsapp);
@@ -160,7 +173,6 @@
         if(key==="call") content=fillPH(S.templates.call);
         downloadTxt("dojo-"+slug(S.areaId||"area")+"-"+slug(S.scenId||"escenario")+"-"+key+".txt", content);
       }
-
       else if(t.closest("#btn-share-tmpl")){
         const key=(qs(".tab.active")?.dataset.tab)||"wha"; let content="";
         if(key==="wha") content=fillPH(S.templates.whatsapp);
@@ -168,22 +180,18 @@
         if(key==="call") content=fillPH(S.templates.call);
         share(content, "Dojo — "+(S.areaTitle||""));
       }
-
       else if(t.closest(".phrase button")){
         const text=t.closest(".phrase").querySelector("div")?.textContent||""; copy(text);
       }
-
       else if(t.id==="rr-generate"){
         roundTwo();
       }
-
       else if(t.closest("#to-p5")){
         qs("#p5-frase").textContent = S.lastFrase || "Aún no ha generado una frase.";
-        const micro=(S.pack && (S.pack.micro_accion))||"";
+        const micro=(S.pack && (getMicro(S.pack)))||"";
         if(micro) qs("#micro").value = fillPH(micro);
         nav("p5");
       }
-
       else if(t.closest("#btn-wa")){
         const msg = `Dojo de Polizar — ${S.areaTitle}
 Escenario: ${qs('#esc-title').textContent}
@@ -197,7 +205,6 @@ Frase de poder:
 ${S.lastFrase||"-"}`;
         window.open("https://wa.me/?text="+encodeURIComponent(msg),"_blank");
       }
-
       else if(t.closest("#p5-copy")){
         const txt = `Dojo de Polizar — ${S.areaTitle}
 Escenario: ${qs('#esc-title').textContent}
@@ -211,7 +218,6 @@ Frase de poder:
 ${S.lastFrase||"-"}`;
         copy(txt);
       }
-
       else if(t.closest("#p5-dl")){
         const txt = `Dojo de Polizar — ${S.areaTitle}
 Escenario: ${qs('#esc-title').textContent}
@@ -225,7 +231,6 @@ Frase de poder:
 ${S.lastFrase||"-"}`;
         downloadTxt("dojo-"+slug(S.areaId||'area')+"-"+slug(S.scenId||'escenario')+"-resumen.txt", txt);
       }
-
       else if(t.closest("#finish")){
         qs("#thanks-name").textContent = S.nombre || "Pro";
         qs("#thanks-area").textContent = S.areaTitle || "su área";
@@ -240,7 +245,7 @@ ${S.lastFrase||"-"}`;
     });
   }
 
-  // Vistas
+  // ===== Vistas =====
   function buildAreas(){
     const grid=qs("#areas-grid"); if(!grid) return; grid.innerHTML="";
     (S.content.areas||[]).forEach(a=>{
@@ -273,7 +278,6 @@ ${S.lastFrase||"-"}`;
     qs("#esc-question").textContent= sc.question || ("Cliente: " + sc.title + ". ¿Cómo responde?");
 
     const box=qs("#esc-options"); if(!box) return; box.innerHTML="";
-    // 4 jugadas fijas
     const jugadas = ["Lógica","Empática","Estratégica","Proactiva"];
     jugadas.forEach(j=>{
       const b=document.createElement("button");
@@ -281,21 +285,18 @@ ${S.lastFrase||"-"}`;
       box.appendChild(b);
     });
 
-    // Reset toolkit
     qs("#esc-answer").style.display="none";
     qs("#toolkit").style.display="none";
     qs("#esc-continue").style.display="none";
   }
 
-  function getScenarioById(id){
-    return (S.content.scenarios||[]).find(x=>x.areaId===S.areaId && x.id===id);
-  }
+  function getScenarioById(id){ return (S.content.scenarios||[]).find(x=>x.areaId===S.areaId && x.id===id); }
   function getCurrentScenario(){ return getScenarioById(S.scenId); }
 
-  // Ejecuta jugada con IA WOW
+  // ===== Lógica de IA (WOW) =====
   async function runPlay(sc, jugadaLabel){
     const ans=qs("#esc-answer");
-    ans.style.display="block"; ans.innerHTML=`<p class="muted">Generando tu guía…</p>`;
+    ans.style.display="block"; ans.innerHTML=`<p class="muted">Generando su guía…</p>`;
     try{
       const pack = await ai({
         nombre: S.nombre||"Pro",
@@ -303,28 +304,22 @@ ${S.lastFrase||"-"}`;
         area: S.areaTitle,
         escenario: sc.title,
         pregunta: sc.question || ("Cliente: " + sc.title + ". ¿Cómo responde?"),
-        eleccion: jugadaLabel // El Worker inferirá la intención desde aquí
+        eleccion: jugadaLabel
       });
-      if(!pack || !(pack.frase_poder || pack.potenciador_cognitivo?.frase_de_poder)) throw new Error("Pack incompleto");
-
       // Guardar y renderizar
       S.pack = sanitizePackLocal(pack);
       ans.innerHTML = renderWow(S.pack);
 
-      // Plantillas/Guion según tipo
       const type = sc.type || "in-conversation";
       if (type === "follow-up") {
         S.templates = composeTemplates(S.pack, sc.title, type, S.estilo);
         showTemplatesUI(S.templates);
       } else {
-        // in-conversation: guion natural de llamada
         const script = buildCallScript(S.pack, sc.title, S.estilo);
         showCallScriptUI(script);
       }
 
-      // Frases de apoyo
       renderPhrases(S.pack, sc);
-
       qs("#esc-continue").style.display="block";
       scrollTop();
     }catch(e){
@@ -332,50 +327,84 @@ ${S.lastFrase||"-"}`;
     }
   }
 
-  // Sanea placeholders locales por si algo pasa crudo
+  // Sanitiza pack (placeholders + blacklist local) y asegura Potenciador
+  function ensurePotenciador(p){
+    const principle = (p.el_principio || "").toLowerCase();
+    const conceptMap = [
+      { key: "coherencia", concept: "Claridad antes de compromiso", phrase: "Primero acordemos lo esencial; luego avanzamos." },
+      { key: "compromiso", concept: "Claridad antes de compromiso", phrase: "Primero acordemos lo esencial; luego avanzamos." },
+      { key: "reciprocidad", concept: "Dar valor antes de pedir", phrase: "Le comparto valor primero; luego decidimos." },
+      { key: "anclaje", concept: "Definir un marco claro", phrase: "Definamos el marco y decidimos con seguridad." },
+      { key: "ambigüedad", concept: "Hacer explícitos los criterios", phrase: "Hagamos visibles los criterios y avanzamos." },
+      { key: "aversión a la pérdida", concept: "Proteger lo valioso", phrase: "Cuidemos lo valioso y avancemos con criterio." }
+    ];
+    const mapped = conceptMap.find(m => principle.includes(m.key)) || null;
+
+    p.potenciador_cognitivo = p.potenciador_cognitivo || {};
+    if (!p.potenciador_cognitivo.concepto_nuclear || !p.potenciador_cognitivo.concepto_nuclear.trim()) {
+      p.potenciador_cognitivo.concepto_nuclear = mapped ? mapped.concept : "Claridad antes de compromiso";
+    }
+    if (!p.potenciador_cognitivo.frase_de_poder || !p.potenciador_cognitivo.frase_de_poder.trim()) {
+      const fallbackPhrase =
+        (p.frase_poder && p.frase_poder.trim()) ||
+        (mapped && mapped.phrase) ||
+        "Vayamos a lo esencial y avancemos con claridad.";
+      p.potenciador_cognitivo.frase_de_poder = fallbackPhrase;
+    }
+    if (!p.frase_poder || !p.frase_poder.trim()) {
+      p.frase_poder = p.potenciador_cognitivo.frase_de_poder;
+    }
+    if (!p.siguiente_movimiento) p.siguiente_movimiento = {};
+    if (!p.siguiente_movimiento.accion_estrategica || !p.siguiente_movimiento.accion_estrategica.trim()) {
+      p.siguiente_movimiento.accion_estrategica = "Enviar un resumen de 1 página con puntos clave y validarlo.";
+    }
+    if (!Array.isArray(p.siguiente_movimiento.frases_de_apoyo) || !p.siguiente_movimiento.frases_de_apoyo.length) {
+      p.siguiente_movimiento.frases_de_apoyo = [
+        "Vayamos a lo esencial y que todo quede visible.",
+        "Acordemos criterios y luego decidimos con seguridad."
+      ];
+    }
+    return p;
+  }
+
   function sanitizePackLocal(p){
-    const clone = JSON.parse(JSON.stringify(p));
-    const walk=(obj)=>{ for(const k in obj){ if(!Object.prototype.hasOwnProperty.call(obj,k)) continue; if(typeof obj[k]==="string") obj[k]=fillPH(obj[k]); else if(obj[k] && typeof obj[k]==="object") walk(obj[k]); } };
+    const clone = JSON.parse(JSON.stringify(p||{}));
+    const walk=(obj)=>{ for(const k in obj){ if(!Object.prototype.hasOwnProperty.call(obj,k)) continue; if(typeof obj[k]==="string") obj[k]=sanitizeStr(obj[k]); else if(obj[k] && typeof obj[k]==="object") walk(obj[k]); } };
     walk(clone);
-    // Frase de poder prioriza la del potenciador si existe
+    ensurePotenciador(clone);
     const fp = clone.potenciador_cognitivo?.frase_de_poder || clone.frase_poder || "";
-    S.lastFrase = fillPH(fp);
+    S.lastFrase = sanitizeStr(fp);
     return clone;
   }
 
-  // Render WOW (epifanía)
+  // Render WOW (epifanía) siempre con Potenciador visible
   function renderWow(p){
-    const titulo = p.titulo_estrategia || "Estrategia";
-    const revelacion = p.la_revelacion || "";
-    const principio = p.el_principio || "";
-    const concepto = p.potenciador_cognitivo?.concepto_nuclear || p.mejora_potenciadora?.concepto || "";
-    const frasePoder = p.potenciador_cognitivo?.frase_de_poder || p.frase_poder || "";
+    const titulo = sanitizeStr(p.titulo_estrategia || "Estrategia");
+    const revelacion = sanitizeStr(p.la_revelacion || "");
+    const principio = sanitizeStr(p.el_principio || "");
+    const concepto = sanitizeStr(p.potenciador_cognitivo?.concepto_nuclear || p.mejora_potenciadora?.concepto || "");
+    const frasePoder = sanitizeStr(p.potenciador_cognitivo?.frase_de_poder || p.frase_poder || "");
 
     let html=`<h3>${titulo}</h3>`;
     if(revelacion) html += `<div class="fb-sec"><div class="sec-title">La Revelación</div><p>${revelacion}</p></div>`;
     if(principio) html += `<div class="fb-sec"><div class="sec-title">Principio</div><p>${principio}</p></div>`;
-    if(concepto || frasePoder){
-      html += `<div class="fb-sec"><div class="sec-title">Potenciador Cognitivo</div>`;
-      if(concepto) html += `<p><strong>Regla:</strong> ${concepto}</p>`;
-      if(frasePoder) html += `<p><strong>Frase de poder:</strong> ${fillPH(frasePoder)}</p>`;
-      html += `</div>`;
-    }
+    html += `<div class="fb-sec"><div class="sec-title">Potenciador Cognitivo</div>`;
+    if(concepto) html += `<p><strong>Regla:</strong> ${concepto}</p>`;
+    if(frasePoder) html += `<p><strong>Frase de poder:</strong> ${frasePoder}</p>`;
+    html += `</div>`;
     return html;
   }
 
-  // ====== Motor de cierres por arquetipo ======
+  // ===== Motor de cierres por arquetipo =====
   function norm(s){ return (s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\s+/g," ").trim(); }
   function contains(text, snippet){ return norm(text).includes(norm(snippet)); }
-
-  // Elegir arquetipo de cierre de forma determinística
   function seedInt(str){ let h=0; for(let i=0;i<str.length;i++){ h=((h<<5)-h)+str.charCodeAt(i); h|=0; } return Math.abs(h); }
+
   function pickArchetype(scenId, jugada, estilo){
     const archetypes = ["propuesta_directa","sugerencia_accion","oferta_apoyo","invitacion_abierta"];
     const seed = seedInt((scenId||"")+":"+jugada+":"+estilo);
     return archetypes[seed % archetypes.length];
   }
-
-  // Variantes de entregables (sin tiempos por defecto)
   const DELIVERABLES = [
     "un resumen de 1 página",
     "una lista de verificación simple",
@@ -385,28 +414,27 @@ ${S.lastFrase||"-"}`;
   ];
   function pickDeliverable(seed){ return DELIVERABLES[seed % DELIVERABLES.length]; }
 
-  // Cierre por arquetipo (lenguaje simple, formal)
   function composeClosure(archetype, deliverable){
     switch(archetype){
       case "propuesta_directa":
-        return `Le propongo enviar ${deliverable} y revisarlo juntos en breve. ¿Le sirve?`;
+        return `Le propongo enviar ${deliverable} y revisarlo juntos pronto. ¿Le funciona?`;
       case "sugerencia_accion":
-        return `Podemos empezar con ${deliverable} y ver si encaja. ¿Le comparto hoy?`;
+        return `Podemos empezar con ${deliverable} y ver si encaja. ¿Se lo comparto hoy?`;
       case "oferta_apoyo":
-        return `Me encargo de preparar ${deliverable} y se lo envío. Usted me dice si vale una revisión breve.`;
+        return `Me encargo de preparar ${deliverable} y se lo envío. Luego confirmamos una revisión breve.`;
       case "invitacion_abierta":
       default:
         return `Le dejo ${deliverable}. Cuando le funcione, lo vemos rápido.`;
     }
   }
 
-  // Aplicar estilo leve por canal
   function applyTone(channel, text, estilo){
     if(!text) return "";
     let t=text;
+
     if(estilo==="Calma"){
-      t = t.replace(/\bLe propongo\b/gi, "Si le parece, le propongo")
-           .replace(/\?$/,". ¿Le funciona?");
+      t = t.replace(/\bLe propongo\b/gi, "Si le parece, le propongo");
+      if(!/[?]$/.test(t)) t = t + "";
     }
     if(estilo==="Curiosidad"){
       const q = "¿Qué punto le ayudaría a decidir mejor?";
@@ -423,16 +451,24 @@ ${S.lastFrase||"-"}`;
       const wink = (channel==="call") ? "Prometo ser breve." : "Prometo ser breve 🙂";
       if(!contains(t,"prometo ser breve")) t = t + "\n" + wink;
     }
-    return t.trim();
+    return cleanTextLocal(t.trim());
   }
 
-  // Guion de llamada natural (3–4 líneas)
+  function getFrasePoder(p){
+    return p.potenciador_cognitivo?.frase_de_poder || p.frase_poder || "Vayamos a lo esencial.";
+  }
+  function getMicro(p){
+    return p.siguiente_movimiento?.accion_estrategica || p.micro_accion || "Enviar un resumen claro y validarlo.";
+  }
+
+  // Guion de llamada (in-conversation)
   function buildCallScript(pack, scTitle, estilo){
-    const frase = pack.potenciador_cognitivo?.frase_de_poder || pack.frase_poder || "Vayamos a lo esencial.";
+    const frase = sanitizeStr(getFrasePoder(pack));
     const seed = seedInt((S.scenId||"")+":"+(pack.titulo_estrategia||"")+":"+(S.estilo||""));
     const archetype = pickArchetype(S.scenId||"", "Proactiva", S.estilo||"");
     const deliverable = pickDeliverable(seed);
     const cierre = composeClosure(archetype, deliverable);
+
     let script = [
       `Hola {CLIENTE}, soy {MI_NOMBRE}.`,
       `${frase}`,
@@ -440,19 +476,18 @@ ${S.lastFrase||"-"}`;
       `${cierre}`
     ].join("\n");
     script = applyTone("call", script, estilo||"");
-    return fillPH(script);
+    return sanitizeStr(script);
   }
 
-  // Componer plantillas para follow-up (WhatsApp, Email, Llamada)
+  // Plantillas (solo follow-up)
   function composeTemplates(pack, scTitle, tipo, estilo){
-    const frase = pack.potenciador_cognitivo?.frase_de_poder || pack.frase_poder || "Vayamos a lo esencial.";
-    const micro = pack.micro_accion || "Enviar un resumen claro y validarlo.";
+    const frase = sanitizeStr(getFrasePoder(pack));
+    const micro = sanitizeStr(getMicro(pack));
     const seed = seedInt((S.scenId||"")+":"+(pack.titulo_estrategia||"")+":"+(S.estilo||""));
-    const archetype = pickArchetype(S.scenId||"", (pack.intencion_jugada||"Proactiva"), S.estilo||"");
+    const archetype = pickArchetype(S.scenId||"", ("Proactiva"), S.estilo||"");
     const deliverable = pickDeliverable(seed);
     const cierre = composeClosure(archetype, deliverable);
 
-    // WhatsApp
     let wa = [
       `Hola {CLIENTE}, soy {MI_NOMBRE}.`,
       `${frase}`,
@@ -461,7 +496,6 @@ ${S.lastFrase||"-"}`;
     ].join("\n");
     wa = applyTone("wha", wa, estilo||"");
 
-    // Email
     const subj = `Sobre “${scTitle}”`;
     let eb = [
       `Hola {CLIENTE},`,
@@ -472,7 +506,6 @@ ${S.lastFrase||"-"}`;
     ].join("\n");
     eb = applyTone("eml", eb, estilo||"");
 
-    // Llamada (para envío de guion por si hace falta)
     let call = buildCallScript(pack, scTitle, estilo||"");
 
     return {
@@ -485,7 +518,7 @@ ${S.lastFrase||"-"}`;
     };
   }
 
-  // Frases de apoyo (WOW) o fallback
+  // Frases de apoyo
   function renderPhrases(pack, sc){
     const list = Array.isArray(pack.siguiente_movimiento?.frases_de_apoyo) && pack.siguiente_movimiento.frases_de_apoyo.length
       ? pack.siguiente_movimiento.frases_de_apoyo
@@ -494,12 +527,12 @@ ${S.lastFrase||"-"}`;
     list.forEach(text=>{
       const row=document.createElement("div");
       row.className="phrase";
-      row.innerHTML=`<div>${fillPH(text)}</div><button class="btn" type="button">Copiar</button>`;
+      row.innerHTML=`<div>${sanitizeStr(text)}</div><button class="btn" type="button">Copiar</button>`;
       box.appendChild(row);
     });
   }
 
-  // Fallback frases si no viene suficiente material
+  // Fallback frases
   function fallbackPhrases(title,type){
     const t=(title||"").toLowerCase();
     if(type==='in-conversation'){
@@ -514,9 +547,9 @@ ${S.lastFrase||"-"}`;
         "Cuidemos el proceso para decidir con seguridad."
       ];
     }
-    if(t.includes("info")||t.includes("envíame")||t.includes("envia")) return [
+    if(t.includes("info")||t.includes("envíe")||t.includes("envia")||t.includes("envíeme")) return [
       "Le envío un resumen claro y lo validamos juntos.",
-      "Prefiere 3 puntos clave o un comparativo breve.",
+      "¿Prefiere 3 puntos clave o un comparativo breve?",
       "Comparto lo esencial y lo vemos en breve."
     ];
     return [
@@ -526,25 +559,23 @@ ${S.lastFrase||"-"}`;
     ];
   }
 
-  // Mostrar plantillas en UI (follow-up)
+  // UI helpers
   function showTemplatesUI(templates){
     const tk=qs("#toolkit"); const tabs=qs(".tabs"); const titleEl=qs("#tmpl-container h4");
     if(titleEl) titleEl.textContent = "Plantillas";
     if(tabs) tabs.style.display="flex";
     if(tk) tk.style.display="grid";
-    // Inicial WhatsApp
     qsa(".tab").forEach(x=>x.classList.remove("active"));
     const whaTab = qs('.tab[data-tab="wha"]'); if(whaTab) whaTab.classList.add("active");
     const TB=qs("#tmpl-box"); if(TB) TB.textContent=fillPH(templates.whatsapp);
   }
 
-  // Mostrar guion natural en UI (in-conversation)
   function showCallScriptUI(script){
     const tk=qs("#toolkit"); const tabs=qs(".tabs"); const titleEl=qs("#tmpl-container h4");
     if(titleEl) titleEl.textContent = "Guion de llamada";
     if(tabs) tabs.style.display="none";
     if(tk) tk.style.display="grid";
-    const TB=qs("#tmpl-box"); if(TB) TB.textContent=script;
+    const TB=qs("#tmpl-box"); if(TB) TB.textContent=fillPH(script);
   }
 
   // Segunda ronda
@@ -568,7 +599,7 @@ ${S.lastFrase||"-"}`;
         pregunta:"Segunda ronda",
         eleccion:"Contra-respuesta: " + input
       });
-      if(pack && (pack.frase_poder || pack.potenciador_cognitivo?.frase_de_poder)){
+      if(pack){
         S.pack = sanitizePackLocal(pack);
         qs("#esc-answer").innerHTML = renderWow(S.pack);
 
@@ -582,7 +613,7 @@ ${S.lastFrase||"-"}`;
 
         renderPhrases(S.pack, sc || { title: scTitle, type: scType });
 
-        const micro=S.pack.micro_accion;
+        const micro=getMicro(S.pack);
         if(micro) qs("#micro").value = fillPH(micro);
 
         out.textContent = `Actualizado.\n\nFrase de poder:\n${S.lastFrase}\n\nSugerencia:\n${fillPH(micro||'—')}`;

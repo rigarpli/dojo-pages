@@ -94,8 +94,19 @@
     return out;
   }
   function sanitizeStr(t){ return cleanTextLocal(fillPH(t||"")); }
-  function esc(s){ return (s||"").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]); }
-
+  function esc(s){
+s = s || "";
+return s.replace(/[&<>"']/g, function(ch){
+switch (ch) {
+case "&": return "&";
+case "<": return "<";
+case ">": return ">";
+case '"': return """;
+case "'": return "'";
+default: return ch;
+}
+});
+}
   async function ai(payload){
     const r=await fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
     if(!r.ok) throw new Error("IA");

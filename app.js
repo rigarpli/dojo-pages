@@ -143,7 +143,7 @@
   function shouldConfirmBack(){ return (currentStep==="p4"||currentStep==="p5") && !!S.pack; }
   function goBack(){ if(shouldConfirmBack()){ if(!confirm("¿Volver al paso anterior? Perderá el foco de este escenario. Sus resultados no se guardan aquí.")) return; } if(historySteps.length<=1) return; historySteps.pop(); const prev = historySteps[historySteps.length-1]||"p0"; go(prev); }
 
-  // FAB “Guía”
+  // FAB "Guía"
   function ensureGuideFab(){
     const card = document.querySelector("#dojoApp .card");
     if (!card) return;
@@ -222,21 +222,22 @@
   function wireEvents(){
     ensureGuideFab();
 
-    // Botón de inicio (listener directo)
+    // Botón de inicio (listener directo) - CORRECCIÓN PRINCIPAL
     const startBtn = qs("#start");
     if(startBtn){
-      startBtn.addEventListener("click", startFlow);
+      startBtn.addEventListener("click", (e) => {
+        e.preventDefault(); // Prevenir comportamiento por defecto
+        e.stopPropagation(); // Detener propagación
+        startFlow();
+      });
     }
 
-    // Delegación global: rescate si el listener directo no se ató
+    // Delegación global: para todos los demás eventos
     document.addEventListener("click", (e)=>{
       const t=e.target;
 
-      // Rescate del botón de inicio
-      if (t.closest && t.closest("#start")) {
-        startFlow();
-        return;
-      }
+      // CORRECCIÓN: Eliminado el rescate del botón de inicio ya que está manejado arriba
+      // El botón de inicio ya tiene su propio listener específico
 
       if(t.closest("#btn-back")) { goBack(); }
       else if(t.closest("#btn-guide-fab")) { nav("p8"); }
@@ -602,12 +603,12 @@ ${S.lastFrase||"-"}`;
   }
 
   function composeTemplatesFromPack(pack, scTitle, tipo, estilo){
-    // Si el Worker trae “Aplicarlo ahora”, úsalo
+    // Si el Worker trae "Aplicarlo ahora", úsalo
     const aa = pack?.aplicarlo_ahora || null;
     if(aa){
       return {
         whatsapp: sanitizeStr(aa.whatsapp||""),
-        emailSubject: sanitizeStr(aa.email_subject||`Sobre “${scTitle}”`),
+        emailSubject: sanitizeStr(aa.email_subject||`Sobre "${scTitle}"`),
         emailBody: sanitizeStr(aa.email_body||""),
         call: sanitizeStr(aa.call||""),
         frase: sanitizeStr(getFrasePoder(pack)),
@@ -636,7 +637,7 @@ ${S.lastFrase||"-"}`;
     ].join("\n");
     wa = applyTone("wha", wa, estilo||"");
 
-    const subj = `Sobre “${scTitle}”`;
+    const subj = `Sobre "${scTitle}"`;
     let eb = [
       "Hola {CLIENTE},",
       frase,

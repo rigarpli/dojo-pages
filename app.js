@@ -1,4 +1,4 @@
-// build: dojo-app WOW v2.2 — FIXED — 2025-10-22
+// build: dojo-app WOW v2.2 — FIXED v2 — 2025-10-22
 
 (function(){
   "use strict";
@@ -21,7 +21,7 @@
   // ===== Utils base =====
   const qs=(s,sc=document)=>sc.querySelector(s);
   const qsa=(s,sc=document)=>Array.from(sc.querySelectorAll(s));
-  const esc=(s)=> (s||"").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]);
+  const esc=(s)=> (s||"").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 
   const progress=(id)=>{
     const map={p0:0,p1:1,p2:2,p3:3,p4:4,p5:5,p8:8,p9:9};
@@ -382,53 +382,63 @@
         roundTwo();
       }
       else if(t.closest("#to-p5")){
-        qs("#p5-frase").textContent = S.lastFrase || "Aún no se ha generado la frase activadora.";
+        const frase = qs("#p5-frase");
+        if(frase) frase.textContent = S.lastFrase || "Aún no se ha generado la frase activadora.";
         const micro=(S.pack && (getMicro(S.pack)))||"";
-        if(micro) qs("#micro").value = fillPH(micro);
+        const microInput = qs("#micro");
+        if(microInput && micro) microInput.value = fillPH(micro);
         nav("p5");
       }
       else if(t.closest("#btn-wa")){
+        const escTitle = qs('#esc-title');
+        const microInput = qs('#micro');
         const msg = `Dojo de Polizar — ${S.areaTitle}
-Escenario: ${qs('#esc-title').textContent}
+Escenario: ${escTitle ? escTitle.textContent : "-"}
 Estilo: ${S.estilo||"-"}
 Cliente: ${S.cliente||"-"}
 
 Micro‑acción:
-${(qs('#micro')?.value||'________')}
+${(microInput?.value||'________')}
 
 Frase activadora:
 ${S.lastFrase||"-"}`;
         window.open("https://wa.me/?text="+encodeURIComponent(msg),"_blank");
       }
       else if(t.closest("#p5-copy")){
+        const escTitle = qs('#esc-title');
+        const microInput = qs('#micro');
         const txt = `Dojo de Polizar — ${S.areaTitle}
-Escenario: ${qs('#esc-title').textContent}
+Escenario: ${escTitle ? escTitle.textContent : "-"}
 Estilo: ${S.estilo||"-"}
 Cliente: ${S.cliente||"-"}
 
 Micro‑acción:
-${(qs('#micro')?.value||'________')}
+${(microInput?.value||'________')}
 
 Frase activadora:
 ${S.lastFrase||"-"}`;
         copy(txt);
       }
       else if(t.closest("#p5-dl")){
+        const escTitle = qs('#esc-title');
+        const microInput = qs('#micro');
         const txt = `Dojo de Polizar — ${S.areaTitle}
-Escenario: ${qs('#esc-title').textContent}
+Escenario: ${escTitle ? escTitle.textContent : "-"}
 Estilo: ${S.estilo||"-"}
 Cliente: ${S.cliente||"-"}
 
 Micro‑acción:
-${(qs('#micro')?.value||'________')}
+${(microInput?.value||'________')}
 
 Frase activadora:
 ${S.lastFrase||"-"}`;
         downloadTxt("dojo-"+slug(S.areaId||'area')+"-"+slug(S.scenId||'escenario')+"-resumen.txt", txt);
       }
       else if(t.closest("#finish")){
-        qs("#thanks-name").textContent = S.nombre || "Pro";
-        qs("#thanks-area").textContent = S.areaTitle || "su área";
+        const thanksName = qs("#thanks-name");
+        const thanksArea = qs("#thanks-area");
+        if(thanksName) thanksName.textContent = S.nombre || "Pro";
+        if(thanksArea) thanksArea.textContent = S.areaTitle || "su área";
         nav("p9");
       }
     });
@@ -488,9 +498,12 @@ ${S.lastFrase||"-"}`;
     const sc=getScenarioById(sid);
     if(!sc){ nav("p3"); return; }
 
-    qs("#esc-badge").textContent="Escenario — " + (S.areaTitle||"");
-    qs("#esc-title").textContent=sc.title;
-    qs("#esc-question").textContent= sc.question || ("Cliente: " + sc.title + ". ¿Cómo responde?");
+    const escBadge = qs("#esc-badge");
+    const escTitle = qs("#esc-title");
+    const escQuestion = qs("#esc-question");
+    if(escBadge) escBadge.textContent="Escenario — " + (S.areaTitle||"");
+    if(escTitle) escTitle.textContent=sc.title;
+    if(escQuestion) escQuestion.textContent= sc.question || ("Cliente: " + sc.title + ". ¿Cómo responde?");
 
     const box=qs("#esc-options"); if(!box) return; box.innerHTML="";
     const jugadas = ["Lógica","Empática","Estratégica","Proactiva"];
@@ -500,9 +513,12 @@ ${S.lastFrase||"-"}`;
       box.appendChild(b);
     });
 
-    qs("#esc-answer").style.display="none";
-    qs("#toolkit").style.display="none";
-    qs("#esc-continue").style.display="none";
+    const escAnswer = qs("#esc-answer");
+    const toolkit = qs("#toolkit");
+    const escContinue = qs("#esc-continue");
+    if(escAnswer) escAnswer.style.display="none";
+    if(toolkit) toolkit.style.display="none";
+    if(escContinue) escContinue.style.display="none";
   }
 
   function getScenarioById(id){ return ((S.content&&S.content.scenarios)||[]).find(x=>x.areaId===S.areaId && x.id===id); }
@@ -511,7 +527,10 @@ ${S.lastFrase||"-"}`;
   // ===== Lógica de IA (WOW) =====
   async function runPlay(sc, jugadaLabel){
     const ans=qs("#esc-answer");
-    ans.style.display="block"; ans.innerHTML=`<p class="muted">Generando su guía…</p>`;
+    if(ans) {
+      ans.style.display="block"; 
+      ans.innerHTML=`<p class="muted">Generando su guía…</p>`;
+    }
     try{
       const pack = await ai({
         nombre: S.nombre||"Pro",
@@ -523,17 +542,18 @@ ${S.lastFrase||"-"}`;
         eleccion: jugadaLabel
       });
       S.pack = sanitizePackLocal(pack);
-      ans.innerHTML = renderWow(S.pack);
+      if(ans) ans.innerHTML = renderWow(S.pack);
 
       const type = sc.type || "in-conversation";
       S.templates = composeTemplatesFromPack(S.pack, sc.title, type, S.estilo);
       showTemplatesUI(S.templates, type);
 
       renderPhrases(S.pack, sc);
-      qs("#esc-continue").style.display="block";
+      const escContinue = qs("#esc-continue");
+      if(escContinue) escContinue.style.display="block";
       scrollTop();
     }catch(e){
-      ans.innerHTML=`<p class="muted">No pudimos conectar con la IA ahora. Intente de nuevo en unos segundos.</p>`;
+      if(ans) ans.innerHTML=`<p class="muted">No pudimos conectar con la IA ahora. Intente de nuevo en unos segundos.</p>`;
     }
   }
 
@@ -821,7 +841,8 @@ ${S.lastFrase||"-"}`;
     out.textContent="Pensando con usted…";
 
     const sc=getCurrentScenario();
-    const scTitle=sc?.title || qs("#esc-title")?.textContent || "";
+    const escTitle = qs("#esc-title");
+    const scTitle=sc?.title || (escTitle ? escTitle.textContent : "") || "";
     const scType = sc?.type || "in-conversation";
 
     try{
@@ -836,7 +857,8 @@ ${S.lastFrase||"-"}`;
       });
       if(pack){
         S.pack = sanitizePackLocal(pack);
-        qs("#esc-answer").innerHTML = renderWow(S.pack);
+        const escAnswer = qs("#esc-answer");
+        if(escAnswer) escAnswer.innerHTML = renderWow(S.pack);
 
         S.templates = composeTemplatesFromPack(S.pack, scTitle, scType, S.estilo);
         showTemplatesUI(S.templates, scType);
@@ -844,7 +866,8 @@ ${S.lastFrase||"-"}`;
         renderPhrases(S.pack, sc || { title: scTitle, type: scType });
 
         const micro=getMicro(S.pack);
-        if(micro) qs("#micro").value = fillPH(micro);
+        const microInput = qs("#micro");
+        if(microInput && micro) microInput.value = fillPH(micro);
 
         out.textContent = `Actualizado.\n\nFrase activadora:\n${S.lastFrase}\n\nSugerencia:\n${fillPH(micro||'—')}`;
       }else{
@@ -859,23 +882,12 @@ ${S.lastFrase||"-"}`;
   function wireBase(){
     console.log("🎬 Iniciando Dojo de Polizar...");
     wireEvents();
-    setStartState(true);
     
-    // NO cargar contenido automáticamente al inicio
-    // Solo cargar cuando el usuario haga click
-    console.log("⏸️ Esperando acción del usuario para cargar contenido");
+    // Cargar contenido inmediatamente
+    console.log("📦 Cargando contenido al inicio...");
+    startFetchContent();
     
     go("p0");
-    
-    // Habilitar el botón para que el usuario pueda hacer click
-    setTimeout(() => {
-      const startBtn = qs("#start");
-      if(startBtn) {
-        startBtn.disabled = false;
-        startBtn.textContent = "Entrar al Dojo";
-        console.log("✅ Botón habilitado y listo");
-      }
-    }, 100);
   }
   
   console.log("📄 Script cargado, esperando DOM...");

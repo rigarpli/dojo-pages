@@ -1,4 +1,4 @@
-// build: dojo-app WOW v2.1 — Epifanías + botones sólidos + follow-up blindado — 2025-10-22
+// build: dojo-app WOW v2.2 — start sólido + delegación #start + follow-up blindado — 2025-10-22
 
 (function(){
   "use strict";
@@ -38,7 +38,7 @@
     const a=document.createElement("textarea");
     a.value=t; a.style.position="fixed"; a.style.left="-9999px";
     document.body.appendChild(a); a.select();
-    try{document.execCommand("copy"); alert("Copiado");}catch(e){alert("No se pudo copiar")}
+    try{document.execCommand("copy"); alert("Copiado")}catch(e){alert("No se pudo copiar")}
     document.body.removeChild(a);
   }
   function share(t,title){
@@ -186,6 +186,26 @@
       });
   }
 
+  // ===== Start Flow (reutilizable) =====
+  function startFlow(){
+    S.nombre=(qs("#nombre")?.value||"").trim();
+    S.cliente=(qs("#cliente")?.value||"").trim();
+    nav("p1");
+    if (!contentReady) {
+      showAreasLoading();
+      setStartState(true);
+      const onReady = ()=>{
+        setStartState(false);
+        buildAreas();
+        window.removeEventListener("dojo:contentReady", onReady);
+      };
+      window.addEventListener("dojo:contentReady", onReady);
+      startFetchContent();
+      return;
+    }
+    buildAreas();
+  }
+
   // ===== Wire de eventos =====
   function setStartState(loading){
     const startBtn = qs("#start");
@@ -202,32 +222,21 @@
   function wireEvents(){
     ensureGuideFab();
 
-    // Botón de inicio: siempre responde
+    // Botón de inicio (listener directo)
     const startBtn = qs("#start");
     if(startBtn){
-      startBtn.addEventListener("click", ()=>{
-        S.nombre=(qs("#nombre")?.value||"").trim();
-        S.cliente=(qs("#cliente")?.value||"").trim();
-        nav("p1");
-        if (!contentReady) {
-          showAreasLoading();
-          setStartState(true);
-          const onReady = ()=>{
-            setStartState(false);
-            buildAreas();
-            window.removeEventListener("dojo:contentReady", onReady);
-          };
-          window.addEventListener("dojo:contentReady", onReady);
-          startFetchContent();
-          return;
-        }
-        buildAreas();
-      });
+      startBtn.addEventListener("click", startFlow);
     }
 
-    // Delegación de clicks global
+    // Delegación global: rescate si el listener directo no se ató
     document.addEventListener("click", (e)=>{
       const t=e.target;
+
+      // Rescate del botón de inicio
+      if (t.closest && t.closest("#start")) {
+        startFlow();
+        return;
+      }
 
       if(t.closest("#btn-back")) { goBack(); }
       else if(t.closest("#btn-guide-fab")) { nav("p8"); }
@@ -351,7 +360,7 @@ ${S.lastFrase||"-"}`;
     document.addEventListener("keydown",(e)=>{
       const a=document.activeElement;
       const typing=a && (a.tagName==="INPUT"||a.tagName==="TEXTAREA"||a.isContentEditable);
-      if(e.key==="Enter"&&(a?.id==="nombre"||a?.id==="cliente")){ e.preventDefault(); const st=qs("#start"); if(st) st.click(); }
+      if(e.key==="Enter"&&(a?.id==="nombre"||a?.id==="cliente")){ e.preventDefault(); startFlow(); }
       if(e.key==="Enter" && a?.id==="rr-text"){ e.preventDefault(); const g=qs("#rr-generate"); if(g) g.click(); }
       if(e.key==="Escape" && !typing){ e.preventDefault(); goBack(); }
     });
@@ -443,7 +452,7 @@ ${S.lastFrase||"-"}`;
     }
   }
 
-  // ===== Potenciador / principios locales (fallback seguro) =====
+  // ===== Fallback de principios — mantiene Potenciador siempre =====
   function ensurePrincipiosLocal(p){
     p.principios_potenciados = p.principios_potenciados || {};
     if(!p.principios_potenciados.regla && p.potenciador_cognitivo?.concepto_nuclear){
@@ -478,7 +487,7 @@ ${S.lastFrase||"-"}`;
     return clone;
   }
 
-  // Render WOW (epifanía) — muestra La Revelación, Principio y Principios Potenciados + extras si vienen
+  // Render WOW (epifanía) — muestra Revelación, Principio y Potenciador + extras si vienen
   function renderWow(p){
     const titulo = esc(sanitizeStr(p.titulo_estrategia || "Estrategia"));
     const revelacion = esc(sanitizeStr(p.la_revelacion || ""));
@@ -487,13 +496,13 @@ ${S.lastFrase||"-"}`;
     const como = esc(sanitizeStr(p.principios_potenciados?.como_potencia || ""));
     const fraseAct = esc(sanitizeStr(p.principios_potenciados?.frase_activadora || p.potenciador_cognitivo?.frase_de_poder || ""));
     const mini = esc(sanitizeStr(p.principios_potenciados?.mini_evidencia || ""));
+    const pd = esc(sanitizeStr(p.pregunta_detonante || ""));
+    const senal = esc(sanitizeStr(p.senal_a_detectar || p.senal || ""));
+    const rae = esc(sanitizeStr(p.riesgo_a_evitar || ""));
+    const mdec = Array.isArray(p.micro_decisiones) ? p.micro_decisiones.map(x=>esc(sanitizeStr(x))) : [];
     const espejo = esc(sanitizeStr(p.espejo_sin_juicio || p.espejo || ""));
     const micro = esc(sanitizeStr(p.micro_ajuste || ""));
     const re15 = esc(sanitizeStr(p.reescritura_15s || p.reescritura || ""));
-    const senal = esc(sanitizeStr(p.senal_a_detectar || p.senal || ""));
-    const pd = esc(sanitizeStr(p.pregunta_detonante || ""));
-    const rae = esc(sanitizeStr(p.riesgo_a_evitar || ""));
-    const mdec = Array.isArray(p.micro_decisiones) ? p.micro_decisiones.map(x=>esc(sanitizeStr(x))) : [];
     const score = typeof p.score==="number" ? String(Math.round(p.score*10)/10) : "";
     const metrica = esc(sanitizeStr(p.metrica_clave || ""));
 
@@ -521,7 +530,7 @@ ${S.lastFrase||"-"}`;
     return html;
   }
 
-  // ===== Motor de cierres y tono (para follow-up o fallback) =====
+  // ===== Motor de plantillas (solo follow-up) =====
   function norm(s){ return (s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\s+/g," ").trim(); }
   function contains(text, snippet){ return norm(text).includes(norm(snippet)); }
   function seedInt(str){ let h=0; for(let i=0;i<str.length;i++){ h=((h<<5)-h)+str.charCodeAt(i); h|=0; } return Math.abs(h); }
@@ -606,12 +615,12 @@ ${S.lastFrase||"-"}`;
       };
     }
 
-    // Si in-conversation: no mostrar plantillas
     if (tipo !== "follow-up") {
+      // In-conversation: no plantillas
       return { whatsapp:"", emailSubject:"", emailBody:"", call:"", frase:getFrasePoder(pack), micro:getMicro(pack) };
     }
 
-    // Fallback: componer de forma segura
+    // Fallback seguro
     const frase = sanitizeStr(getFrasePoder(pack));
     const micro = sanitizeStr(getMicro(pack));
     const seed = seedInt((S.scenId||"")+":"+(pack.titulo_estrategia||"")+":"+(S.estilo||""));
@@ -705,14 +714,13 @@ ${S.lastFrase||"-"}`;
       titleEl.textContent = "Aplicarlo ahora";
       tabs.style.display="flex";
       tmpl.style.display="block";
-      // Mostrar WhatsApp por defecto
       qsa(".tab").forEach(x=>x.classList.remove("active"));
       const whaTab = qs('.tab[data-tab="wha"]'); if(whaTab){ whaTab.style.display="inline-flex"; whaTab.classList.add("active"); }
       const emlTab = qs('.tab[data-tab="eml"]'); if(emlTab) emlTab.style.display="inline-flex";
       const callTab = qs('.tab[data-tab="call"]'); if(callTab) callTab.style.display="inline-flex";
       TB.textContent = fillPH(templates.whatsapp||"");
     }else{
-      // In-conversation: no plantillas ni guion, solo segunda ronda + frases
+      // In-conversation: no plantillas
       tabs.style.display="none";
       tmpl.style.display="none";
       TB.textContent = "";
@@ -766,13 +774,9 @@ ${S.lastFrase||"-"}`;
   function wireBase(){
     wireEvents();
     setStartState(true);
-    startFetchContent();
+    startFetchContent(); // dispara la carga apenas abre
     go("p0");
   }
-
-  // Helpers de vistas
-  function getFraseSafe(){ return sanitizeStr(getFrasePoder(S.pack||{})); }
-
   wireBase();
 
 })();

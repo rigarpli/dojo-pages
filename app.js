@@ -809,28 +809,43 @@ ${S.lastFrase||"-"}`;
   }
 
   function showTemplatesUI(templates, type){
-    const tk=qs("#toolkit"); const tabs=qs(".tabs"); const titleEl=qs("#tmpl-container h4"); const tmpl=qs("#tmpl-container"); const TB=qs("#tmpl-box");
+    const tk=qs("#toolkit"); 
+    const tabs=qs(".tabs"); 
+    const titleEl=qs("#tmpl-container h4"); 
+    const tmpl=qs("#tmpl-container"); 
+    const TB=qs("#tmpl-box");
+    
     if(!tk || !tabs || !titleEl || !tmpl || !TB) return;
 
-    // Mostrar toolkit
+    // SIEMPRE mostrar toolkit y plantillas (CAMBIO CRÍTICO)
     tk.style.display = "grid";
-
-    if(type==="follow-up"){
-      titleEl.textContent = "Aplicarlo ahora";
-      tabs.style.display="flex";
-      tmpl.style.display="block";
-      qsa(".tab").forEach(x=>x.classList.remove("active"));
-      const whaTab = qs('.tab[data-tab="wha"]'); if(whaTab){ whaTab.style.display="inline-flex"; whaTab.classList.add("active"); }
-      const emlTab = qs('.tab[data-tab="eml"]'); if(emlTab) emlTab.style.display="inline-flex";
-      const callTab = qs('.tab[data-tab="call"]'); if(callTab) callTab.style.display="inline-flex";
-      TB.textContent = fillPH(templates.whatsapp||"");
-    }else{
-      // In-conversation: no plantillas
-      tabs.style.display="none";
-      tmpl.style.display="none";
-      TB.textContent = "";
+    titleEl.textContent = "Aplicarlo ahora";
+    tabs.style.display="flex";
+    tmpl.style.display="block";
+    
+    // Resetear tabs
+    qsa(".tab").forEach(x=>x.classList.remove("active"));
+    
+    // Activar WhatsApp por defecto
+    const whaTab = qs('.tab[data-tab="wha"]'); 
+    if(whaTab){ 
+      whaTab.style.display="inline-flex"; 
+      whaTab.classList.add("active"); 
     }
-  }
+    
+    const emlTab = qs('.tab[data-tab="eml"]'); 
+    if(emlTab) emlTab.style.display="inline-flex";
+    
+    const callTab = qs('.tab[data-tab="call"]'); 
+    if(callTab) callTab.style.display="inline-flex";
+    
+    // Mostrar contenido de plantillas
+    if(templates.whatsapp || templates.emailBody || templates.call) {
+      TB.textContent = fillPH(templates.whatsapp||"");
+    } else {
+      TB.textContent = "Generando plantillas...";
+    }
+}
 
   // Segunda ronda
   async function roundTwo(){

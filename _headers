@@ -1,0 +1,11 @@
+/*.js
+Content-Type: application/javascript; charset=utf-8
+X-Content-Type-Options: nosniff
+
+/*.css
+Content-Type: text/css; charset=utf-8
+X-Content-Type-Options: nosniff
+
+/*.json
+Content-Type: application/json; charset=utf-8
+X-Content-Type-Options: nosniff

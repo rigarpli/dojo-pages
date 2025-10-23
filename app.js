@@ -1,7 +1,9 @@
-// build: dojo-app WOW v2.2 — start sólido + delegación #start + follow-up blindado — 2025-10-22
+// build: dojo-app WOW v2.2 — FIXED — 2025-10-22
 
 (function(){
   "use strict";
+
+  console.log("🚀 Dojo iniciando...");
 
   // Ajusta este endpoint si usas otro Worker
   const API = "https://index.rgarciaplicet.workers.dev/";
@@ -110,8 +112,15 @@
   // ===== Nav / visibilidad =====
   let currentStep="p0", historySteps=["p0"];
   function go(id){
+    console.log("📍 Navegando a:", id);
     qsa(".step").forEach(x=>x.classList.remove("active"));
-    const stepEl=qs("#"+id); if(stepEl) stepEl.classList.add("active");
+    const stepEl=qs("#"+id); 
+    if(stepEl) {
+      stepEl.classList.add("active");
+      console.log("✅ Step activado:", id);
+    } else {
+      console.error("❌ No se encontró el step:", id);
+    }
 
     currentStep=id; progress(id);
     const root=qs("#dojoApp"); if(root) window.scrollTo({top:root.offsetTop-10,behavior:"smooth"});
@@ -165,79 +174,145 @@
   }
 
   function startFetchContent(){
-    if (contentFetching) return;
+    console.log("📦 Iniciando carga de contenido...");
+    console.log("   - contentFetching:", contentFetching);
+    console.log("   - contentReady:", contentReady);
+    console.log("   - CONTENT_URL:", CONTENT_URL);
+    
+    if (contentReady) {
+      console.log("✅ Contenido ya está listo");
+      return Promise.resolve();
+    }
+    
+    if (contentFetching) {
+      console.log("⏳ Ya se está cargando el contenido");
+      return Promise.resolve();
+    }
+    
     contentFetching = true;
-    fetch(CONTENT_URL)
-      .then(r=>{ if(!r.ok) throw new Error("content"); return r.json(); })
+    console.log("🔄 Fetching:", CONTENT_URL);
+    
+    return fetch(CONTENT_URL)
+      .then(r=>{ 
+        console.log("📡 Respuesta recibida:", r.status);
+        if(!r.ok) throw new Error("content"); 
+        return r.json(); 
+      })
       .then(data=>{
+        console.log("✅ Contenido cargado:", data);
         S.content = data;
         contentReady = true;
+        contentFetching = false;
         if (currentStep === "p1") buildAreas();
         window.dispatchEvent(new Event("dojo:contentReady"));
       })
-      .catch(()=>{
+      .catch((err)=>{
+        console.error("❌ Error cargando contenido:", err);
         const grid=qs("#areas-grid");
         if(grid) grid.innerHTML = `<div class="fb"><p class="muted">No se pudo cargar el contenido. Verifique content.${plan}.json en la raíz.</p></div>`;
         contentReady = false;
+        contentFetching = false;
       })
       .finally(()=>{
         const startBtn = qs("#start");
-        if(startBtn){ startBtn.disabled = false; startBtn.textContent = "Entrar al Dojo"; }
+        if(startBtn){ 
+          startBtn.disabled = false; 
+          startBtn.textContent = "Entrar al Dojo"; 
+          console.log("🔘 Botón habilitado");
+        }
       });
   }
 
   // ===== Start Flow (reutilizable) =====
   function startFlow(){
-    S.nombre=(qs("#nombre")?.value||"").trim();
-    S.cliente=(qs("#cliente")?.value||"").trim();
-    nav("p1");
-    if (!contentReady) {
-      showAreasLoading();
-      setStartState(true);
-      const onReady = ()=>{
-        setStartState(false);
+    console.log("🎯 startFlow() ejecutado");
+    
+    try {
+      S.nombre=(qs("#nombre")?.value||"").trim();
+      S.cliente=(qs("#cliente")?.value||"").trim();
+      console.log("👤 Nombre:", S.nombre || "(vacío)");
+      console.log("👥 Cliente:", S.cliente || "(vacío)");
+      
+      console.log("🚀 Intentando navegar a p1...");
+      nav("p1");
+      
+      if (!contentReady) {
+        console.log("⏳ Contenido no está listo, mostrando loading...");
+        showAreasLoading();
+        setStartState(true);
+        
+        const onReady = ()=>{
+          console.log("✅ Contenido listo (evento)");
+          setStartState(false);
+          buildAreas();
+          window.removeEventListener("dojo:contentReady", onReady);
+        };
+        
+        window.addEventListener("dojo:contentReady", onReady);
+        startFetchContent();
+      } else {
+        console.log("✅ Contenido listo, construyendo áreas...");
         buildAreas();
-        window.removeEventListener("dojo:contentReady", onReady);
-      };
-      window.addEventListener("dojo:contentReady", onReady);
-      startFetchContent();
-      return;
+      }
+    } catch(error) {
+      console.error("❌ Error en startFlow:", error);
     }
-    buildAreas();
   }
 
   // ===== Wire de eventos =====
   function setStartState(loading){
     const startBtn = qs("#start");
-    if(!startBtn) return;
+    if(!startBtn) {
+      console.error("❌ Botón #start no encontrado");
+      return;
+    }
     if(loading){
       startBtn.disabled = true;
       startBtn.textContent = "Cargando…";
+      console.log("🔘 Botón deshabilitado (cargando)");
     }else{
       startBtn.disabled = false;
       startBtn.textContent = "Entrar al Dojo";
+      console.log("🔘 Botón habilitado");
     }
   }
 
   function wireEvents(){
+    console.log("🔌 Conectando eventos...");
     ensureGuideFab();
 
-    // Botón de inicio (listener directo) - CORRECCIÓN PRINCIPAL
-    const startBtn = qs("#start");
-    if(startBtn){
-      startBtn.addEventListener("click", (e) => {
-        e.preventDefault(); // Prevenir comportamiento por defecto
-        e.stopPropagation(); // Detener propagación
-        startFlow();
-      });
+    // ESPERAR A QUE EL DOM ESTÉ LISTO
+    const setupStartButton = () => {
+      const startBtn = qs("#start");
+      if(startBtn){
+        console.log("✅ Botón #start encontrado, agregando listener");
+        startBtn.addEventListener("click", (e) => {
+          console.log("🖱️ Click en botón start");
+          e.preventDefault();
+          e.stopPropagation();
+          startFlow();
+        });
+        
+        // Verificar que el botón no esté deshabilitado involuntariamente
+        if (startBtn.disabled && startBtn.textContent === "Entrar al Dojo") {
+          console.log("⚠️ Botón estaba deshabilitado, habilitando...");
+          startBtn.disabled = false;
+        }
+      } else {
+        console.error("❌ Botón #start NO encontrado");
+      }
+    };
+
+    // Asegurar que el DOM esté listo
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', setupStartButton);
+    } else {
+      setupStartButton();
     }
 
-    // Delegación global: para todos los demás eventos
+    // Delegación global para otros eventos
     document.addEventListener("click", (e)=>{
       const t=e.target;
-
-      // CORRECCIÓN: Eliminado el rescate del botón de inicio ya que está manejado arriba
-      // El botón de inicio ya tiene su propio listener específico
 
       if(t.closest("#btn-back")) { goBack(); }
       else if(t.closest("#btn-guide-fab")) { nav("p8"); }
@@ -369,8 +444,16 @@ ${S.lastFrase||"-"}`;
 
   // ===== Vistas =====
   function buildAreas(){
-    const grid=qs("#areas-grid"); if(!grid) return; grid.innerHTML="";
+    console.log("🏗️ Construyendo áreas...");
+    const grid=qs("#areas-grid"); 
+    if(!grid) {
+      console.error("❌ No se encontró #areas-grid");
+      return;
+    }
+    grid.innerHTML="";
     const areas = (S.content && S.content.areas) ? S.content.areas : [];
+    console.log("📋 Áreas encontradas:", areas.length);
+    
     if(!areas.length){
       grid.innerHTML = `<div class="fb"><p class="muted">No hay áreas disponibles.</p></div>`;
       return;
@@ -381,6 +464,7 @@ ${S.lastFrase||"-"}`;
       d.innerHTML=`<div class="area-title">${esc(a.title)}</div><p class="area-desc">${esc(a.desc||"")}</p><div class="group"><button class="btn primary" data-area="${esc(a.id)}" type="button">Entrar</button></div>`;
       grid.appendChild(d);
     });
+    console.log("✅ Áreas construidas");
   }
 
   function buildScenarios(){
@@ -773,11 +857,34 @@ ${S.lastFrase||"-"}`;
 
   // ===== Arranque =====
   function wireBase(){
+    console.log("🎬 Iniciando Dojo de Polizar...");
     wireEvents();
     setStartState(true);
-    startFetchContent(); // dispara la carga apenas abre
+    
+    // NO cargar contenido automáticamente al inicio
+    // Solo cargar cuando el usuario haga click
+    console.log("⏸️ Esperando acción del usuario para cargar contenido");
+    
     go("p0");
+    
+    // Habilitar el botón para que el usuario pueda hacer click
+    setTimeout(() => {
+      const startBtn = qs("#start");
+      if(startBtn) {
+        startBtn.disabled = false;
+        startBtn.textContent = "Entrar al Dojo";
+        console.log("✅ Botón habilitado y listo");
+      }
+    }, 100);
   }
-  wireBase();
+  
+  console.log("📄 Script cargado, esperando DOM...");
+  
+  // Esperar a que el DOM esté completamente listo
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', wireBase);
+  } else {
+    wireBase();
+  }
 
 })();

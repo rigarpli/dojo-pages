@@ -524,47 +524,54 @@ ${S.lastFrase||"-"}`;
   }
 
   // Render WOW
-  function renderWow(p){
-    const titulo = esc(p.titulo_estrategia || "Estrategia");
-    const revelacion = esc(p.la_revelacion || "");
-    const principio = esc(p.el_principio || "");
-    const regla = esc(p.principios_potenciados?.regla || p.potenciador_cognitivo?.concepto_nuclear || "");
-    const como = esc(p.principios_potenciados?.como_potencia || "");
-    const fraseAct = esc(p.principios_potenciados?.frase_activadora || p.potenciador_cognitivo?.frase_de_poder || "");
-    const mini = esc(p.principios_potenciados?.mini_evidencia || "");
-    const pd = esc(p.pregunta_detonante || "");
-    const senal = esc(p.senal_a_detectar || p.senal || "");
-    const rae = esc(p.riesgo_a_evitar || "");
-    const mdec = Array.isArray(p.micro_decisiones) ? p.micro_decisiones.map(x=>esc(x)) : [];
-    const espejo = esc(p.espejo_sin_juicio || p.espejo || "");
-    const micro = esc(p.micro_ajuste || "");
-    const re15 = esc(p.reescritura_15s || p.reescritura || "");
-    const score = typeof p.score==="number" ? String(Math.round(p.score*10)/10) : "";
-    const metrica = esc(p.metrica_clave || "");
-
-    let html=`<h3>${titulo}</h3>`;
-    if(revelacion) html += `<div class="fb-sec"><div class="sec-title">Revelación</div><p>${revelacion}</p></div>`;
-    if(principio) html += `<div class="fb-sec"><div class="sec-title">Principio</div><p>${principio}</p></div>`;
-
-    html += `<div class="fb-sec"><div class="sec-title">Potenciador Cognitivo</div>`;
-    if(regla) html += `<p><strong>Regla:</strong> ${regla}</p>`;
-    if(como) html += `<p><strong>Cómo potencia tu jugada:</strong> ${como}</p>`;
-    if(fraseAct) html += `<p><strong>Frase activadora:</strong> ${fraseAct}</p>`;
-    if(mini) html += `<p><strong>Mini‑evidencia:</strong> ${mini}</p>`;
-    html += `</div>`;
-
-    if(pd) html += `<div class="fb-sec"><div class="sec-title">Pregunta detonante</div><p>${pd}</p></div>`;
-    if(senal) html += `<div class="fb-sec"><div class="sec-title">Señal a detectar</div><p>${senal}</p></div>`;
-    if(rae) html += `<div class="fb-sec"><div class="sec-title">Riesgo a evitar</div><p>${rae}</p></div>`;
-    if(mdec.length) html += `<div class="fb-sec"><div class="sec-title">Micro‑decisiones</div><ul>${mdec.map(x=>`<li>${x}</li>`).join("")}</ul></div>`;
-
-    if(espejo) html += `<div class="fb-sec"><div class="sec-title">Espejo (sin juicio)</div><p>${espejo}</p></div>`;
-    if(micro) html += `<div class="fb-sec"><div class="sec-title">Micro‑ajuste</div><p>${micro}</p></div>`;
-    if(re15) html += `<div class="fb-sec"><div class="sec-title">Versión 15s</div><p>${re15}</p></div>`;
-    if(score || metrica) html += `<div class="fb-sec"><div class="sec-title">Indicadores</div><p>${metrica ? `<strong>Métrica:</strong> ${metrica}`:""} ${score?` · <strong>Score:</strong> ${score}/10`:""}</p></div>`;
-
-    return html;
+  function renderWow(p) {
+  // SOLO 5 SECCIONES QUE IMPORTAN
+  let html = `<h3>${esc(p.tu_jugada || "Tu jugada")}</h3>`;
+  
+  // 1. La clave (el insight principal)
+  if(p.la_clave) {
+    html += `<div class="fb-sec">
+      <div class="sec-title">La clave</div>
+      <p>${esc(p.la_clave)}</p>
+    </div>`;
   }
+  
+  // 2. Frase de poder (memorable)
+  if(p.frase_poder) {
+    html += `<div class="fb-sec">
+      <div class="sec-title">Tu frase de poder</div>
+      <p style="font-size:18px;font-weight:600;color:#FF67BF">${esc(p.frase_poder)}</p>
+    </div>`;
+  }
+  
+  // 3. Plan B (si hay resistencia)
+  if(p.plan_b) {
+    html += `<div class="fb-sec">
+      <div class="sec-title">Si hay resistencia</div>
+      <p>${esc(p.plan_b)}</p>
+    </div>`;
+  }
+  
+  // 4. Dato transformador
+  if(p.dato_transformador) {
+    html += `<div class="fb-sec">
+      <div class="sec-title">Dato que cambia todo</div>
+      <p style="background:#1b2a2f;padding:10px;border-radius:8px">📊 ${esc(p.dato_transformador)}</p>
+    </div>`;
+  }
+  
+  return html;
+}
+
+// También actualizar extractTemplates para usar el nuevo formato
+function extractTemplates(pack) {
+  return pack?.aplicarlo_ahora || {
+    whatsapp: "",
+    email_subject: "",
+    email_body: "",
+    call: ""
+  };
+}
 
   function extractTemplates(pack){
     // Si el Worker envía aplicarlo_ahora, usarlo

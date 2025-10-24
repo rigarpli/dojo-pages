@@ -1,16 +1,17 @@
-// build: dojo-app WOW v2.2 — FIXED v2 — 2025-10-22
+// build: dojo-app v3.0 SEGUROS - Comunicación completa
+// CAMBIOS: Envía TODOS los datos del escenario al Worker
 
 (function(){
   "use strict";
 
-  console.log("🚀 Dojo iniciando...");
+  console.log("🚀 Dojo de Polizar v3.0 - Edición Seguros");
 
-  // Ajusta este endpoint si usas otro Worker
+  // Endpoint del Worker
   const API = "https://index.rgarciaplicet.workers.dev/";
   const plan = new URLSearchParams(location.search).get("plan") || "full";
   const CONTENT_URL = `./content.${plan}.json`;
 
-  // Estado
+  // Estado global
   const S = {
     nombre:"", cliente:"", estilo:"", areaId:"", areaTitle:"",
     scenId:"", pack:null, lastFrase:"", lastJugada:"", content:null, templates:null
@@ -58,68 +59,42 @@
   // Placeholders {CLIENTE}/{MI_NOMBRE}
   function fillPH(t){
     if(!t) return "";
-    const cli = (S.cliente && S.cliente.trim()) ? S.cliente.trim() : "cliente";
-    const yo  = (S.nombre && S.nombre.trim()) ? S.nombre.trim()  : "yo";
-    return t
-      .replace(/\{\s*CLIENTE\s*\}/gi, cli)
-      .replace(/\{\s*MI[_\s]*NOMBRE\s*\}/gi, yo);
+    const cli = (S.cliente && S.cliente.trim()) ? S.cliente.trim() : "";
+    const yo  = (S.nombre && S.nombre.trim()) ? S.nombre.trim()  : "";
+    
+    if(cli) {
+      t = t.replace(/\{\s*CLIENTE\s*\}/gi, cli);
+    } else {
+      // Si no hay nombre de cliente, eliminar referencias
+      t = t.replace(/Hola \{\s*CLIENTE\s*\},?/gi, "Hola,");
+      t = t.replace(/\{\s*CLIENTE\s*\},?/gi, "");
+    }
+    
+    if(yo) {
+      t = t.replace(/\{\s*MI[_\s]*NOMBRE\s*\}/gi, yo);
+    } else {
+      t = t.replace(/\{\s*MI[_\s]*NOMBRE\s*\}/gi, "Tu corredor");
+    }
+    
+    return t;
   }
-
-  // Saneo de lenguaje y signos — reescritura segura
-  const FRONT_RULES = [
-    { re: /\b(le|te)\s+entiendo\b/gi, to: "tiene sentido" },
-    { re: /\b(tienes que|debes|usted debe)\b/gi, to: "si le sirve" },
-    { re: /\btranquil[oa]s?\b/gi, to: "" },
-    { re: /\bno te preocupes\b/gi, to: "" },
-    { re: /\b(claramente|obvio)\b/gi, to: "" },
-    { re: /\b(y hablamos luego)\b/gi, to: "" },
-    { re: /\bculpa(s|ble|r)?\b/gi, to: "" },
-    { re: /\bno vale la pena\b/gi, to: "" },
-    { re: /\bno pierdo nada\b/gi, to: "" },
-    { re: /\bdecidimos tranquilos\b/gi, to: "decidir con claridad" }
-  ];
-  const CLOSER_RULES = [
-    { re: /\bsi no cuadra(,)? (lo )?dejamos\.?/gi, to: "Avanzamos cuando el valor quede claro; si falta, ajusto." },
-    { re: /\bsi no encaja(,)? (no )?avanzamos\.?/gi, to: "Seguimos cuando encaje con sus prioridades; si algo falta, lo ajusto." },
-    { re: /\bsi no funciona(,)? (lo )?dejamos\.?/gi, to: "Avanzamos cuando funcione para usted; si falta, lo ajusto." }
-  ];
-  function cleanTextLocal(s){
-    if(!s || typeof s!=="string") return s;
-    let out = s;
-    FRONT_RULES.forEach(r=>{ out = out.replace(r.re,r.to); });
-    CLOSER_RULES.forEach(r=>{ out = out.replace(r.re,r.to); });
-    out = out
-      .replace(/[ \t]+\n/g,"\n")
-      .replace(/[ ]{2,}/g," ")
-      .replace(/\?\./g,"?")
-      .replace(/\. \?/g,"?")
-      .replace(/([!?\.]){2,}/g,"$1")
-      .replace(/\s+([!?\.])/g,"$1")
-      .replace(/([¿¡])\s+/g,"$1")
-      .replace(/\s+([,;:])/g,"$1")
-      .trim();
-    if(out.length>2000) out = out.slice(0,1980)+"…";
-    return out;
-  }
-  function sanitizeStr(t){ return cleanTextLocal(fillPH(t||"")); }
 
   async function ai(payload){
+    console.log("📤 Enviando al Worker:", payload);
     const r=await fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
     if(!r.ok) throw new Error("IA");
-    return await r.json();
+    const response = await r.json();
+    console.log("📥 Respuesta del Worker:", response);
+    return response;
   }
 
   // ===== Nav / visibilidad =====
   let currentStep="p0", historySteps=["p0"];
   function go(id){
-    console.log("📍 Navegando a:", id);
     qsa(".step").forEach(x=>x.classList.remove("active"));
     const stepEl=qs("#"+id); 
     if(stepEl) {
       stepEl.classList.add("active");
-      console.log("✅ Step activado:", id);
-    } else {
-      console.error("❌ No se encontró el step:", id);
     }
 
     currentStep=id; progress(id);
@@ -148,6 +123,7 @@
     const guideFab = qs("#btn-guide-fab");
     if (guideFab) guideFab.style.display = (id==="p0" || id==="p1") ? "none" : "inline-flex";
   }
+  
   function nav(id){ if(id===currentStep) return; historySteps.push(id); go(id); }
   function shouldConfirmBack(){ return (currentStep==="p4"||currentStep==="p5") && !!S.pack; }
   function goBack(){ if(shouldConfirmBack()){ if(!confirm("¿Volver al paso anterior? Perderá el foco de este escenario. Sus resultados no se guardan aquí.")) return; } if(historySteps.length<=1) return; historySteps.pop(); const prev = historySteps[historySteps.length-1]||"p0"; go(prev); }
@@ -174,27 +150,18 @@
   }
 
   function startFetchContent(){
-    console.log("📦 Iniciando carga de contenido...");
-    console.log("   - contentFetching:", contentFetching);
-    console.log("   - contentReady:", contentReady);
-    console.log("   - CONTENT_URL:", CONTENT_URL);
-    
     if (contentReady) {
-      console.log("✅ Contenido ya está listo");
       return Promise.resolve();
     }
     
     if (contentFetching) {
-      console.log("⏳ Ya se está cargando el contenido");
       return Promise.resolve();
     }
     
     contentFetching = true;
-    console.log("🔄 Fetching:", CONTENT_URL);
     
     return fetch(CONTENT_URL)
       .then(r=>{ 
-        console.log("📡 Respuesta recibida:", r.status);
         if(!r.ok) throw new Error("content"); 
         return r.json(); 
       })
@@ -218,44 +185,31 @@
         if(startBtn){ 
           startBtn.disabled = false; 
           startBtn.textContent = "Entrar al Dojo"; 
-          console.log("🔘 Botón habilitado");
         }
       });
   }
 
-  // ===== Start Flow (reutilizable) =====
+  // ===== Start Flow =====
   function startFlow(){
-    console.log("🎯 startFlow() ejecutado");
+    S.nombre=(qs("#nombre")?.value||"").trim();
+    S.cliente=(qs("#cliente")?.value||"").trim();
     
-    try {
-      S.nombre=(qs("#nombre")?.value||"").trim();
-      S.cliente=(qs("#cliente")?.value||"").trim();
-      console.log("👤 Nombre:", S.nombre || "(vacío)");
-      console.log("👥 Cliente:", S.cliente || "(vacío)");
+    nav("p1");
+    
+    if (!contentReady) {
+      showAreasLoading();
+      setStartState(true);
       
-      console.log("🚀 Intentando navegar a p1...");
-      nav("p1");
-      
-      if (!contentReady) {
-        console.log("⏳ Contenido no está listo, mostrando loading...");
-        showAreasLoading();
-        setStartState(true);
-        
-        const onReady = ()=>{
-          console.log("✅ Contenido listo (evento)");
-          setStartState(false);
-          buildAreas();
-          window.removeEventListener("dojo:contentReady", onReady);
-        };
-        
-        window.addEventListener("dojo:contentReady", onReady);
-        startFetchContent();
-      } else {
-        console.log("✅ Contenido listo, construyendo áreas...");
+      const onReady = ()=>{
+        setStartState(false);
         buildAreas();
-      }
-    } catch(error) {
-      console.error("❌ Error en startFlow:", error);
+        window.removeEventListener("dojo:contentReady", onReady);
+      };
+      
+      window.addEventListener("dojo:contentReady", onReady);
+      startFetchContent();
+    } else {
+      buildAreas();
     }
   }
 
@@ -263,43 +217,33 @@
   function setStartState(loading){
     const startBtn = qs("#start");
     if(!startBtn) {
-      console.error("❌ Botón #start no encontrado");
       return;
     }
     if(loading){
       startBtn.disabled = true;
       startBtn.textContent = "Cargando…";
-      console.log("🔘 Botón deshabilitado (cargando)");
     }else{
       startBtn.disabled = false;
       startBtn.textContent = "Entrar al Dojo";
-      console.log("🔘 Botón habilitado");
     }
   }
 
   function wireEvents(){
-    console.log("🔌 Conectando eventos...");
     ensureGuideFab();
 
-    // ESPERAR A QUE EL DOM ESTÉ LISTO
+    // Botón de inicio
     const setupStartButton = () => {
       const startBtn = qs("#start");
       if(startBtn){
-        console.log("✅ Botón #start encontrado, agregando listener");
         startBtn.addEventListener("click", (e) => {
-          console.log("🖱️ Click en botón start");
           e.preventDefault();
           e.stopPropagation();
           startFlow();
         });
         
-        // Verificar que el botón no esté deshabilitado involuntariamente
         if (startBtn.disabled && startBtn.textContent === "Entrar al Dojo") {
-          console.log("⚠️ Botón estaba deshabilitado, habilitando...");
           startBtn.disabled = false;
         }
-      } else {
-        console.error("❌ Botón #start NO encontrado");
       }
     };
 
@@ -454,15 +398,12 @@ ${S.lastFrase||"-"}`;
 
   // ===== Vistas =====
   function buildAreas(){
-    console.log("🏗️ Construyendo áreas...");
     const grid=qs("#areas-grid"); 
     if(!grid) {
-      console.error("❌ No se encontró #areas-grid");
       return;
     }
     grid.innerHTML="";
     const areas = (S.content && S.content.areas) ? S.content.areas : [];
-    console.log("📋 Áreas encontradas:", areas.length);
     
     if(!areas.length){
       grid.innerHTML = `<div class="fb"><p class="muted">No hay áreas disponibles.</p></div>`;
@@ -471,10 +412,10 @@ ${S.lastFrase||"-"}`;
     areas.forEach(a=>{
       const d=document.createElement("div");
       d.className="area-card";
-      d.innerHTML=`<div class="area-title">${esc(a.title)}</div><p class="area-desc">${esc(a.desc||"")}</p><div class="group"><button class="btn primary" data-area="${esc(a.id)}" type="button">Entrar</button></div>`;
+      const icon = a.icon || "📋";
+      d.innerHTML=`<div class="area-title">${icon} ${esc(a.title)}</div><p class="area-desc">${esc(a.desc||"")}</p><div class="group"><button class="btn primary" data-area="${esc(a.id)}" type="button">Entrar</button></div>`;
       grid.appendChild(d);
     });
-    console.log("✅ Áreas construidas");
   }
 
   function buildScenarios(){
@@ -488,8 +429,14 @@ ${S.lastFrase||"-"}`;
     list.forEach(sc=>{
       const q= sc.question || ("Cliente: " + sc.title + ". ¿Cómo responde?");
       const d=document.createElement("div");
-      d.className="sc-card"; d.setAttribute("data-scenario", sc.id);
-      d.innerHTML=`<div class="sc-title">${esc(sc.title)}</div><p class="sc-desc">${esc(q)}</p>`;
+      d.className="sc-card"; 
+      d.setAttribute("data-scenario", sc.id);
+      
+      // Indicador de dificultad
+      const difficulty = sc.difficulty || 3;
+      const stars = "⭐".repeat(difficulty);
+      
+      d.innerHTML=`<div class="sc-title">${esc(sc.title)} <span style="float:right;font-size:12px">${stars}</span></div><p class="sc-desc">${esc(q)}</p>`;
       grid.appendChild(d);
     });
   }
@@ -524,92 +471,76 @@ ${S.lastFrase||"-"}`;
   function getScenarioById(id){ return ((S.content&&S.content.scenarios)||[]).find(x=>x.areaId===S.areaId && x.id===id); }
   function getCurrentScenario(){ return getScenarioById(S.scenId); }
 
-  // ===== Lógica de IA (WOW) =====
+  // ===== Lógica de IA - CAMBIO CRÍTICO AQUÍ =====
   async function runPlay(sc, jugadaLabel){
     const ans=qs("#esc-answer");
     if(ans) {
       ans.style.display="block"; 
-      ans.innerHTML=`<p class="muted">Generando su guía…</p>`;
+      ans.innerHTML=`<p class="muted">Generando tu feedback…</p>`;
     }
     try{
+      // ENVIAR TODOS LOS DATOS DEL ESCENARIO
       const pack = await ai({
-        nombre: S.nombre||"Pro",
-        estilo: S.estilo||"Neutral",
+        nombre: S.nombre||"",
+        estilo: S.estilo||"Claridad",
         area: S.areaTitle,
         escenario: sc.title,
+        
+        // NUEVOS CAMPOS CRÍTICOS
+        pattern: sc.pattern || null,  // ← IMPORTANTE
+        keywords: sc.keywords || [],  // ← IMPORTANTE
+        context: sc.context || "",  // ← IMPORTANTE
+        scenarioId: sc.id || "",  // ← IMPORTANTE
+        difficulty: sc.difficulty || 3,  // ← IMPORTANTE
+        real_challenge: sc.real_challenge || "",  // ← IMPORTANTE
+        
         type: sc.type || "in-conversation",
         pregunta: sc.question || ("Cliente: " + sc.title + ". ¿Cómo responde?"),
-        eleccion: jugadaLabel
+        eleccion: jugadaLabel,
+        cliente: S.cliente || ""
       });
-      S.pack = sanitizePackLocal(pack);
+      
+      S.pack = pack;
       if(ans) ans.innerHTML = renderWow(S.pack);
 
       const type = sc.type || "in-conversation";
-      S.templates = composeTemplatesFromPack(S.pack, sc.title, type, S.estilo);
+      S.templates = extractTemplates(S.pack);
       showTemplatesUI(S.templates, type);
 
       renderPhrases(S.pack, sc);
       const escContinue = qs("#esc-continue");
       if(escContinue) escContinue.style.display="block";
       scrollTop();
+      
+      // Guardar frase activadora
+      S.lastFrase = S.pack?.principios_potenciados?.frase_activadora 
+        || S.pack?.potenciador_cognitivo?.frase_de_poder 
+        || S.pack?.frase_poder 
+        || "";
+        
     }catch(e){
-      if(ans) ans.innerHTML=`<p class="muted">No pudimos conectar con la IA ahora. Intente de nuevo en unos segundos.</p>`;
+      if(ans) ans.innerHTML=`<p class="muted">No pudimos conectar. Intente de nuevo en unos segundos.</p>`;
     }
   }
 
-  // ===== Fallback de principios — mantiene Potenciador siempre =====
-  function ensurePrincipiosLocal(p){
-    p.principios_potenciados = p.principios_potenciados || {};
-    if(!p.principios_potenciados.regla && p.potenciador_cognitivo?.concepto_nuclear){
-      p.principios_potenciados.regla = p.potenciador_cognitivo.concepto_nuclear;
-    }
-    if(!p.principios_potenciados.frase_activadora && p.potenciador_cognitivo?.frase_de_poder){
-      p.principios_potenciados.frase_activadora = p.potenciador_cognitivo.frase_de_poder;
-    }
-    if(!p.potenciador_cognitivo){
-      p.potenciador_cognitivo = {
-        concepto_nuclear: p.principios_potenciados.regla || "Claridad antes de compromiso",
-        frase_de_poder: p.principios_potenciados.frase_activadora || "Acordemos lo esencial para decidir con claridad."
-      };
-    }
-    if(!p.potenciador_cognitivo.concepto_nuclear){
-      p.potenciador_cognitivo.concepto_nuclear = p.principios_potenciados.regla || "Claridad antes de compromiso";
-    }
-    if(!p.potenciador_cognitivo.frase_de_poder){
-      p.potenciador_cognitivo.frase_de_poder = p.principios_potenciados.frase_activadora || "Acordemos lo esencial para decidir con claridad.";
-    }
-    if(!p.frase_poder) p.frase_poder = p.potenciador_cognitivo.frase_de_poder;
-    return p;
-  }
-
-  function sanitizePackLocal(p){
-    const clone = JSON.parse(JSON.stringify(p||{}));
-    const walk=(obj)=>{ for(const k in obj){ if(!Object.prototype.hasOwnProperty.call(obj,k)) continue; if(typeof obj[k]==="string") obj[k]=sanitizeStr(obj[k]); else if(obj[k] && typeof obj[k]==="object") walk(obj[k]); } };
-    walk(clone);
-    ensurePrincipiosLocal(clone);
-    const fp = clone.principios_potenciados?.frase_activadora || clone.potenciador_cognitivo?.frase_de_poder || clone.frase_poder || "";
-    S.lastFrase = sanitizeStr(fp);
-    return clone;
-  }
-
-  // Render WOW (epifanía) — muestra Revelación, Principio y Potenciador + extras si vienen
+  // Render WOW
   function renderWow(p){
-    const titulo = esc(sanitizeStr(p.titulo_estrategia || "Estrategia"));
-    const revelacion = esc(sanitizeStr(p.la_revelacion || ""));
-    const principio = esc(sanitizeStr(p.el_principio || ""));
-    const regla = esc(sanitizeStr(p.principios_potenciados?.regla || p.potenciador_cognitivo?.concepto_nuclear || ""));
-    const como = esc(sanitizeStr(p.principios_potenciados?.como_potencia || ""));
-    const fraseAct = esc(sanitizeStr(p.principios_potenciados?.frase_activadora || p.potenciador_cognitivo?.frase_de_poder || ""));
-    const mini = esc(sanitizeStr(p.principios_potenciados?.mini_evidencia || ""));
-    const pd = esc(sanitizeStr(p.pregunta_detonante || ""));
-    const senal = esc(sanitizeStr(p.senal_a_detectar || p.senal || ""));
-    const rae = esc(sanitizeStr(p.riesgo_a_evitar || ""));
-    const mdec = Array.isArray(p.micro_decisiones) ? p.micro_decisiones.map(x=>esc(sanitizeStr(x))) : [];
-    const espejo = esc(sanitizeStr(p.espejo_sin_juicio || p.espejo || ""));
-    const micro = esc(sanitizeStr(p.micro_ajuste || ""));
-    const re15 = esc(sanitizeStr(p.reescritura_15s || p.reescritura || ""));
+    const titulo = esc(p.titulo_estrategia || "Estrategia");
+    const revelacion = esc(p.la_revelacion || "");
+    const principio = esc(p.el_principio || "");
+    const regla = esc(p.principios_potenciados?.regla || p.potenciador_cognitivo?.concepto_nuclear || "");
+    const como = esc(p.principios_potenciados?.como_potencia || "");
+    const fraseAct = esc(p.principios_potenciados?.frase_activadora || p.potenciador_cognitivo?.frase_de_poder || "");
+    const mini = esc(p.principios_potenciados?.mini_evidencia || "");
+    const pd = esc(p.pregunta_detonante || "");
+    const senal = esc(p.senal_a_detectar || p.senal || "");
+    const rae = esc(p.riesgo_a_evitar || "");
+    const mdec = Array.isArray(p.micro_decisiones) ? p.micro_decisiones.map(x=>esc(x)) : [];
+    const espejo = esc(p.espejo_sin_juicio || p.espejo || "");
+    const micro = esc(p.micro_ajuste || "");
+    const re15 = esc(p.reescritura_15s || p.reescritura || "");
     const score = typeof p.score==="number" ? String(Math.round(p.score*10)/10) : "";
-    const metrica = esc(sanitizeStr(p.metrica_clave || ""));
+    const metrica = esc(p.metrica_clave || "");
 
     let html=`<h3>${titulo}</h3>`;
     if(revelacion) html += `<div class="fb-sec"><div class="sec-title">Revelación</div><p>${revelacion}</p></div>`;
@@ -617,7 +548,7 @@ ${S.lastFrase||"-"}`;
 
     html += `<div class="fb-sec"><div class="sec-title">Potenciador Cognitivo</div>`;
     if(regla) html += `<p><strong>Regla:</strong> ${regla}</p>`;
-    if(como) html += `<p><strong>Cómo potencia su jugada:</strong> ${como}</p>`;
+    if(como) html += `<p><strong>Cómo potencia tu jugada:</strong> ${como}</p>`;
     if(fraseAct) html += `<p><strong>Frase activadora:</strong> ${fraseAct}</p>`;
     if(mini) html += `<p><strong>Mini‑evidencia:</strong> ${mini}</p>`;
     html += `</div>`;
@@ -635,177 +566,43 @@ ${S.lastFrase||"-"}`;
     return html;
   }
 
-  // ===== Motor de plantillas (solo follow-up) =====
-  function norm(s){ return (s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\s+/g," ").trim(); }
-  function contains(text, snippet){ return norm(text).includes(norm(snippet)); }
-  function seedInt(str){ let h=0; for(let i=0;i<str.length;i++){ h=((h<<5)-h)+str.charCodeAt(i); h|=0; } return Math.abs(h); }
-
-  function pickArchetype(scenId, jugada, estilo){
-    const archetypes = ["propuesta_directa","sugerencia_accion","oferta_apoyo","invitacion_abierta"];
-    const seed = seedInt((scenId||"")+":"+(jugada||"")+":"+(estilo||""));
-    return archetypes[seed % archetypes.length];
-  }
-  const DELIVERABLES = [
-    "un resumen de 1 página",
-    "una lista de verificación simple",
-    "un comparativo breve",
-    "3 puntos clave en un correo",
-    "un ejemplo comparable corto"
-  ];
-  function pickDeliverable(seed){ return DELIVERABLES[seed % DELIVERABLES.length]; }
-
-  function composeClosure(archetype, deliverable){
-    switch(archetype){
-      case "propuesta_directa":
-        return `Le propongo enviar ${deliverable} y revisarlo juntos pronto. ¿Le funciona?`;
-      case "sugerencia_accion":
-        return `Podemos empezar con ${deliverable} y ver si encaja. ¿Se lo comparto hoy?`;
-      case "oferta_apoyo":
-        return `Me encargo de preparar ${deliverable} y se lo envío. Luego confirmamos una revisión breve.`;
-      case "invitacion_abierta":
-      default:
-        return `Le dejo ${deliverable}. Cuando le funcione, lo vemos rápido.`;
+  function extractTemplates(pack){
+    // Si el Worker envía aplicarlo_ahora, usarlo
+    if(pack?.aplicarlo_ahora){
+      return {
+        whatsapp: pack.aplicarlo_ahora.whatsapp || "",
+        email_subject: pack.aplicarlo_ahora.email_subject || "",
+        email_body: pack.aplicarlo_ahora.email_body || "",
+        call: pack.aplicarlo_ahora.call || ""
+      };
     }
+    
+    // Fallback
+    return {
+      whatsapp: "",
+      email_subject: "",
+      email_body: "",
+      call: ""
+    };
   }
 
-  function applyTone(channel, text, estilo){
-    if(!text) return "";
-    let t=text;
-
-    if(estilo==="Calma"){
-      t = t.replace(/\bLe propongo\b/gi, "Si le parece, le propongo");
-      if(!/[?？]$/.test(t.trim())) t = t.trim() + " ¿Le funciona?";
-    }
-    if(estilo==="Curiosidad"){
-      const q = "¿Qué punto le ayudaría a decidir mejor?";
-      if(!contains(t,q)) t = t + "\n" + q;
-    }
-    if(estilo==="Claridad"){
-      t = t.replace(/\bEn breve\b/gi, "pronto").replace(/\s{2,}/g," ");
-    }
-    if(estilo==="Avance"){
-      t = t.replace(/\bUsted me dice\b/gi, "Luego confirmamos")
-           .replace(/\bPodemos empezar\b/gi, "Empecemos con");
-    }
-    if(estilo==="Humor"){
-      const wink = (channel==="call") ? "Prometo ser breve." : "Prometo ser breve 🙂";
-      if(!contains(t,"prometo ser breve")) t = t + "\n" + wink;
-    }
-    return cleanTextLocal(t.trim());
-  }
-
-  function getFrasePoder(p){
-    return p?.principios_potenciados?.frase_activadora
-      || p?.potenciador_cognitivo?.frase_de_poder
-      || p?.frase_poder
-      || "Acordemos lo esencial para decidir con claridad.";
-  }
   function getMicro(p){
     return p?.siguiente_movimiento?.accion_estrategica
       || p?.micro_accion
-      || "Enviar 3 puntos claros y acordar el siguiente paso.";
-  }
-
-  function composeTemplatesFromPack(pack, scTitle, tipo, estilo){
-    // Si el Worker trae "Aplicarlo ahora", úsalo
-    const aa = pack?.aplicarlo_ahora || null;
-    if(aa){
-      return {
-        whatsapp: sanitizeStr(aa.whatsapp||""),
-        emailSubject: sanitizeStr(aa.email_subject||`Sobre "${scTitle}"`),
-        emailBody: sanitizeStr(aa.email_body||""),
-        call: sanitizeStr(aa.call||""),
-        frase: sanitizeStr(getFrasePoder(pack)),
-        micro: sanitizeStr(getMicro(pack))
-      };
-    }
-
-    if (tipo !== "follow-up") {
-      // In-conversation: no plantillas
-      return { whatsapp:"", emailSubject:"", emailBody:"", call:"", frase:getFrasePoder(pack), micro:getMicro(pack) };
-    }
-
-    // Fallback seguro
-    const frase = sanitizeStr(getFrasePoder(pack));
-    const micro = sanitizeStr(getMicro(pack));
-    const seed = seedInt((S.scenId||"")+":"+(pack.titulo_estrategia||"")+":"+(S.estilo||""));
-    const archetype = pickArchetype(S.scenId||"", (S.lastJugada||"Proactiva"), S.estilo||"");
-    const deliverable = pickDeliverable(seed);
-    const cierre = composeClosure(archetype, deliverable);
-
-    let wa = [
-      "Hola {CLIENTE}, soy {MI_NOMBRE}.",
-      frase,
-      micro,
-      "¿Le funciona?"
-    ].join("\n");
-    wa = applyTone("wha", wa, estilo||"");
-
-    const subj = `Sobre "${scTitle}"`;
-    let eb = [
-      "Hola {CLIENTE},",
-      frase,
-      micro,
-      "¿Se lo comparto hoy?",
-      "{MI_NOMBRE}"
-    ].join("\n");
-    eb = applyTone("eml", eb, estilo||"");
-
-    let call = [
-      "Hola {CLIENTE}, soy {MI_NOMBRE}.",
-      frase,
-      micro.replace(/\.$/, ""),
-      "¿Lo vemos juntos?"
-    ].join("\n");
-    call = applyTone("call", call, estilo||"");
-
-    return {
-      whatsapp: wa,
-      emailSubject: subj,
-      emailBody: eb,
-      call: call,
-      frase: frase,
-      micro: micro
-    };
+      || "Definir siguiente paso concreto";
   }
 
   function renderPhrases(pack, sc){
     const list = Array.isArray(pack.siguiente_movimiento?.frases_de_apoyo) && pack.siguiente_movimiento.frases_de_apoyo.length
       ? pack.siguiente_movimiento.frases_de_apoyo
-      : fallbackPhrases(sc.title, sc.type);
+      : ["Explorar necesidad real", "Clarificar prioridades"];
     const box=qs("#phrases-box"); if(!box) return; box.innerHTML="";
     list.forEach(text=>{
       const row=document.createElement("div");
       row.className="phrase";
-      row.innerHTML=`<div>${esc(sanitizeStr(text))}</div><button class="btn" type="button">Copiar</button>`;
+      row.innerHTML=`<div>${esc(text)}</div><button class="btn" type="button">Copiar</button>`;
       box.appendChild(row);
     });
-  }
-
-  function fallbackPhrases(title,type){
-    const t=(title||"").toLowerCase();
-    if(type==='in-conversation'){
-      if(t.includes("precio")||t.includes("barato")) return [
-        "Comparemos alcance y resultado, no solo el número.",
-        "¿Qué resultado quiere asegurar ahora?",
-        "Veamos dónde está el valor para usted."
-      ];
-      if(t.includes("experiencia")||t.includes("mala")) return [
-        "Tomemos esa experiencia y definamos no negociables.",
-        "Acordemos expectativas, entregables y revisiones.",
-        "Cuidemos el proceso para decidir con seguridad."
-      ];
-    }
-    if(t.includes("info")||t.includes("envíe")||t.includes("envia")||t.includes("envíeme")) return [
-      "Le envío un resumen claro y lo validamos juntos.",
-      "¿Prefiere 3 puntos clave o un comparativo breve?",
-      "Comparto lo esencial y lo vemos pronto."
-    ];
-    return [
-      "Vayamos a lo esencial y decidamos con claridad.",
-      "Primero claridad, luego el siguiente paso.",
-      "Si esto le sirve, avanzamos paso a paso."
-    ];
   }
 
   function showTemplatesUI(templates, type){
@@ -817,7 +614,7 @@ ${S.lastFrase||"-"}`;
     
     if(!tk || !tabs || !titleEl || !tmpl || !TB) return;
 
-    // SIEMPRE mostrar toolkit y plantillas (CAMBIO CRÍTICO)
+    // SIEMPRE mostrar toolkit y plantillas
     tk.style.display = "grid";
     titleEl.textContent = "Aplicarlo ahora";
     tabs.style.display="flex";
@@ -839,21 +636,17 @@ ${S.lastFrase||"-"}`;
     const callTab = qs('.tab[data-tab="call"]'); 
     if(callTab) callTab.style.display="inline-flex";
     
-    // Mostrar contenido de plantillas
-    if(templates.whatsapp || templates.emailBody || templates.call) {
-      TB.textContent = fillPH(templates.whatsapp||"");
-    } else {
-      TB.textContent = "Generando plantillas...";
-    }
-}
+    // Mostrar contenido
+    TB.textContent = fillPH(templates.whatsapp || "Generando plantilla...");
+  }
 
   // Segunda ronda
   async function roundTwo(){
     const out=qs("#rr-output"); if(!out) return;
     const input=(qs("#rr-text")?.value||"").trim();
     out.style.display="block";
-    if(!input){ out.textContent="Escriba lo que diría el cliente y generamos la contra‑respuesta."; return; }
-    out.textContent="Pensando con usted…";
+    if(!input){ out.textContent="Escribe lo que diría el cliente y generamos la contra‑respuesta."; return; }
+    out.textContent="Pensando contigo…";
 
     const sc=getCurrentScenario();
     const escTitle = qs("#esc-title");
@@ -862,20 +655,29 @@ ${S.lastFrase||"-"}`;
 
     try{
       const pack = await ai({
-        nombre:S.nombre||"Pro",
-        estilo:S.estilo||"Neutral",
+        nombre:S.nombre||"",
+        estilo:S.estilo||"Claridad",
         area:S.areaTitle,
         escenario:scTitle,
+        
+        // Incluir datos del escenario
+        pattern: sc?.pattern || null,
+        keywords: sc?.keywords || [],
+        context: sc?.context || "",
+        scenarioId: sc?.id || "",
+        
         type: scType,
         pregunta:"Segunda ronda",
-        eleccion:"Contra-respuesta: " + input
+        eleccion:"Contra-respuesta: " + input,
+        cliente: S.cliente || ""
       });
+      
       if(pack){
-        S.pack = sanitizePackLocal(pack);
+        S.pack = pack;
         const escAnswer = qs("#esc-answer");
         if(escAnswer) escAnswer.innerHTML = renderWow(S.pack);
 
-        S.templates = composeTemplatesFromPack(S.pack, scTitle, scType, S.estilo);
+        S.templates = extractTemplates(S.pack);
         showTemplatesUI(S.templates, scType);
 
         renderPhrases(S.pack, sc || { title: scTitle, type: scType });
@@ -884,30 +686,32 @@ ${S.lastFrase||"-"}`;
         const microInput = qs("#micro");
         if(microInput && micro) microInput.value = fillPH(micro);
 
+        S.lastFrase = S.pack?.principios_potenciados?.frase_activadora 
+          || S.pack?.potenciador_cognitivo?.frase_de_poder 
+          || "";
+
         out.textContent = `Actualizado.\n\nFrase activadora:\n${S.lastFrase}\n\nSugerencia:\n${fillPH(micro||'—')}`;
       }else{
-        out.textContent="No se pudo refinar ahora. Intente nuevamente.";
+        out.textContent="No se pudo refinar. Intente nuevamente.";
       }
     }catch(e){
-      out.textContent="No pudimos conectar con la IA ahora. Intente de nuevo en unos segundos.";
+      out.textContent="Error de conexión. Intente de nuevo.";
     }
   }
 
   // ===== Arranque =====
   function wireBase(){
-    console.log("🎬 Iniciando Dojo de Polizar...");
+    console.log("🎬 Iniciando Dojo de Polizar v3.0...");
     wireEvents();
     
     // Cargar contenido inmediatamente
-    console.log("📦 Cargando contenido al inicio...");
+    console.log("📦 Cargando contenido...");
     startFetchContent();
     
     go("p0");
   }
   
-  console.log("📄 Script cargado, esperando DOM...");
-  
-  // Esperar a que el DOM esté completamente listo
+  // Esperar a que el DOM esté listo
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', wireBase);
   } else {

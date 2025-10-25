@@ -1,7 +1,7 @@
 {
   "meta": { 
     "plan": "full", 
-    "version": "seguros-2025-v2",
+    "version": "seguros-2025-v3-revelador",
     "industry": "seguros",
     "disclaimer": "Herramienta de práctica profesional. No constituye formación regulada."
   },
@@ -41,19 +41,19 @@
       "frequency": "daily",
       "jugadas": [
         {
-          "texto": "Le muestro exactamente dónde va cada peso de esa prima y qué riesgos específicos cubre.",
+          "texto": "Permítame mostrarle exactamente qué protege cada peso de esa prima, y por qué ese valor va más allá del número.",
           "estilo": "logica"
         },
         {
-          "texto": "Entiendo perfectamente que el presupuesto aprieta. ¿Qué parte le preocupa más del costo?",
+          "texto": "Totalmente entiendo que el presupuesto es importante. ¿Qué parte le genera más inquietud del costo?",
           "estilo": "empatica"
         },
         {
-          "texto": "¿Es caro comparado con qué? Porque $500 al mes vs $45,000 de golpe cambia la perspectiva.",
+          "texto": "¿Le parece caro comparado con qué? Porque cuando lo vemos frente al riesgo real, la perspectiva cambia naturalmente.",
           "estilo": "estrategica"
         },
         {
-          "texto": "Ok, armemos juntos un seguro que no le duela pagar. ¿Qué es lo indispensable para usted?",
+          "texto": "¿Qué tal si construimos juntos un plan que se sienta cómodo para usted? Usted define lo indispensable, yo adapto la protección.",
           "estilo": "proactiva"
         }
       ]
@@ -72,19 +72,19 @@
       "frequency": "daily",
       "jugadas": [
         {
-          "texto": "Tiene razón, soy $80 más caro. Esos $80 son mi WhatsApp personal a las 2am. ¿Lo vale?",
+          "texto": "Tiene toda la razón. Soy $80 más. Esos $80 son acceso directo a mí, incluso a las 2am. ¿Qué valor tiene para usted esa tranquilidad?",
           "estilo": "logica"
         },
         {
-          "texto": "Qué bueno que investigó. ¿Las apps mencionan quién responde cuando más lo necesita?",
+          "texto": "Qué bueno que investigó. Una pregunta sincera: ¿alguna app mencionó quién estará de su lado cuando más lo necesite?",
           "estilo": "empatica"
         },
         {
-          "texto": "Perfecto. La app vende pólizas, yo vendo dormir tranquilo. Son productos diferentes.",
+          "texto": "Perfecto. Las apps venden pólizas. Yo vendo acompañamiento. Son propuestas distintas, con precios distintos. ¿Cuál se alinea con lo que busca?",
           "estilo": "estrategica"
         },
         {
-          "texto": "Hagamos la prueba ahora: llame a la app, luego a mí. Vea la diferencia en vivo.",
+          "texto": "¿Qué tal si hacemos una prueba rápida? Llame a una app, luego a mí. No para comparar precios, sino para sentir la diferencia en la conexión.",
           "estilo": "proactiva"
         }
       ]
@@ -103,19 +103,19 @@
       "frequency": "weekly",
       "jugadas": [
         {
-          "texto": "No puedo asegurar hacia atrás, es fraude federal. Pero puedo blindar desde hoy. ¿Empezamos?",
+          "texto": "Entiendo su urgencia. Aunque no puedo cubrir lo de ayer, puedo ayudarle a blindar desde hoy para que esto no vuelva a pasar.",
           "estilo": "logica"
         },
         {
-          "texto": "Lamento lo que pasó. No hay retroactivo, pero conozco talleres con facilidades. ¿Lo ayudo?",
+          "texto": "Lamento mucho lo que pasó. Aunque no hay cobertura retroactiva, conozco opciones reales para resolver esto juntos. ¿Me permite ayudarle?",
           "estilo": "empatica"
         },
         {
-          "texto": "Este golpe de $45,000: ¿será su última lección cara o la primera de muchas? Usted decide.",
+          "texto": "Este momento puede ser el punto de inflexión: ¿quiere que sea el último susto o el primero de muchos? La decisión es suya, y yo estoy aquí para lo que elija.",
           "estilo": "estrategica"
         },
         {
-          "texto": "Llamo al taller ahora mismo en altavoz y negocio con usted. Resolvamos esto ya.",
+          "texto": "¿Qué tal si llamamos juntos ahora mismo a un taller que pueda ayudarle? Yo gestiono, usted decide. Resolvamos esto paso a paso, sin presión.",
           "estilo": "proactiva"
         }
       ]

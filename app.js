@@ -1,6 +1,6 @@
 // ============================================
 // DOJO DE POLIZAR v11.0 - REVELADOR PURO
-// Feedback generado 100% por IA, sin bloques, sin plantillas.
+// Sin plantillas. Sin bloques. Solo revelación.
 // ============================================
 
 (function(){
@@ -106,21 +106,26 @@
     return response;
   }
 
-  // ===== Formatear feedback revelador =====
-  function formatFeedback(text) {
-    if(!text) return "";
+  // ===== Render feedback revelador =====
+  function renderFeedback(text) {
+    if (!text) return "<p class='muted'>No se generó feedback.</p>";
     
-    // Conservamos saltos de línea y formato original
-    return text
+    // Escapar HTML pero preservar saltos de línea y formato
+    let html = esc(text)
+      .replace(/\n{3,}/g, '\n\n') // Normalizar saltos múltiples
+      .replace(/\n\n/g, '</div><div class="fb-section">')
       .replace(/\n/g, '<br>')
-      .replace(/✅/g, '<strong class="emoji">✅</strong>')
-      .replace(/💡/g, '<strong class="emoji">💡</strong>')
-      .replace(/🧠/g, '<strong class="emoji">🧠</strong>')
-      .replace(/🌟/g, '<strong class="emoji">🌟</strong>')
-      .replace(/👉/g, '<strong class="emoji">👉</strong>')
-      .replace(/🔁/g, '<strong class="emoji">🔁</strong>')
-      .replace(/—/g, '<hr style="border:0; border-top:1px solid rgba(255,255,255,0.12); margin:16px 0;">')
-      .replace(/"([^"]+)"/g, '<em>“$1”</em>');
+      .replace(/✅/g, '<span class="emoji emoji-check">✅</span> ')
+      .replace(/💡/g, '<span class="emoji emoji-bulb">💡</span> ')
+      .replace(/🧠/g, '<span class="emoji emoji-brain">🧠</span> ')
+      .replace(/🌟/g, '<span class="emoji emoji-star">🌟</span> ')
+      .replace(/👉/g, '<span class="emoji emoji-point">👉</span> ')
+      .replace(/🔁/g, '<span class="emoji emoji-repeat">🔁</span> ')
+      .replace(/→/g, '<span class="arrow">→</span> ')
+      .replace(/"/g, '<span class="quote">"</span>');
+    
+    // Envolver en contenedores
+    return `<div class="fb-section">${html}</div>`;
   }
 
   // ===== Navegación =====
@@ -360,14 +365,14 @@
         b.type = "button";
         b.dataset.estilo = jugada.estilo;
         b.dataset.texto = jugada.texto;
-        // Truncar visualmente si es muy largo
+        // Truncar texto si es muy largo
         const displayText = jugada.texto.length > 60 ? jugada.texto.substring(0, 57) + "..." : jugada.texto;
         b.textContent = displayText;
         b.title = jugada.texto; // Tooltip con texto completo
         box.appendChild(b);
       });
     } else {
-      // Fallback (no debería ocurrir)
+      // Fallback (no debería ocurrir si el JSON está bien)
       const jugadas = ["Lógica", "Empática", "Estratégica", "Proactiva"];
       jugadas.forEach(j => {
         const b = document.createElement("button");
@@ -384,7 +389,7 @@
     const escContinue = qs("#esc-continue");
     
     if(escAnswer) escAnswer.style.display = "none";
-    if(toolkit) toolkit.style.display = "none"; // ← Toolkit eliminado
+    if(toolkit) toolkit.style.display = "none"; // ← Eliminado toolkit
     if(escContinue) escContinue.style.display = "none";
   }
 
@@ -401,7 +406,7 @@
     const ans = qs("#esc-answer");
     if(ans) {
       ans.style.display = "block"; 
-      ans.innerHTML = `<p class="muted">Generando tu revelación…</p>`;
+      ans.innerHTML = `<p class="muted">Revelando perspectivas ocultas...</p>`;
     }
     
     try {
@@ -410,6 +415,9 @@
         estilo: jugadaEstilo,
         area: S.areaTitle,
         escenario: sc.title,
+        pregunta: sc.question,
+        pattern: sc.pattern || null,
+        keywords: sc.keywords || [],
         frase_usuario: jugadaTexto,
         cliente: S.cliente || ""
       });
@@ -417,18 +425,25 @@
       S.pack = pack;
       
       if(ans && pack.feedback) {
-        // Renderizar feedback tal cual, con formato mínimo
-        ans.innerHTML = `<div class="revelation-container">${formatFeedback(pack.feedback)}</div>`;
+        // Renderizar feedback con formato limpio
+        ans.innerHTML = `<div class="revelation-container">${renderFeedback(pack.feedback)}</div>`;
       }
       
-      // Eliminamos toolkit, plantillas, frases de apoyo
+      // Eliminar toolkit (ya no existe)
       const toolkit = qs("#toolkit");
       if(toolkit) toolkit.style.display = "none";
       
-      // Extraemos solo la primera frase entre comillas para p5 (si existe)
+      // Extraer frase memorable para p5 (opcional, por compatibilidad)
       if(pack.feedback) {
-        const quoteMatch = pack.feedback.match(/"[^"]+"/);
-        S.lastFrase = quoteMatch ? quoteMatch[0].replace(/"/g, '') : "Tu revelación aparecerá aquí";
+        const lines = pack.feedback.split('\n');
+        const fraseLine = lines.find(line => line.includes('"') && line.match(/"[^"]+"/));
+        if (fraseLine) {
+          // Extraer solo la frase entre comillas
+          const match = fraseLine.match(/"([^"]+)"/);
+          S.lastFrase = match ? match[1] : fraseLine.replace(/["]/g, '').trim();
+        } else {
+          S.lastFrase = "Tu revelación aparecerá aquí";
+        }
       }
       
       const escContinue = qs("#esc-continue");
@@ -442,7 +457,7 @@
     }
   }
 
-  // ===== Segunda ronda (opcional, minimalista) =====
+  // ===== Segunda ronda (opcional, simplificada) =====
   async function roundTwo() {
     const out = qs("#rr-output"); 
     if(!out) return;
@@ -455,7 +470,7 @@
       return; 
     }
     
-    out.textContent = "Generando nueva perspectiva...";
+    out.textContent = "Revelando nueva perspectiva...";
 
     const sc = getCurrentScenario();
     const escTitle = qs("#esc-title");
@@ -467,7 +482,9 @@
         estilo: S.lastJugada || "empatico",
         area: S.areaTitle,
         escenario: scTitle,
-        frase_usuario: input, // ← El input del usuario es la nueva "frase"
+        pattern: sc?.pattern || null,
+        pregunta: "Segunda ronda: " + input,
+        frase_usuario: input,
         cliente: S.cliente || ""
       });
       
@@ -475,9 +492,9 @@
         S.pack = pack;
         const escAnswer = qs("#esc-answer");
         if(escAnswer) {
-          escAnswer.innerHTML = `<div class="revelation-container">${formatFeedback(pack.feedback)}</div>`;
+          escAnswer.innerHTML = `<div class="revelation-container">${renderFeedback(pack.feedback)}</div>`;
         }
-        out.textContent = "Nueva perspectiva generada arriba ↑";
+        out.textContent = "Nueva perspectiva revelada arriba ↑";
       } else {
         out.textContent = "No se pudo generar. Intente nuevamente.";
       }

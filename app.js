@@ -401,7 +401,7 @@
         const area = (S.content?.areas || []).find(a => a.id === id) || {};
         S.areaId = id; S.areaTitle = area.title || ""; 
         const ctx = qs("#ctx-area"); if(ctx) ctx.textContent = S.areaTitle || "—"; 
-        nav("p2");
+        nav("p3");
       }
       else if(t.closest("[data-style]")) {
         S.estilo = t.closest("[data-style]").dataset.style; 

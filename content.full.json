@@ -1,342 +1,32 @@
 {
   "meta": { 
     "plan": "full", 
-    "version": "seguros-2025-v1",
+    "version": "seguros-2025-v2",
     "industry": "seguros",
-    "disclaimer": "Contenido para práctica profesional de corredores certificados"
+    "disclaimer": "Herramienta de práctica profesional. No constituye formación regulada."
   },
   "areas": [
     { 
-      "id": "guerra_digital", 
-      "title": "Competencia digital", 
-      "desc": "Apps, IA, comparadores online y venta directa.",
-      "icon": "🌐"
+      "id": "objeciones_clasicas", 
+      "title": "Objeciones tradicionales", 
+      "desc": "Precio, desconfianza, comparación",
+      "icon": "💭"
     },
     { 
-      "id": "vida_moderna", 
-      "title": "Nuevos estilos de vida", 
-      "desc": "Remoto, nómadas, economía compartida.",
-      "icon": "🚀"
+      "id": "guerra_digital", 
+      "title": "Competencia digital", 
+      "desc": "Apps, IA, comparadores online",
+      "icon": "🌐"
     },
     { 
       "id": "situaciones_limite", 
       "title": "Casos extremos", 
-      "desc": "Post-siniestro, perfiles radioactivos, historiales complejos.",
+      "desc": "Post-siniestro, perfiles complejos",
       "icon": "⚠️"
-    },
-    { 
-      "id": "competencia_desleal", 
-      "title": "Competencia irregular", 
-      "desc": "Familiares corredores, seguros piratas, prácticas dudosas.",
-      "icon": "🏴"
-    },
-    { 
-      "id": "crisis_economica", 
-      "title": "Presión financiera", 
-      "desc": "Clientes quebrados, recortes, prioridades cambiantes.",
-      "icon": "📉"
-    },
-    { 
-      "id": "objeciones_clasicas", 
-      "title": "Objeciones tradicionales", 
-      "desc": "Precio, desconfianza, comparación (las de siempre).",
-      "icon": "💭"
-    },
-    { 
-      "id": "generacion_z", 
-      "title": "Clientes Gen Z", 
-      "desc": "Primer seguro, sin experiencia, todo digital.",
-      "icon": "📱"
-    },
-    { 
-      "id": "renovaciones", 
-      "title": "Retención y renovación", 
-      "desc": "Cancelaciones, competencia en renovación, ghosting.",
-      "icon": "🔄"
     }
   ],
   
   "scenarios": [
-    {
-      "areaId": "guerra_digital",
-      "id": "apps_vs_humano",
-      "type": "in-conversation",
-      "pattern": "comparacion_digital",
-      "keywords": ["app", "online", "digital", "comparador", "barato"],
-      "title": "Coticé en 5 apps y usted es el más caro",
-      "context": "Cliente con comparativo digital, precios en tiempo real de aseguradoras directas",
-      "real_challenge": "Aseguradoras online dan 40% menos sin intermediarios",
-      "question": "Cliente mostrando su teléfono: 'Tengo 5 cotizaciones instantáneas, todas más baratas que la suya'. ¿Cómo responde?",
-      "difficulty": 5,
-      "frequency": "daily"
-    },
-    {
-      "areaId": "guerra_digital",
-      "id": "influencer_antiseguros",
-      "type": "in-conversation",
-      "pattern": "desinformacion_digital",
-      "keywords": ["influencer", "redes", "estafa", "video", "viral"],
-      "title": "Vi en redes que los seguros son estafa",
-      "context": "Cliente influenciado por contenido viral anti-seguros",
-      "real_challenge": "Compites contra 'educación' financiera de 30 segundos con millones de views",
-      "question": "Cliente: 'Un influencer financiero dice que mejor invierta esa prima en lugar de regalarla'. ¿Cómo responde?",
-      "difficulty": 4,
-      "frequency": "weekly"
-    },
-    {
-      "areaId": "guerra_digital",
-      "id": "ia_asesora",
-      "type": "in-conversation",
-      "pattern": "tecnologia_vs_humano",
-      "keywords": ["ia", "chatbot", "inteligencia artificial", "robot"],
-      "title": "La IA me armó estrategia sin seguros",
-      "context": "Cliente usó IA para evaluar riesgos",
-      "real_challenge": "IA gratuita le dio plan de auto-aseguramiento",
-      "question": "Cliente: 'Le pregunté a IA y me dijo que estadísticamente me conviene auto-asegurarme'. ¿Cómo responde?",
-      "difficulty": 5,
-      "frequency": "weekly"
-    },
-    
-    {
-      "areaId": "vida_moderna",
-      "id": "trabajo_remoto",
-      "type": "in-conversation",
-      "pattern": "uso_minimo",
-      "keywords": ["remoto", "home office", "no uso", "poco kilometraje"],
-      "title": "Trabajo remoto, casi no uso el auto",
-      "context": "Post-pandemia, auto usado 1-2 veces por semana",
-      "real_challenge": "Pagar seguro completo por uso mínimo no tiene lógica financiera",
-      "question": "Cliente: 'Uso el auto una vez por semana, máximo. ¿Por qué pagar seguro completo?'. ¿Cómo responde?",
-      "difficulty": 3,
-      "frequency": "daily"
-    },
-    {
-      "areaId": "vida_moderna",
-      "id": "economia_compartida",
-      "type": "in-conversation",
-      "pattern": "uso_mixto",
-      "keywords": ["uber", "compartir", "ride", "app", "extra"],
-      "title": "Uso mi auto para generar ingreso extra",
-      "context": "Usa auto personal para ride-sharing informal",
-      "real_challenge": "Seguros personales no cubren uso comercial",
-      "question": "Cliente: 'A veces llevo gente por app para gasolina, no es negocio formal. ¿Me cubre?'. ¿Cómo responde?",
-      "difficulty": 4,
-      "frequency": "daily"
-    },
-    {
-      "areaId": "vida_moderna",
-      "id": "nomada_digital",
-      "type": "follow-up",
-      "pattern": "sin_domicilio_fijo",
-      "keywords": ["nomada", "viajo", "meses", "países", "mudanza"],
-      "title": "Cambio de ciudad cada pocos meses",
-      "context": "Nómada digital sin dirección permanente",
-      "real_challenge": "Cobertura tradicional requiere domicilio fijo",
-      "question": "Cliente: 'Vivo 3 meses aquí, 3 allá, trabajo donde hay wifi. ¿Cómo aseguro algo móvil?'. ¿Cómo responde?",
-      "difficulty": 4,
-      "frequency": "monthly"
-    },
-    
-    {
-      "areaId": "situaciones_limite",
-      "id": "post_siniestro",
-      "type": "in-conversation",
-      "pattern": "urgencia_tardia",
-      "keywords": ["ya pasó", "ayer", "choqué", "retroactivo", "urgente"],
-      "title": "Ya choqué, ¿ahora sí me ayuda?",
-      "context": "Busca seguro DESPUÉS del accidente",
-      "real_challenge": "Quiere cobertura retroactiva imposible",
-      "question": "Cliente: 'Tuve un incidente ayer. Si saco seguro hoy, ¿en cuánto tiempo puedo hacer el reclamo?'. ¿Cómo responde?",
-      "difficulty": 5,
-      "frequency": "weekly"
-    },
-    {
-      "areaId": "situaciones_limite",
-      "id": "perfil_radioactivo",
-      "type": "in-conversation",
-      "pattern": "alto_riesgo",
-      "keywords": ["choques", "multas", "joven", "historial", "accidentes"],
-      "title": "Conductor joven con pésimo historial",
-      "context": "19 años, múltiples siniestros, multas sin pagar",
-      "real_challenge": "Prima más cara que valor del vehículo",
-      "question": "Cliente: 'Mi hijo de 19 años, 3 choques en 2 años. Las cotizaciones son absurdas. ¿Qué opciones hay?'. ¿Cómo responde?",
-      "difficulty": 5,
-      "frequency": "weekly"
-    },
-    {
-      "areaId": "situaciones_limite",
-      "id": "vehiculo_problema",
-      "type": "in-conversation",
-      "pattern": "documentacion_irregular",
-      "keywords": ["nombre", "factura", "ex", "prestado", "informal"],
-      "title": "Auto con situación legal compleja",
-      "context": "Vehículo a nombre de ex-pareja, empresa cerrada, o fallecido",
-      "real_challenge": "No puede asegurar lo que no está a su nombre",
-      "question": "Cliente: 'El auto está a nombre de mi ex, pero yo lo pago y uso. ¿Puedo asegurarlo?'. ¿Cómo responde?",
-      "difficulty": 4,
-      "frequency": "weekly"
-    },
-    
-    {
-      "areaId": "competencia_desleal",
-      "id": "familiar_corredor",
-      "type": "in-conversation",
-      "pattern": "competencia_emocional",
-      "keywords": ["primo", "familia", "cuñado", "amigo", "conocido"],
-      "title": "Mi familiar es corredor",
-      "context": "Competencia con lazos emocionales",
-      "real_challenge": "No puedes competir con 'familia'",
-      "question": "Cliente: 'Mi cuñado es corredor y me da precio especial por ser familia. ¿Usted qué puede ofrecer?'. ¿Cómo responde?",
-      "difficulty": 4,
-      "frequency": "daily"
-    },
-    {
-      "areaId": "competencia_desleal",
-      "id": "seguro_pirata",
-      "type": "in-conversation",
-      "pattern": "fraude_potencial",
-      "keywords": ["marketplace", "baratisimo", "facebook", "informal", "efectivo"],
-      "title": "Encontré seguro súper barato en redes",
-      "context": "Seguros piratas proliferan en redes sociales",
-      "real_challenge": "Cliente no distingue entre seguro real y estafa",
-      "question": "Cliente: 'En marketplace venden seguros a $100 mensuales, todo incluido, pago en efectivo'. ¿Cómo responde?",
-      "difficulty": 3,
-      "frequency": "weekly"
-    },
-    {
-      "areaId": "competencia_desleal",
-      "id": "corporativo_hack",
-      "type": "follow-up",
-      "pattern": "abuso_sistema",
-      "keywords": ["flotilla", "empresa", "corporativo", "descuento"],
-      "title": "Quiero precio de flotilla con 1 auto",
-      "context": "Intenta hackear tarifas corporativas",
-      "real_challenge": "Quiere beneficios empresariales sin serlo",
-      "question": "Cliente: 'Tengo razón social, dame precio de flotilla aunque sea solo mi auto personal'. ¿Cómo responde?",
-      "difficulty": 3,
-      "frequency": "monthly"
-    },
-    
-    {
-      "areaId": "crisis_economica",
-      "id": "cliente_quebrado",
-      "type": "in-conversation",
-      "pattern": "sin_recursos",
-      "keywords": ["quebrado", "perdí", "no puedo", "crisis", "despido"],
-      "title": "Perdí mi trabajo/negocio",
-      "context": "Cliente en crisis financiera severa",
-      "real_challenge": "Necesita protección justo cuando menos puede pagarla",
-      "question": "Cliente: 'Me despidieron, necesito bajar el seguro al mínimo legal o cancelar'. ¿Cómo responde?",
-      "difficulty": 4,
-      "frequency": "daily"
-    },
-    {
-      "areaId": "crisis_economica",
-      "id": "prioridades_cambiadas",
-      "type": "in-conversation",
-      "pattern": "seguro_vs_necesidades",
-      "keywords": ["comida", "renta", "escuela", "medicina", "prioridad"],
-      "title": "Entre el seguro y necesidades básicas",
-      "context": "Debe elegir entre seguro y gastos esenciales",
-      "real_challenge": "El seguro es lo primero que cortan",
-      "question": "Cliente: 'Entre pagar el seguro o la escuela de mis hijos, la decisión es obvia'. ¿Cómo responde?",
-      "difficulty": 5,
-      "frequency": "weekly"
-    },
-    {
-      "areaId": "crisis_economica",
-      "id": "empresa_beneficio",
-      "type": "in-conversation",
-      "pattern": "beneficio_vs_efectivo",
-      "keywords": ["empresa", "beneficio", "prestación", "efectivo", "cash"],
-      "title": "Prefiero el dinero que el seguro",
-      "context": "Empresa ofrece seguro o efectivo",
-      "real_challenge": "Prefiere liquidez sobre protección",
-      "question": "Cliente: 'Mi empresa me da seguro o $800 extra al mes. Obvio elegí el dinero'. ¿Cómo responde?",
-      "difficulty": 3,
-      "frequency": "weekly"
-    },
-    
-    {
-      "areaId": "generacion_z",
-      "id": "primer_auto",
-      "type": "in-conversation",
-      "pattern": "sin_experiencia",
-      "keywords": ["primer", "nuevo", "licencia", "joven", "padres"],
-      "title": "Mi primer auto, ¿necesito seguro?",
-      "context": "Gen Z, primer vehículo, cero experiencia con seguros",
-      "real_challenge": "No entiende qué es un seguro ni por qué pagarlo",
-      "question": "Cliente de 20 años: 'Acabo de comprar mi primer auto. ¿Es obligatorio el seguro o es opcional?'. ¿Cómo responde?",
-      "difficulty": 2,
-      "frequency": "daily"
-    },
-    {
-      "areaId": "generacion_z",
-      "id": "todo_digital",
-      "type": "follow-up",
-      "pattern": "nativos_digitales",
-      "keywords": ["app", "online", "whatsapp", "llamada no", "mensaje"],
-      "title": "No quiero llamadas, todo por app",
-      "context": "Generación que evita llamadas telefónicas",
-      "real_challenge": "Proceso tradicional de seguros es muy análogo",
-      "question": "Cliente: 'Si tengo que hablar por teléfono o ir a oficina, mejor no. ¿Todo es digital?'. ¿Cómo responde?",
-      "difficulty": 2,
-      "frequency": "daily"
-    },
-    {
-      "areaId": "generacion_z",
-      "id": "suscripcion_mensual",
-      "type": "in-conversation",
-      "pattern": "modelo_netflix",
-      "keywords": ["mensual", "cancelar", "suscripción", "pausar", "flexible"],
-      "title": "¿Puedo cancelar cuando quiera como Netflix?",
-      "context": "Esperan modelo de suscripción flexible",
-      "real_challenge": "Seguros anuales vs. mentalidad de suscripción",
-      "question": "Cliente joven: '¿Es como suscripción que cancelo cuando quiera o me amarran un año?'. ¿Cómo responde?",
-      "difficulty": 2,
-      "frequency": "weekly"
-    },
-    
-    {
-      "areaId": "renovaciones",
-      "id": "fantasma_renovacion",
-      "type": "follow-up",
-      "pattern": "cliente_desaparecido",
-      "keywords": ["no contesta", "ghosting", "ignora", "desapareció"],
-      "title": "Cliente no responde en renovación",
-      "context": "Se acerca renovación, cliente desaparecido",
-      "real_challenge": "Probablemente cotizando con otros o decidió no renovar",
-      "question": "Cliente no responde hace 3 semanas, renovación en 5 días. ¿Qué mensaje envía para reactivar?",
-      "difficulty": 3,
-      "frequency": "daily"
-    },
-    {
-      "areaId": "renovaciones",
-      "id": "aumento_renovacion",
-      "type": "in-conversation",
-      "pattern": "shock_precio",
-      "keywords": ["subió", "aumento", "más caro", "año pasado", "incremento"],
-      "title": "¿Por qué subió 30% si no tuve siniestros?",
-      "context": "Incremento en renovación sin siniestros",
-      "real_challenge": "Inflación, siniestralidad general, ajustes de mercado",
-      "question": "Cliente: 'Cero siniestros y me suben 30%. Esto es un robo'. ¿Cómo responde?",
-      "difficulty": 4,
-      "frequency": "daily"
-    },
-    {
-      "areaId": "renovaciones",
-      "id": "mejor_oferta",
-      "type": "in-conversation",
-      "pattern": "retencion",
-      "keywords": ["mejor precio", "otro corredor", "cambiar", "oferta"],
-      "title": "Me llegó mejor oferta de otro corredor",
-      "context": "Competencia agresiva en renovación",
-      "real_challenge": "Cliente leal tentado por precio",
-      "question": "Cliente de 3 años: 'Otro corredor me ofrece lo mismo 25% más barato. ¿Qué puede hacer?'. ¿Cómo responde?",
-      "difficulty": 4,
-      "frequency": "daily"
-    },
-    
     {
       "areaId": "objeciones_clasicas",
       "id": "precio_alto_clasico",
@@ -348,33 +38,87 @@
       "real_challenge": "Ve el seguro como gasto, no inversión",
       "question": "Cliente: 'La verdad está muy caro el seguro'. ¿Cómo responde?",
       "difficulty": 2,
-      "frequency": "daily"
+      "frequency": "daily",
+      "jugadas": [
+        {
+          "texto": "Le muestro exactamente dónde va cada peso de esa prima y qué riesgos específicos cubre.",
+          "estilo": "logica"
+        },
+        {
+          "texto": "Entiendo perfectamente que el presupuesto aprieta. ¿Qué parte le preocupa más del costo?",
+          "estilo": "empatica"
+        },
+        {
+          "texto": "¿Es caro comparado con qué? Porque $500 al mes vs $45,000 de golpe cambia la perspectiva.",
+          "estilo": "estrategica"
+        },
+        {
+          "texto": "Ok, armemos juntos un seguro que no le duela pagar. ¿Qué es lo indispensable para usted?",
+          "estilo": "proactiva"
+        }
+      ]
     },
     {
-      "areaId": "objeciones_clasicas",
-      "id": "desconfianza_clasica",
+      "areaId": "guerra_digital",
+      "id": "apps_vs_humano",
       "type": "in-conversation",
-      "pattern": "desconfianza_aseguradora",
-      "keywords": ["no pagan", "estafa", "letra chica", "trabas"],
-      "title": "Los seguros nunca pagan",
-      "context": "Desconfianza general en la industria",
-      "real_challenge": "Mala experiencia propia o ajena",
-      "question": "Cliente: 'Los seguros cobran y cuando necesitas, ponen mil trabas'. ¿Cómo responde?",
-      "difficulty": 3,
-      "frequency": "daily"
+      "pattern": "comparacion_digital",
+      "keywords": ["app", "online", "digital", "comparador"],
+      "title": "Coticé en 5 apps y usted es el más caro",
+      "context": "Cliente comparó precios online",
+      "real_challenge": "Apps dan 40% menos sin intermediarios",
+      "question": "Cliente mostrando su teléfono: 'Tengo 5 cotizaciones, todas más baratas'. ¿Cómo responde?",
+      "difficulty": 5,
+      "frequency": "daily",
+      "jugadas": [
+        {
+          "texto": "Tiene razón, soy $80 más caro. Esos $80 son mi WhatsApp personal a las 2am. ¿Lo vale?",
+          "estilo": "logica"
+        },
+        {
+          "texto": "Qué bueno que investigó. ¿Las apps mencionan quién responde cuando más lo necesita?",
+          "estilo": "empatica"
+        },
+        {
+          "texto": "Perfecto. La app vende pólizas, yo vendo dormir tranquilo. Son productos diferentes.",
+          "estilo": "estrategica"
+        },
+        {
+          "texto": "Hagamos la prueba ahora: llame a la app, luego a mí. Vea la diferencia en vivo.",
+          "estilo": "proactiva"
+        }
+      ]
     },
     {
-      "areaId": "objeciones_clasicas",
-      "id": "pensarlo_clasico",
-      "type": "follow-up",
-      "pattern": "evasion_diplomatica",
-      "keywords": ["pensar", "consultar", "avisar", "ver"],
-      "title": "Lo voy a pensar",
-      "context": "Evasión cortés clásica",
-      "real_challenge": "Forma educada de decir no",
-      "question": "Cliente: 'Déjeme pensarlo y le aviso'. ¿Cómo responde?",
-      "difficulty": 2,
-      "frequency": "daily"
+      "areaId": "situaciones_limite",
+      "id": "post_siniestro",
+      "type": "in-conversation",
+      "pattern": "urgencia_tardia",
+      "keywords": ["ya pasó", "ayer", "choqué", "retroactivo"],
+      "title": "Ya choqué, ¿ahora sí me ayuda?",
+      "context": "Busca seguro DESPUÉS del accidente",
+      "real_challenge": "Quiere cobertura retroactiva imposible",
+      "question": "Cliente: 'Tuve un incidente ayer. Si saco seguro hoy, ¿cuándo puedo reclamar?'",
+      "difficulty": 5,
+      "frequency": "weekly",
+      "jugadas": [
+        {
+          "texto": "No puedo asegurar hacia atrás, es fraude federal. Pero puedo blindar desde hoy. ¿Empezamos?",
+          "estilo": "logica"
+        },
+        {
+          "texto": "Lamento lo que pasó. No hay retroactivo, pero conozco talleres con facilidades. ¿Lo ayudo?",
+          "estilo": "empatica"
+        },
+        {
+          "texto": "Este golpe de $45,000: ¿será su última lección cara o la primera de muchas? Usted decide.",
+          "estilo": "estrategica"
+        },
+        {
+          "texto": "Llamo al taller ahora mismo en altavoz y negocio con usted. Resolvamos esto ya.",
+          "estilo": "proactiva"
+        }
+      ]
     }
   ]
 }

@@ -1,12 +1,12 @@
 // ============================================
-// DOJO DE POLIZAR v10.0 - REVELADOR
-// Sin enseñar, solo revelar perspectivas ocultas
+// DOJO DE POLIZAR v11.0 - REVELADOR PURO
+// Feedback generado 100% por IA, sin bloques, sin plantillas.
 // ============================================
 
 (function(){
   "use strict";
 
-  console.log("🚀 Dojo de Polizar v10.0 - Edición Reveladora");
+  console.log("🚀 Dojo de Polizar v11.0 - Edición Reveladora Pura");
 
   // Endpoint del Worker
   const API = "https://index.rgarciaplicet.workers.dev/";
@@ -110,17 +110,17 @@
   function formatFeedback(text) {
     if(!text) return "";
     
+    // Conservamos saltos de línea y formato original
     return text
-      .replace(/✅/g, '<span class="emoji-check">✅</span>')
-      .replace(/💡/g, '<span class="emoji-bulb">💡</span>')
-      .replace(/🧠/g, '<span class="emoji-brain">🧠</span>')
-      .replace(/🌟/g, '<span class="emoji-star">🌟</span>')
-      .replace(/👉/g, '<span class="emoji-point">👉</span>')
-      .replace(/🔁/g, '<span class="emoji-repeat">🔁</span>')
-      .replace(/→/g, '<span class="arrow">→</span>')
-      .replace(/—/g, '<hr class="separator">')
       .replace(/\n/g, '<br>')
-      .replace(/"([^"]+)"/g, '<span class="quote">"$1"</span>');
+      .replace(/✅/g, '<strong class="emoji">✅</strong>')
+      .replace(/💡/g, '<strong class="emoji">💡</strong>')
+      .replace(/🧠/g, '<strong class="emoji">🧠</strong>')
+      .replace(/🌟/g, '<strong class="emoji">🌟</strong>')
+      .replace(/👉/g, '<strong class="emoji">👉</strong>')
+      .replace(/🔁/g, '<strong class="emoji">🔁</strong>')
+      .replace(/—/g, '<hr style="border:0; border-top:1px solid rgba(255,255,255,0.12); margin:16px 0;">')
+      .replace(/"([^"]+)"/g, '<em>“$1”</em>');
   }
 
   // ===== Navegación =====
@@ -352,7 +352,7 @@
     
     box.innerHTML = "";
 
-    // NUEVO: Mostrar las frases completas como botones
+    // Mostrar las frases completas como botones
     if(sc.jugadas && sc.jugadas.length > 0) {
       sc.jugadas.forEach(jugada => {
         const b = document.createElement("button");
@@ -360,11 +360,14 @@
         b.type = "button";
         b.dataset.estilo = jugada.estilo;
         b.dataset.texto = jugada.texto;
-        b.textContent = jugada.texto;
+        // Truncar visualmente si es muy largo
+        const displayText = jugada.texto.length > 60 ? jugada.texto.substring(0, 57) + "..." : jugada.texto;
+        b.textContent = displayText;
+        b.title = jugada.texto; // Tooltip con texto completo
         box.appendChild(b);
       });
     } else {
-      // Fallback si no hay jugadas definidas
+      // Fallback (no debería ocurrir)
       const jugadas = ["Lógica", "Empática", "Estratégica", "Proactiva"];
       jugadas.forEach(j => {
         const b = document.createElement("button");
@@ -381,7 +384,7 @@
     const escContinue = qs("#esc-continue");
     
     if(escAnswer) escAnswer.style.display = "none";
-    if(toolkit) toolkit.style.display = "none";
+    if(toolkit) toolkit.style.display = "none"; // ← Toolkit eliminado
     if(escContinue) escContinue.style.display = "none";
   }
 
@@ -393,12 +396,12 @@
     return getScenarioById(S.scenId); 
   }
 
-  // ===== Ejecutar jugada (NUEVO - Solo feedback revelador) =====
+  // ===== Ejecutar jugada =====
   async function runPlay(sc, jugadaEstilo, jugadaTexto) {
     const ans = qs("#esc-answer");
     if(ans) {
       ans.style.display = "block"; 
-      ans.innerHTML = `<p class="muted">Revelando perspectivas ocultas...</p>`;
+      ans.innerHTML = `<p class="muted">Generando tu revelación…</p>`;
     }
     
     try {
@@ -407,28 +410,25 @@
         estilo: jugadaEstilo,
         area: S.areaTitle,
         escenario: sc.title,
-        pregunta: sc.question,
-        pattern: sc.pattern || null,
-        keywords: sc.keywords || [],
-        eleccion: jugadaEstilo,
+        frase_usuario: jugadaTexto,
         cliente: S.cliente || ""
       });
       
       S.pack = pack;
       
       if(ans && pack.feedback) {
-        ans.innerHTML = `<div class="revelation-box">${formatFeedback(pack.feedback)}</div>`;
+        // Renderizar feedback tal cual, con formato mínimo
+        ans.innerHTML = `<div class="revelation-container">${formatFeedback(pack.feedback)}</div>`;
       }
       
-      // Ya no hay toolkit ni plantillas
+      // Eliminamos toolkit, plantillas, frases de apoyo
       const toolkit = qs("#toolkit");
       if(toolkit) toolkit.style.display = "none";
       
-      // Extraer frase memorable para p5 (opcional)
+      // Extraemos solo la primera frase entre comillas para p5 (si existe)
       if(pack.feedback) {
-        const lines = pack.feedback.split('\n');
-        const fraseLine = lines.find(line => line.includes('"') && line.includes('"'));
-        S.lastFrase = fraseLine ? fraseLine.replace(/"/g, '').trim() : "Tu revelación aparecerá aquí";
+        const quoteMatch = pack.feedback.match(/"[^"]+"/);
+        S.lastFrase = quoteMatch ? quoteMatch[0].replace(/"/g, '') : "Tu revelación aparecerá aquí";
       }
       
       const escContinue = qs("#esc-continue");
@@ -442,7 +442,7 @@
     }
   }
 
-  // ===== Segunda ronda (opcional - simplificada) =====
+  // ===== Segunda ronda (opcional, minimalista) =====
   async function roundTwo() {
     const out = qs("#rr-output"); 
     if(!out) return;
@@ -455,7 +455,7 @@
       return; 
     }
     
-    out.textContent = "Revelando nueva perspectiva...";
+    out.textContent = "Generando nueva perspectiva...";
 
     const sc = getCurrentScenario();
     const escTitle = qs("#esc-title");
@@ -464,12 +464,10 @@
     try {
       const pack = await ai({
         nombre: S.nombre || "",
-        estilo: S.lastJugada || "logica",
+        estilo: S.lastJugada || "empatico",
         area: S.areaTitle,
         escenario: scTitle,
-        pattern: sc?.pattern || null,
-        pregunta: "Segunda ronda: " + input,
-        eleccion: "contra-respuesta",
+        frase_usuario: input, // ← El input del usuario es la nueva "frase"
         cliente: S.cliente || ""
       });
       
@@ -477,9 +475,9 @@
         S.pack = pack;
         const escAnswer = qs("#esc-answer");
         if(escAnswer) {
-          escAnswer.innerHTML = `<div class="revelation-box">${formatFeedback(pack.feedback)}</div>`;
+          escAnswer.innerHTML = `<div class="revelation-container">${formatFeedback(pack.feedback)}</div>`;
         }
-        out.textContent = "Nueva perspectiva revelada arriba ↑";
+        out.textContent = "Nueva perspectiva generada arriba ↑";
       } else {
         out.textContent = "No se pudo generar. Intente nuevamente.";
       }
@@ -556,7 +554,7 @@
       }
       else if(t.closest(".jugada-btn")) {
         const btn = t.closest(".jugada-btn");
-        const estilo = btn.dataset.estilo || "logica";
+        const estilo = btn.dataset.estilo || "empatico";
         const texto = btn.dataset.texto || btn.textContent;
         const sc = getCurrentScenario();
         if(sc) { 
@@ -638,7 +636,7 @@ ${S.lastFrase || "-"}`;
 
   // ===== Inicialización =====
   function wireBase() {
-    console.log("🎬 Iniciando Dojo de Polizar v10.0...");
+    console.log("🎬 Iniciando Dojo de Polizar v11.0...");
     wireEvents();
     console.log("📦 Cargando contenido...");
     startFetchContent();

@@ -1,10 +1,12 @@
-// build: dojo-app v3.0 SEGUROS - Comunicación completa
-// CAMBIOS: Envía TODOS los datos del escenario al Worker
+// ============================================
+// DOJO DE POLIZAR v10.0 - REVELADOR
+// Sin enseñar, solo revelar perspectivas ocultas
+// ============================================
 
 (function(){
   "use strict";
 
-  console.log("🚀 Dojo de Polizar v3.0 - Edición Seguros");
+  console.log("🚀 Dojo de Polizar v10.0 - Edición Reveladora");
 
   // Endpoint del Worker
   const API = "https://index.rgarciaplicet.workers.dev/";
@@ -13,126 +15,177 @@
 
   // Estado global
   const S = {
-    nombre:"", cliente:"", estilo:"", areaId:"", areaTitle:"",
-    scenId:"", pack:null, lastFrase:"", lastJugada:"", content:null, templates:null
+    nombre: "", 
+    cliente: "", 
+    estilo: "", 
+    areaId: "", 
+    areaTitle: "",
+    scenId: "", 
+    pack: null, 
+    lastFrase: "", 
+    lastJugada: "", 
+    content: null
   };
+  
   let contentReady = false;
   let contentFetching = false;
 
   // ===== Utils base =====
-  const qs=(s,sc=document)=>sc.querySelector(s);
-  const qsa=(s,sc=document)=>Array.from(sc.querySelectorAll(s));
-  const esc=(s)=> (s||"").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  const qs = (s, sc = document) => sc.querySelector(s);
+  const qsa = (s, sc = document) => Array.from(sc.querySelectorAll(s));
+  const esc = (s) => (s || "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 
-  const progress=(id)=>{
-    const map={p0:0,p1:1,p2:2,p3:3,p4:4,p5:5,p8:8,p9:9};
-    const pct=Math.max(10,Math.round(((map[id]??0)+1)/10*100));
-    const b=qs("#bar"); if(b) b.style.width=pct+"%";
+  const progress = (id) => {
+    const map = {p0:0, p1:1, p2:2, p3:3, p4:4, p5:5, p8:8, p9:9};
+    const pct = Math.max(10, Math.round(((map[id] ?? 0) + 1) / 10 * 100));
+    const b = qs("#bar"); 
+    if(b) b.style.width = pct + "%";
   };
-  const scrollTop=()=>{ const root=qs("#dojoApp"); if(root) window.scrollTo({top:root.offsetTop-10,behavior:"smooth"}); };
 
-  function copy(t){
-    t=t||"";
-    if(navigator.clipboard && window.isSecureContext){
-      navigator.clipboard.writeText(t).then(()=>alert("Copiado")).catch(()=>fallbackCopy(t));
+  const scrollTop = () => { 
+    const root = qs("#dojoApp"); 
+    if(root) window.scrollTo({top: root.offsetTop - 10, behavior: "smooth"}); 
+  };
+
+  function copy(t) {
+    t = t || "";
+    if(navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(t).then(() => alert("Copiado")).catch(() => fallbackCopy(t));
     } else fallbackCopy(t);
   }
-  function fallbackCopy(t){
-    const a=document.createElement("textarea");
-    a.value=t; a.style.position="fixed"; a.style.left="-9999px";
-    document.body.appendChild(a); a.select();
-    try{document.execCommand("copy"); alert("Copiado")}catch(e){alert("No se pudo copiar")}
+
+  function fallbackCopy(t) {
+    const a = document.createElement("textarea");
+    a.value = t; 
+    a.style.position = "fixed"; 
+    a.style.left = "-9999px";
+    document.body.appendChild(a); 
+    a.select();
+    try {
+      document.execCommand("copy"); 
+      alert("Copiado");
+    } catch(e) {
+      alert("No se pudo copiar");
+    }
     document.body.removeChild(a);
   }
-  function share(t,title){
-    if(navigator.share){ navigator.share({title:title||"Dojo de Polizar", text:t}).catch(()=>{}); }
-    else { copy(t); window.open("https://wa.me/?text="+encodeURIComponent(t), "_blank"); }
-  }
-  function downloadTxt(name, t){
-    const blob=new Blob([t||""],{type:"text/plain;charset=utf-8"});
-    const url=URL.createObjectURL(blob); const a=document.createElement("a");
-    a.href=url; a.download=name||"dojo.txt"; document.body.appendChild(a);
-    a.click(); setTimeout(()=>{URL.revokeObjectURL(url); a.remove();},0);
-  }
-  function slug(s){ s=s||""; try{s=s.normalize("NFD").replace(/[\u0300-\u036f]/g,"")}catch(e){} return s.toLowerCase().replace(/[^\w]+/g,"-").replace(/-+/g,"-").replace(/^-|-$/g,""); }
 
-  // Placeholders {CLIENTE}/{MI_NOMBRE}
-  function fillPH(t){
-    if(!t) return "";
-    const cli = (S.cliente && S.cliente.trim()) ? S.cliente.trim() : "";
-    const yo  = (S.nombre && S.nombre.trim()) ? S.nombre.trim()  : "";
-    
-    if(cli) {
-      t = t.replace(/\{\s*CLIENTE\s*\}/gi, cli);
-    } else {
-      // Si no hay nombre de cliente, eliminar referencias
-      t = t.replace(/Hola \{\s*CLIENTE\s*\},?/gi, "Hola,");
-      t = t.replace(/\{\s*CLIENTE\s*\},?/gi, "");
-    }
-    
-    if(yo) {
-      t = t.replace(/\{\s*MI[_\s]*NOMBRE\s*\}/gi, yo);
-    } else {
-      t = t.replace(/\{\s*MI[_\s]*NOMBRE\s*\}/gi, "Tu corredor");
-    }
-    
-    return t;
+  function downloadTxt(name, t) {
+    const blob = new Blob([t || ""], {type: "text/plain;charset=utf-8"});
+    const url = URL.createObjectURL(blob); 
+    const a = document.createElement("a");
+    a.href = url; 
+    a.download = name || "dojo.txt"; 
+    document.body.appendChild(a);
+    a.click(); 
+    setTimeout(() => {
+      URL.revokeObjectURL(url); 
+      a.remove();
+    }, 0);
   }
 
-  async function ai(payload){
+  function slug(s) { 
+    s = s || ""; 
+    try {
+      s = s.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    } catch(e) {}
+    return s.toLowerCase().replace(/[^\w]+/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
+  }
+
+  // ===== Llamada al Worker =====
+  async function ai(payload) {
     console.log("📤 Enviando al Worker:", payload);
-    const r=await fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
-    if(!r.ok) throw new Error("IA");
+    const r = await fetch(API, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(payload)
+    });
+    if(!r.ok) throw new Error("Worker error");
     const response = await r.json();
     console.log("📥 Respuesta del Worker:", response);
     return response;
   }
 
-  // ===== Nav / visibilidad =====
-  let currentStep="p0", historySteps=["p0"];
-  function go(id){
-    qsa(".step").forEach(x=>x.classList.remove("active"));
-    const stepEl=qs("#"+id); 
+  // ===== Formatear feedback revelador =====
+  function formatFeedback(text) {
+    if(!text) return "";
+    
+    return text
+      .replace(/✅/g, '<span class="emoji-check">✅</span>')
+      .replace(/💡/g, '<span class="emoji-bulb">💡</span>')
+      .replace(/🧠/g, '<span class="emoji-brain">🧠</span>')
+      .replace(/🌟/g, '<span class="emoji-star">🌟</span>')
+      .replace(/👉/g, '<span class="emoji-point">👉</span>')
+      .replace(/🔁/g, '<span class="emoji-repeat">🔁</span>')
+      .replace(/→/g, '<span class="arrow">→</span>')
+      .replace(/—/g, '<hr class="separator">')
+      .replace(/\n/g, '<br>')
+      .replace(/"([^"]+)"/g, '<span class="quote">"$1"</span>');
+  }
+
+  // ===== Navegación =====
+  let currentStep = "p0", historySteps = ["p0"];
+  
+  function go(id) {
+    qsa(".step").forEach(x => x.classList.remove("active"));
+    const stepEl = qs("#" + id); 
     if(stepEl) {
       stepEl.classList.add("active");
     }
 
-    currentStep=id; progress(id);
-    const root=qs("#dojoApp"); if(root) window.scrollTo({top:root.offsetTop-10,behavior:"smooth"});
+    currentStep = id; 
+    progress(id);
+    scrollTop();
 
     // Topnav visible solo desde p2
     const topnav = qs(".topnav");
-    if (topnav) topnav.style.display = (id==="p0" || id==="p1") ? "none" : "flex";
+    if(topnav) topnav.style.display = (id === "p0" || id === "p1") ? "none" : "flex";
 
-    // Ocultar "Guía" en topnav (se usa FAB)
+    // Ocultar "Guía" en topnav
     const guiaTop = qs('[data-nav="guia"]');
-    if (guiaTop) guiaTop.style.display = "none";
+    if(guiaTop) guiaTop.style.display = "none";
 
     // "← Volver" solo desde p2
     const backBtn = qs("#btn-back");
-    if (backBtn) backBtn.style.display = (id==="p0" || id==="p1") ? "none" : "inline-flex";
+    if(backBtn) backBtn.style.display = (id === "p0" || id === "p1") ? "none" : "inline-flex";
 
     // "Áreas" solo desde p3
     const areasBtn = qs('[data-nav="areas"]');
-    if (areasBtn) {
+    if(areasBtn) {
       const stepNum = parseInt((id || "p0").slice(1), 10) || 0;
       areasBtn.style.display = stepNum >= 3 ? "inline-flex" : "none";
     }
 
     // FAB "Guía" solo desde p2
     const guideFab = qs("#btn-guide-fab");
-    if (guideFab) guideFab.style.display = (id==="p0" || id==="p1") ? "none" : "inline-flex";
+    if(guideFab) guideFab.style.display = (id === "p0" || id === "p1") ? "none" : "inline-flex";
   }
   
-  function nav(id){ if(id===currentStep) return; historySteps.push(id); go(id); }
-  function shouldConfirmBack(){ return (currentStep==="p4"||currentStep==="p5") && !!S.pack; }
-  function goBack(){ if(shouldConfirmBack()){ if(!confirm("¿Volver al paso anterior? Perderá el foco de este escenario. Sus resultados no se guardan aquí.")) return; } if(historySteps.length<=1) return; historySteps.pop(); const prev = historySteps[historySteps.length-1]||"p0"; go(prev); }
+  function nav(id) { 
+    if(id === currentStep) return; 
+    historySteps.push(id); 
+    go(id); 
+  }
+  
+  function shouldConfirmBack() { 
+    return (currentStep === "p4" || currentStep === "p5") && !!S.pack; 
+  }
+  
+  function goBack() { 
+    if(shouldConfirmBack()) { 
+      if(!confirm("¿Volver al paso anterior? Perderá el foco de este escenario.")) return; 
+    }
+    if(historySteps.length <= 1) return; 
+    historySteps.pop(); 
+    const prev = historySteps[historySteps.length - 1] || "p0"; 
+    go(prev); 
+  }
 
-  // FAB "Guía"
-  function ensureGuideFab(){
+  // ===== FAB "Guía" =====
+  function ensureGuideFab() {
     const card = document.querySelector("#dojoApp .card");
-    if (!card) return;
-    if (!document.querySelector("#btn-guide-fab")) {
+    if(!card) return;
+    if(!document.querySelector("#btn-guide-fab")) {
       const btn = document.createElement("button");
       btn.id = "btn-guide-fab";
       btn.className = "corner-guide";
@@ -144,45 +197,40 @@
   }
 
   // ===== Contenido =====
-  function showAreasLoading(){
+  function showAreasLoading() {
     const grid = qs("#areas-grid");
     if(grid) grid.innerHTML = `<div class="fb"><p class="muted">Cargando áreas…</p></div>`;
   }
 
-  function startFetchContent(){
-    if (contentReady) {
-      return Promise.resolve();
-    }
-    
-    if (contentFetching) {
-      return Promise.resolve();
-    }
+  function startFetchContent() {
+    if(contentReady) return Promise.resolve();
+    if(contentFetching) return Promise.resolve();
     
     contentFetching = true;
     
     return fetch(CONTENT_URL)
-      .then(r=>{ 
+      .then(r => { 
         if(!r.ok) throw new Error("content"); 
         return r.json(); 
       })
-      .then(data=>{
+      .then(data => {
         console.log("✅ Contenido cargado:", data);
         S.content = data;
         contentReady = true;
         contentFetching = false;
-        if (currentStep === "p1") buildAreas();
+        if(currentStep === "p1") buildAreas();
         window.dispatchEvent(new Event("dojo:contentReady"));
       })
-      .catch((err)=>{
+      .catch((err) => {
         console.error("❌ Error cargando contenido:", err);
-        const grid=qs("#areas-grid");
-        if(grid) grid.innerHTML = `<div class="fb"><p class="muted">No se pudo cargar el contenido. Verifique content.${plan}.json en la raíz.</p></div>`;
+        const grid = qs("#areas-grid");
+        if(grid) grid.innerHTML = `<div class="fb"><p class="muted">No se pudo cargar el contenido.</p></div>`;
         contentReady = false;
         contentFetching = false;
       })
-      .finally(()=>{
+      .finally(() => {
         const startBtn = qs("#start");
-        if(startBtn){ 
+        if(startBtn) { 
           startBtn.disabled = false; 
           startBtn.textContent = "Entrar al Dojo"; 
         }
@@ -190,17 +238,17 @@
   }
 
   // ===== Start Flow =====
-  function startFlow(){
-    S.nombre=(qs("#nombre")?.value||"").trim();
-    S.cliente=(qs("#cliente")?.value||"").trim();
+  function startFlow() {
+    S.nombre = (qs("#nombre")?.value || "").trim();
+    S.cliente = (qs("#cliente")?.value || "").trim();
     
     nav("p1");
     
-    if (!contentReady) {
+    if(!contentReady) {
       showAreasLoading();
       setStartState(true);
       
-      const onReady = ()=>{
+      const onReady = () => {
         setStartState(false);
         buildAreas();
         window.removeEventListener("dojo:contentReady", onReady);
@@ -213,172 +261,352 @@
     }
   }
 
-  // ===== Wire de eventos =====
-  function setStartState(loading){
+  function setStartState(loading) {
     const startBtn = qs("#start");
-    if(!startBtn) {
-      return;
-    }
-    if(loading){
+    if(!startBtn) return;
+    
+    if(loading) {
       startBtn.disabled = true;
       startBtn.textContent = "Cargando…";
-    }else{
+    } else {
       startBtn.disabled = false;
       startBtn.textContent = "Entrar al Dojo";
     }
   }
 
-  function wireEvents(){
+  // ===== Construir vistas =====
+  function buildAreas() {
+    const grid = qs("#areas-grid"); 
+    if(!grid) return;
+    
+    grid.innerHTML = "";
+    const areas = (S.content && S.content.areas) ? S.content.areas : [];
+    
+    if(!areas.length) {
+      grid.innerHTML = `<div class="fb"><p class="muted">No hay áreas disponibles.</p></div>`;
+      return;
+    }
+    
+    areas.forEach(a => {
+      const d = document.createElement("div");
+      d.className = "area-card";
+      const icon = a.icon || "📋";
+      d.innerHTML = `
+        <div class="area-title">${icon} ${esc(a.title)}</div>
+        <p class="area-desc">${esc(a.desc || "")}</p>
+        <div class="group">
+          <button class="btn primary" data-area="${esc(a.id)}" type="button">Entrar</button>
+        </div>`;
+      grid.appendChild(d);
+    });
+  }
+
+  function buildScenarios() {
+    const list = ((S.content && S.content.scenarios) || []).filter(x => x.areaId === S.areaId);
+    const titleEl = qs("#area-title"); 
+    if(titleEl) titleEl.textContent = S.areaTitle || "";
+    
+    const grid = qs("#scen-grid"); 
+    if(!grid) return; 
+    
+    grid.innerHTML = "";
+    
+    if(!list.length) {
+      grid.innerHTML = `<div class="fb"><p class="muted">No hay escenarios para esta área.</p></div>`;
+      return;
+    }
+    
+    list.forEach(sc => {
+      const q = sc.question || ("Cliente: " + sc.title + ". ¿Cómo responde?");
+      const d = document.createElement("div");
+      d.className = "sc-card"; 
+      d.setAttribute("data-scenario", sc.id);
+      
+      const difficulty = sc.difficulty || 3;
+      const stars = "⭐".repeat(difficulty);
+      
+      d.innerHTML = `
+        <div class="sc-title">${esc(sc.title)} <span style="float:right;font-size:12px">${stars}</span></div>
+        <p class="sc-desc">${esc(q)}</p>`;
+      grid.appendChild(d);
+    });
+  }
+
+  function buildScenarioView(sid) {
+    const sc = getScenarioById(sid);
+    if(!sc) { 
+      nav("p3"); 
+      return; 
+    }
+
+    const escBadge = qs("#esc-badge");
+    const escTitle = qs("#esc-title");
+    const escQuestion = qs("#esc-question");
+    
+    if(escBadge) escBadge.textContent = "Escenario — " + (S.areaTitle || "");
+    if(escTitle) escTitle.textContent = sc.title;
+    if(escQuestion) escQuestion.textContent = sc.question || ("Cliente: " + sc.title + ". ¿Cómo responde?");
+
+    const box = qs("#esc-options"); 
+    if(!box) return; 
+    
+    box.innerHTML = "";
+
+    // NUEVO: Mostrar las frases completas como botones
+    if(sc.jugadas && sc.jugadas.length > 0) {
+      sc.jugadas.forEach(jugada => {
+        const b = document.createElement("button");
+        b.className = "btn jugada-btn";
+        b.type = "button";
+        b.dataset.estilo = jugada.estilo;
+        b.dataset.texto = jugada.texto;
+        b.textContent = jugada.texto;
+        box.appendChild(b);
+      });
+    } else {
+      // Fallback si no hay jugadas definidas
+      const jugadas = ["Lógica", "Empática", "Estratégica", "Proactiva"];
+      jugadas.forEach(j => {
+        const b = document.createElement("button");
+        b.className = "btn jugada-btn";
+        b.type = "button";
+        b.dataset.jugada = j;
+        b.textContent = j;
+        box.appendChild(b);
+      });
+    }
+
+    const escAnswer = qs("#esc-answer");
+    const toolkit = qs("#toolkit");
+    const escContinue = qs("#esc-continue");
+    
+    if(escAnswer) escAnswer.style.display = "none";
+    if(toolkit) toolkit.style.display = "none";
+    if(escContinue) escContinue.style.display = "none";
+  }
+
+  function getScenarioById(id) { 
+    return ((S.content && S.content.scenarios) || []).find(x => x.areaId === S.areaId && x.id === id); 
+  }
+  
+  function getCurrentScenario() { 
+    return getScenarioById(S.scenId); 
+  }
+
+  // ===== Ejecutar jugada (NUEVO - Solo feedback revelador) =====
+  async function runPlay(sc, jugadaEstilo, jugadaTexto) {
+    const ans = qs("#esc-answer");
+    if(ans) {
+      ans.style.display = "block"; 
+      ans.innerHTML = `<p class="muted">Revelando perspectivas ocultas...</p>`;
+    }
+    
+    try {
+      const pack = await ai({
+        nombre: S.nombre || "",
+        estilo: jugadaEstilo,
+        area: S.areaTitle,
+        escenario: sc.title,
+        pregunta: sc.question,
+        pattern: sc.pattern || null,
+        keywords: sc.keywords || [],
+        eleccion: jugadaEstilo,
+        cliente: S.cliente || ""
+      });
+      
+      S.pack = pack;
+      
+      if(ans && pack.feedback) {
+        ans.innerHTML = `<div class="revelation-box">${formatFeedback(pack.feedback)}</div>`;
+      }
+      
+      // Ya no hay toolkit ni plantillas
+      const toolkit = qs("#toolkit");
+      if(toolkit) toolkit.style.display = "none";
+      
+      // Extraer frase memorable para p5 (opcional)
+      if(pack.feedback) {
+        const lines = pack.feedback.split('\n');
+        const fraseLine = lines.find(line => line.includes('"') && line.includes('"'));
+        S.lastFrase = fraseLine ? fraseLine.replace(/"/g, '').trim() : "Tu revelación aparecerá aquí";
+      }
+      
+      const escContinue = qs("#esc-continue");
+      if(escContinue) escContinue.style.display = "block";
+      
+      scrollTop();
+      
+    } catch(e) {
+      console.error("Error:", e);
+      if(ans) ans.innerHTML = `<p class="muted">No pudimos conectar. Intente de nuevo.</p>`;
+    }
+  }
+
+  // ===== Segunda ronda (opcional - simplificada) =====
+  async function roundTwo() {
+    const out = qs("#rr-output"); 
+    if(!out) return;
+    
+    const input = (qs("#rr-text")?.value || "").trim();
+    out.style.display = "block";
+    
+    if(!input) { 
+      out.textContent = "Escribe la nueva objeción del cliente."; 
+      return; 
+    }
+    
+    out.textContent = "Revelando nueva perspectiva...";
+
+    const sc = getCurrentScenario();
+    const escTitle = qs("#esc-title");
+    const scTitle = sc?.title || (escTitle ? escTitle.textContent : "") || "";
+
+    try {
+      const pack = await ai({
+        nombre: S.nombre || "",
+        estilo: S.lastJugada || "logica",
+        area: S.areaTitle,
+        escenario: scTitle,
+        pattern: sc?.pattern || null,
+        pregunta: "Segunda ronda: " + input,
+        eleccion: "contra-respuesta",
+        cliente: S.cliente || ""
+      });
+      
+      if(pack && pack.feedback) {
+        S.pack = pack;
+        const escAnswer = qs("#esc-answer");
+        if(escAnswer) {
+          escAnswer.innerHTML = `<div class="revelation-box">${formatFeedback(pack.feedback)}</div>`;
+        }
+        out.textContent = "Nueva perspectiva revelada arriba ↑";
+      } else {
+        out.textContent = "No se pudo generar. Intente nuevamente.";
+      }
+    } catch(e) {
+      out.textContent = "Error de conexión. Intente de nuevo.";
+    }
+  }
+
+  // ===== Event listeners =====
+  function wireEvents() {
     ensureGuideFab();
 
     // Botón de inicio
     const setupStartButton = () => {
       const startBtn = qs("#start");
-      if(startBtn){
+      if(startBtn) {
         startBtn.addEventListener("click", (e) => {
           e.preventDefault();
           e.stopPropagation();
           startFlow();
         });
         
-        if (startBtn.disabled && startBtn.textContent === "Entrar al Dojo") {
+        if(startBtn.disabled && startBtn.textContent === "Entrar al Dojo") {
           startBtn.disabled = false;
         }
       }
     };
 
-    // Asegurar que el DOM esté listo
-    if (document.readyState === 'loading') {
+    if(document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', setupStartButton);
     } else {
       setupStartButton();
     }
 
-    // Delegación global para otros eventos
-    document.addEventListener("click", (e)=>{
-      const t=e.target;
+    // Delegación global
+    document.addEventListener("click", (e) => {
+      const t = e.target;
 
-      if(t.closest("#btn-back")) { goBack(); }
-      else if(t.closest("#btn-guide-fab")) { nav("p8"); }
-      else if(t.closest("[data-nav]")){
-        const where=t.closest("[data-nav]").dataset.nav;
-        if(where==="areas"){ buildAreas(); nav("p1"); }
-        if(where==="guia"){ nav("p8"); }
+      if(t.closest("#btn-back")) { 
+        goBack(); 
       }
-      else if(t.closest(".area-card .btn")){
-        const id=t.closest(".area-card .btn").dataset.area;
-        const area=((S.content&&S.content.areas)||[]).find(a=>a.id===id)||{};
-        S.areaId=id; S.areaTitle=area.title||""; const ctx=qs("#ctx-area"); if(ctx) ctx.textContent=S.areaTitle||"—"; nav("p2");
+      else if(t.closest("#btn-guide-fab")) { 
+        nav("p8"); 
       }
-      else if(t.closest("[data-style]")){
-        S.estilo=t.closest("[data-style]").dataset.style; buildScenarios(); nav("p3");
-      }
-      else if(t.closest("[data-scenario]")){
-        const id=t.closest("[data-scenario]").dataset.scenario; S.scenId=id; buildScenarioView(id); nav("p4");
-      }
-      else if(t.closest(".jugada-btn")){
-        const btn=t.closest(".jugada-btn");
-        const label=btn.dataset.jugada||btn.textContent||"Lógica";
-        const sc=getCurrentScenario();
-        if(sc){ S.lastJugada = label; runPlay(sc,label); }
-      }
-      else if(t.closest(".tab")){
-        qsa(".tab").forEach(x=>x.classList.remove("active"));
-        const tabBtn = t.closest(".tab");
-        tabBtn.classList.add("active");
-        const key=tabBtn.dataset.tab;
-        const TB=qs("#tmpl-box");
-        if(S.templates && TB){
-          if(key==="wha") TB.textContent = fillPH(S.templates.whatsapp||"");
-          if(key==="eml") TB.textContent = (fillPH(S.templates.emailSubject||S.templates.email_subject||"")+"\n\n"+fillPH(S.templates.emailBody||S.templates.email_body||"")).trim();
-          if(key==="call") TB.textContent = fillPH(S.templates.call||"");
+      else if(t.closest("[data-nav]")) {
+        const where = t.closest("[data-nav]").dataset.nav;
+        if(where === "areas") { 
+          buildAreas(); 
+          nav("p1"); 
+        }
+        if(where === "guia") { 
+          nav("p8"); 
         }
       }
-      else if(t.closest("#btn-copy-tmpl")){
-        const box = qs("#tmpl-box"); if(box) copy(box.textContent||"");
+      else if(t.closest(".area-card .btn")) {
+        const id = t.closest(".area-card .btn").dataset.area;
+        const area = ((S.content && S.content.areas) || []).find(a => a.id === id) || {};
+        S.areaId = id; 
+        S.areaTitle = area.title || ""; 
+        const ctx = qs("#ctx-area"); 
+        if(ctx) ctx.textContent = S.areaTitle || "—"; 
+        nav("p2");
       }
-      else if(t.closest("#btn-dl-txt")){
-        const TB=qs("#tmpl-box"); if(!TB) return;
-        const key=(qs(".tab.active")?.dataset.tab)||"wha"; let content="";
-        if(S.templates){
-          if(key==="wha") content=fillPH(S.templates.whatsapp||"");
-          if(key==="eml") content=(fillPH(S.templates.emailSubject||S.templates.email_subject||"")+"\n\n"+fillPH(S.templates.emailBody||S.templates.email_body||"")).trim();
-          if(key==="call") content=fillPH(S.templates.call||"");
-        } else {
-          content = TB.textContent||"";
+      else if(t.closest("[data-style]")) {
+        S.estilo = t.closest("[data-style]").dataset.style; 
+        buildScenarios(); 
+        nav("p3");
+      }
+      else if(t.closest("[data-scenario]")) {
+        const id = t.closest("[data-scenario]").dataset.scenario; 
+        S.scenId = id; 
+        buildScenarioView(id); 
+        nav("p4");
+      }
+      else if(t.closest(".jugada-btn")) {
+        const btn = t.closest(".jugada-btn");
+        const estilo = btn.dataset.estilo || "logica";
+        const texto = btn.dataset.texto || btn.textContent;
+        const sc = getCurrentScenario();
+        if(sc) { 
+          S.lastJugada = estilo;
+          S.lastFrase = texto;
+          runPlay(sc, estilo, texto); 
         }
-        downloadTxt("dojo-"+slug(S.areaId||"area")+"-"+slug(S.scenId||"escenario")+"-"+key+".txt", content);
       }
-      else if(t.closest("#btn-share-tmpl")){
-        const TB=qs("#tmpl-box"); if(!TB) return;
-        const key=(qs(".tab.active")?.dataset.tab)||"wha"; let content=TB.textContent||"";
-        if(S.templates){
-          if(key==="wha") content=fillPH(S.templates.whatsapp||"");
-          if(key==="eml") content=(fillPH(S.templates.emailSubject||S.templates.email_subject||"")+"\n\n"+fillPH(S.templates.emailBody||S.templates.email_body||"")).trim();
-          if(key==="call") content=fillPH(S.templates.call||"");
-        }
-        share(content, "Dojo — "+(S.areaTitle||""));
-      }
-      else if(t.closest(".phrase button")){
-        const text=t.closest(".phrase").querySelector("div")?.textContent||""; copy(text);
-      }
-      else if(t.id==="rr-generate"){
+      else if(t.id === "rr-generate") {
         roundTwo();
       }
-      else if(t.closest("#to-p5")){
+      else if(t.closest("#to-p5")) {
         const frase = qs("#p5-frase");
-        if(frase) frase.textContent = S.lastFrase || "Aún no se ha generado la frase activadora.";
-        const micro=(S.pack && (getMicro(S.pack)))||"";
-        const microInput = qs("#micro");
-        if(microInput && micro) microInput.value = fillPH(micro);
+        if(frase) frase.textContent = S.lastFrase || "Tu revelación aparecerá aquí.";
         nav("p5");
       }
-      else if(t.closest("#btn-wa")){
+      else if(t.closest("#btn-wa")) {
         const escTitle = qs('#esc-title');
-        const microInput = qs('#micro');
         const msg = `Dojo de Polizar — ${S.areaTitle}
 Escenario: ${escTitle ? escTitle.textContent : "-"}
-Estilo: ${S.estilo||"-"}
-Cliente: ${S.cliente||"-"}
+Estilo: ${S.estilo || "-"}
+Cliente: ${S.cliente || "-"}
 
-Micro‑acción:
-${(microInput?.value||'________')}
-
-Frase activadora:
-${S.lastFrase||"-"}`;
-        window.open("https://wa.me/?text="+encodeURIComponent(msg),"_blank");
+Revelación clave:
+${S.lastFrase || "-"}`;
+        window.open("https://wa.me/?text=" + encodeURIComponent(msg), "_blank");
       }
-      else if(t.closest("#p5-copy")){
+      else if(t.closest("#p5-copy")) {
         const escTitle = qs('#esc-title');
-        const microInput = qs('#micro');
         const txt = `Dojo de Polizar — ${S.areaTitle}
 Escenario: ${escTitle ? escTitle.textContent : "-"}
-Estilo: ${S.estilo||"-"}
-Cliente: ${S.cliente||"-"}
+Estilo: ${S.estilo || "-"}
+Cliente: ${S.cliente || "-"}
 
-Micro‑acción:
-${(microInput?.value||'________')}
-
-Frase activadora:
-${S.lastFrase||"-"}`;
+Revelación clave:
+${S.lastFrase || "-"}`;
         copy(txt);
       }
-      else if(t.closest("#p5-dl")){
+      else if(t.closest("#p5-dl")) {
         const escTitle = qs('#esc-title');
-        const microInput = qs('#micro');
         const txt = `Dojo de Polizar — ${S.areaTitle}
 Escenario: ${escTitle ? escTitle.textContent : "-"}
-Estilo: ${S.estilo||"-"}
-Cliente: ${S.cliente||"-"}
+Estilo: ${S.estilo || "-"}
+Cliente: ${S.cliente || "-"}
 
-Micro‑acción:
-${(microInput?.value||'________')}
-
-Frase activadora:
-${S.lastFrase||"-"}`;
-        downloadTxt("dojo-"+slug(S.areaId||'area')+"-"+slug(S.scenId||'escenario')+"-resumen.txt", txt);
+Revelación clave:
+${S.lastFrase || "-"}`;
+        downloadTxt("dojo-" + slug(S.areaId || 'area') + "-" + slug(S.scenId || 'escenario') + "-revelacion.txt", txt);
       }
-      else if(t.closest("#finish")){
+      else if(t.closest("#finish")) {
         const thanksName = qs("#thanks-name");
         const thanksArea = qs("#thanks-area");
         if(thanksName) thanksName.textContent = S.nombre || "Pro";
@@ -387,339 +615,37 @@ ${S.lastFrase||"-"}`;
       }
     });
 
-    document.addEventListener("keydown",(e)=>{
-      const a=document.activeElement;
-      const typing=a && (a.tagName==="INPUT"||a.tagName==="TEXTAREA"||a.isContentEditable);
-      if(e.key==="Enter"&&(a?.id==="nombre"||a?.id==="cliente")){ e.preventDefault(); startFlow(); }
-      if(e.key==="Enter" && a?.id==="rr-text"){ e.preventDefault(); const g=qs("#rr-generate"); if(g) g.click(); }
-      if(e.key==="Escape" && !typing){ e.preventDefault(); goBack(); }
-    });
-  }
-
-  // ===== Vistas =====
-  function buildAreas(){
-    const grid=qs("#areas-grid"); 
-    if(!grid) {
-      return;
-    }
-    grid.innerHTML="";
-    const areas = (S.content && S.content.areas) ? S.content.areas : [];
-    
-    if(!areas.length){
-      grid.innerHTML = `<div class="fb"><p class="muted">No hay áreas disponibles.</p></div>`;
-      return;
-    }
-    areas.forEach(a=>{
-      const d=document.createElement("div");
-      d.className="area-card";
-      const icon = a.icon || "📋";
-      d.innerHTML=`<div class="area-title">${icon} ${esc(a.title)}</div><p class="area-desc">${esc(a.desc||"")}</p><div class="group"><button class="btn primary" data-area="${esc(a.id)}" type="button">Entrar</button></div>`;
-      grid.appendChild(d);
-    });
-  }
-
-  function buildScenarios(){
-    const list=((S.content&&S.content.scenarios)||[]).filter(x=>x.areaId===S.areaId);
-    const titleEl=qs("#area-title"); if(titleEl) titleEl.textContent=S.areaTitle||"";
-    const grid=qs("#scen-grid"); if(!grid) return; grid.innerHTML="";
-    if(!list.length){
-      grid.innerHTML = `<div class="fb"><p class="muted">No hay escenarios para esta área.</p></div>`;
-      return;
-    }
-    list.forEach(sc=>{
-      const q= sc.question || ("Cliente: " + sc.title + ". ¿Cómo responde?");
-      const d=document.createElement("div");
-      d.className="sc-card"; 
-      d.setAttribute("data-scenario", sc.id);
+    // Keyboard
+    document.addEventListener("keydown", (e) => {
+      const a = document.activeElement;
+      const typing = a && (a.tagName === "INPUT" || a.tagName === "TEXTAREA" || a.isContentEditable);
       
-      // Indicador de dificultad
-      const difficulty = sc.difficulty || 3;
-      const stars = "⭐".repeat(difficulty);
-      
-      d.innerHTML=`<div class="sc-title">${esc(sc.title)} <span style="float:right;font-size:12px">${stars}</span></div><p class="sc-desc">${esc(q)}</p>`;
-      grid.appendChild(d);
-    });
-  }
-
-  function buildScenarioView(sid){
-    const sc=getScenarioById(sid);
-    if(!sc){ nav("p3"); return; }
-
-    const escBadge = qs("#esc-badge");
-    const escTitle = qs("#esc-title");
-    const escQuestion = qs("#esc-question");
-    if(escBadge) escBadge.textContent="Escenario — " + (S.areaTitle||"");
-    if(escTitle) escTitle.textContent=sc.title;
-    if(escQuestion) escQuestion.textContent= sc.question || ("Cliente: " + sc.title + ". ¿Cómo responde?");
-
-    const box=qs("#esc-options"); if(!box) return; box.innerHTML="";
-    const jugadas = ["Lógica","Empática","Estratégica","Proactiva"];
-    jugadas.forEach(j=>{
-      const b=document.createElement("button");
-      b.className="btn jugada-btn"; b.type="button"; b.dataset.jugada=j; b.textContent=j;
-      box.appendChild(b);
-    });
-
-    const escAnswer = qs("#esc-answer");
-    const toolkit = qs("#toolkit");
-    const escContinue = qs("#esc-continue");
-    if(escAnswer) escAnswer.style.display="none";
-    if(toolkit) toolkit.style.display="none";
-    if(escContinue) escContinue.style.display="none";
-  }
-
-  function getScenarioById(id){ return ((S.content&&S.content.scenarios)||[]).find(x=>x.areaId===S.areaId && x.id===id); }
-  function getCurrentScenario(){ return getScenarioById(S.scenId); }
-
-  // ===== Lógica de IA - CAMBIO CRÍTICO AQUÍ =====
-  async function runPlay(sc, jugadaLabel){
-    const ans=qs("#esc-answer");
-    if(ans) {
-      ans.style.display="block"; 
-      ans.innerHTML=`<p class="muted">Generando tu feedback…</p>`;
-    }
-    try{
-      // ENVIAR TODOS LOS DATOS DEL ESCENARIO
-      const pack = await ai({
-        nombre: S.nombre||"",
-        estilo: S.estilo||"Claridad",
-        area: S.areaTitle,
-        escenario: sc.title,
-        
-        // NUEVOS CAMPOS CRÍTICOS
-        pattern: sc.pattern || null,  // ← IMPORTANTE
-        keywords: sc.keywords || [],  // ← IMPORTANTE
-        context: sc.context || "",  // ← IMPORTANTE
-        scenarioId: sc.id || "",  // ← IMPORTANTE
-        difficulty: sc.difficulty || 3,  // ← IMPORTANTE
-        real_challenge: sc.real_challenge || "",  // ← IMPORTANTE
-        
-        type: sc.type || "in-conversation",
-        pregunta: sc.question || ("Cliente: " + sc.title + ". ¿Cómo responde?"),
-        eleccion: jugadaLabel,
-        cliente: S.cliente || ""
-      });
-      
-      S.pack = pack;
-      if(ans) ans.innerHTML = renderWow(S.pack);
-
-      const type = sc.type || "in-conversation";
-      S.templates = extractTemplates(S.pack);
-      showTemplatesUI(S.templates, type);
-
-      renderPhrases(S.pack, sc);
-      const escContinue = qs("#esc-continue");
-      if(escContinue) escContinue.style.display="block";
-      scrollTop();
-      
-      // Guardar frase activadora
-      S.lastFrase = S.pack?.principios_potenciados?.frase_activadora 
-        || S.pack?.potenciador_cognitivo?.frase_de_poder 
-        || S.pack?.frase_poder 
-        || "";
-        
-    }catch(e){
-      if(ans) ans.innerHTML=`<p class="muted">No pudimos conectar. Intente de nuevo en unos segundos.</p>`;
-    }
-  }
-
-  // Render WOW
-  function renderWow(p) {
-  // SOLO 5 SECCIONES QUE IMPORTAN
-  let html = `<h3>${esc(p.tu_jugada || "Tu jugada")}</h3>`;
-  
-  // 1. La clave (el insight principal)
-  if(p.la_clave) {
-    html += `<div class="fb-sec">
-      <div class="sec-title">La clave</div>
-      <p>${esc(p.la_clave)}</p>
-    </div>`;
-  }
-  
-  // 2. Frase de poder (memorable)
-  if(p.frase_poder) {
-    html += `<div class="fb-sec">
-      <div class="sec-title">Tu frase de poder</div>
-      <p style="font-size:18px;font-weight:600;color:#FF67BF">${esc(p.frase_poder)}</p>
-    </div>`;
-  }
-  
-  // 3. Plan B (si hay resistencia)
-  if(p.plan_b) {
-    html += `<div class="fb-sec">
-      <div class="sec-title">Si hay resistencia</div>
-      <p>${esc(p.plan_b)}</p>
-    </div>`;
-  }
-  
-  // 4. Dato transformador
-  if(p.dato_transformador) {
-    html += `<div class="fb-sec">
-      <div class="sec-title">Dato que cambia todo</div>
-      <p style="background:#1b2a2f;padding:10px;border-radius:8px">📊 ${esc(p.dato_transformador)}</p>
-    </div>`;
-  }
-  
-  return html;
-}
-
-// También actualizar extractTemplates para usar el nuevo formato
-function extractTemplates(pack) {
-  return pack?.aplicarlo_ahora || {
-    whatsapp: "",
-    email_subject: "",
-    email_body: "",
-    call: ""
-  };
-}
-
-  function extractTemplates(pack){
-    // Si el Worker envía aplicarlo_ahora, usarlo
-    if(pack?.aplicarlo_ahora){
-      return {
-        whatsapp: pack.aplicarlo_ahora.whatsapp || "",
-        email_subject: pack.aplicarlo_ahora.email_subject || "",
-        email_body: pack.aplicarlo_ahora.email_body || "",
-        call: pack.aplicarlo_ahora.call || ""
-      };
-    }
-    
-    // Fallback
-    return {
-      whatsapp: "",
-      email_subject: "",
-      email_body: "",
-      call: ""
-    };
-  }
-
-  function getMicro(p){
-    return p?.siguiente_movimiento?.accion_estrategica
-      || p?.micro_accion
-      || "Definir siguiente paso concreto";
-  }
-
-  function renderPhrases(pack, sc){
-    const list = Array.isArray(pack.siguiente_movimiento?.frases_de_apoyo) && pack.siguiente_movimiento.frases_de_apoyo.length
-      ? pack.siguiente_movimiento.frases_de_apoyo
-      : ["Explorar necesidad real", "Clarificar prioridades"];
-    const box=qs("#phrases-box"); if(!box) return; box.innerHTML="";
-    list.forEach(text=>{
-      const row=document.createElement("div");
-      row.className="phrase";
-      row.innerHTML=`<div>${esc(text)}</div><button class="btn" type="button">Copiar</button>`;
-      box.appendChild(row);
-    });
-  }
-
-  function showTemplatesUI(templates, type){
-    const tk=qs("#toolkit"); 
-    const tabs=qs(".tabs"); 
-    const titleEl=qs("#tmpl-container h4"); 
-    const tmpl=qs("#tmpl-container"); 
-    const TB=qs("#tmpl-box");
-    
-    if(!tk || !tabs || !titleEl || !tmpl || !TB) return;
-
-    // SIEMPRE mostrar toolkit y plantillas
-    tk.style.display = "grid";
-    titleEl.textContent = "Aplicarlo ahora";
-    tabs.style.display="flex";
-    tmpl.style.display="block";
-    
-    // Resetear tabs
-    qsa(".tab").forEach(x=>x.classList.remove("active"));
-    
-    // Activar WhatsApp por defecto
-    const whaTab = qs('.tab[data-tab="wha"]'); 
-    if(whaTab){ 
-      whaTab.style.display="inline-flex"; 
-      whaTab.classList.add("active"); 
-    }
-    
-    const emlTab = qs('.tab[data-tab="eml"]'); 
-    if(emlTab) emlTab.style.display="inline-flex";
-    
-    const callTab = qs('.tab[data-tab="call"]'); 
-    if(callTab) callTab.style.display="inline-flex";
-    
-    // Mostrar contenido
-    TB.textContent = fillPH(templates.whatsapp || "Generando plantilla...");
-  }
-
-  // Segunda ronda
-  async function roundTwo(){
-    const out=qs("#rr-output"); if(!out) return;
-    const input=(qs("#rr-text")?.value||"").trim();
-    out.style.display="block";
-    if(!input){ out.textContent="Escribe lo que diría el cliente y generamos la contra‑respuesta."; return; }
-    out.textContent="Pensando contigo…";
-
-    const sc=getCurrentScenario();
-    const escTitle = qs("#esc-title");
-    const scTitle=sc?.title || (escTitle ? escTitle.textContent : "") || "";
-    const scType = sc?.type || "in-conversation";
-
-    try{
-      const pack = await ai({
-        nombre:S.nombre||"",
-        estilo:S.estilo||"Claridad",
-        area:S.areaTitle,
-        escenario:scTitle,
-        
-        // Incluir datos del escenario
-        pattern: sc?.pattern || null,
-        keywords: sc?.keywords || [],
-        context: sc?.context || "",
-        scenarioId: sc?.id || "",
-        
-        type: scType,
-        pregunta:"Segunda ronda",
-        eleccion:"Contra-respuesta: " + input,
-        cliente: S.cliente || ""
-      });
-      
-      if(pack){
-        S.pack = pack;
-        const escAnswer = qs("#esc-answer");
-        if(escAnswer) escAnswer.innerHTML = renderWow(S.pack);
-
-        S.templates = extractTemplates(S.pack);
-        showTemplatesUI(S.templates, scType);
-
-        renderPhrases(S.pack, sc || { title: scTitle, type: scType });
-
-        const micro=getMicro(S.pack);
-        const microInput = qs("#micro");
-        if(microInput && micro) microInput.value = fillPH(micro);
-
-        S.lastFrase = S.pack?.principios_potenciados?.frase_activadora 
-          || S.pack?.potenciador_cognitivo?.frase_de_poder 
-          || "";
-
-        out.textContent = `Actualizado.\n\nFrase activadora:\n${S.lastFrase}\n\nSugerencia:\n${fillPH(micro||'—')}`;
-      }else{
-        out.textContent="No se pudo refinar. Intente nuevamente.";
+      if(e.key === "Enter" && (a?.id === "nombre" || a?.id === "cliente")) { 
+        e.preventDefault(); 
+        startFlow(); 
       }
-    }catch(e){
-      out.textContent="Error de conexión. Intente de nuevo.";
-    }
+      if(e.key === "Enter" && a?.id === "rr-text") { 
+        e.preventDefault(); 
+        const g = qs("#rr-generate"); 
+        if(g) g.click(); 
+      }
+      if(e.key === "Escape" && !typing) { 
+        e.preventDefault(); 
+        goBack(); 
+      }
+    });
   }
 
-  // ===== Arranque =====
-  function wireBase(){
-    console.log("🎬 Iniciando Dojo de Polizar v3.0...");
+  // ===== Inicialización =====
+  function wireBase() {
+    console.log("🎬 Iniciando Dojo de Polizar v10.0...");
     wireEvents();
-    
-    // Cargar contenido inmediatamente
     console.log("📦 Cargando contenido...");
     startFetchContent();
-    
     go("p0");
   }
   
-  // Esperar a que el DOM esté listo
-  if (document.readyState === 'loading') {
+  if(document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', wireBase);
   } else {
     wireBase();

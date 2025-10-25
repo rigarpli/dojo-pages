@@ -12,7 +12,7 @@
       <header>
         <div class="brand">
           <div class="title">Dojo de Polizar</div>
-          <div class="subtitle">Entrenador práctico para profesionales de la venta.</div>
+          <div class="subtitle">Un espacio seguro para descubrir tu propia grandeza conversacional.</div>
         </div>
         <div class="header-controls">
           <div class="progress"><div class="bar" id="bar"></div></div>
@@ -27,8 +27,8 @@
 
       <section class="step active" id="p0">
         <span class="badge">Bienvenida</span>
-        <h1>Vamos a entrenar en serio</h1>
-        <p>Elige un área, tu estilo y un escenario. Obtendrás feedback, segunda ronda y plantillas listas para usar.</p>
+        <h1>Descubre lo que ya sabías… pero no veías</h1>
+        <p>Elige un área y un escenario. Recibirás una revelación conversacional que potenciará tu intuición, no tu libreta de apuntes.</p>
         <div class="grid two">
           <input id="nombre" class="input" placeholder="Tu nombre (opcional)" />
           <input id="cliente" class="input" placeholder="Nombre de tu cliente (opcional)" />
@@ -40,14 +40,14 @@
 
       <section class="step" id="p1">
         <span class="badge">Paso 1</span>
-        <h1>Áreas a potenciar</h1>
-        <p class="muted">Elige un área para practicar.</p>
+        <h1>Elige un área para explorar</h1>
+        <p class="muted">Cada área contiene escenarios reales para practicar sin juicio.</p>
         <div class="area-grid" id="areas-grid"></div>
       </section>
 
       <section class="step" id="p2">
         <span class="badge">Paso 2</span>
-        <h1>Elige el estilo</h1>
+        <h1>Selecciona tu intención conversacional</h1>
         <p class="muted">Practicando en: <strong id="ctx-area">—</strong></p>
         <div class="grid three" id="estilos-grid">
           <button class="btn" data-style="Calma">Calma</button>
@@ -73,37 +73,11 @@
 
         <div id="esc-answer" class="fb" style="display:none;"></div>
 
+        <!-- ❌ ELIMINADO: Toolkit de plantillas, WhatsApp, Email, Llamada -->
+        <!-- No pertenece a la filosofía del Dojo -->
+
         <div class="toolkit" id="toolkit" style="display:none;">
-          <div class="tool">
-            <h4>Segunda ronda</h4>
-            <p class="muted" style="font-size:14px; margin:0 0 10px;">Escribe la contra-respuesta del cliente para generar una nueva frase.</p>
-            <div class="group">
-              <input id="rr-text" class="input" placeholder="Ej.: 'Sigue siendo caro'"/>
-              <button class="btn" id="rr-generate" type="button">Generar</button>
-            </div>
-            <div id="rr-output" class="tmpl" style="display:none;"></div>
-          </div>
-
-          <div class="tool">
-            <div id="tmpl-container">
-              <h4>Plantillas</h4>
-              <div class="tabs">
-                <button class="tab active" data-tab="wha" type="button">WhatsApp</button>
-                <button class="tab" data-tab="eml" type="button">Email</button>
-                <button class="tab" data-tab="call" type="button">Llamada</button>
-              </div>
-              <div id="tmpl-box" class="tmpl"></div>
-              <div class="group">
-                <button class="btn" id="btn-copy-tmpl" type="button">Copiar</button>
-                <button class="btn ghost" id="btn-dl-txt" type="button">Descargar .txt</button>
-                <button class="btn" id="btn-share-tmpl" type="button">Compartir</button>
-                <button class="btn ghost" id="btn-copy-all" type="button">Copiar todo</button>
-              </div>
-            </div>
-
-            <h4 style="margin-top:12px;">Frases de poder</h4>
-            <div class="phrases" id="phrases-box"></div>
-          </div>
+          <!-- Este bloque se mantiene oculto y no se usa. Solo por compatibilidad técnica. -->
         </div>
 
         <div class="group" id="esc-continue" style="display:none;">
@@ -113,13 +87,13 @@
 
       <section class="step" id="p5">
         <span class="badge">Paso 4</span>
-        <h1>Define tu micro-acción</h1>
-        <p class="muted">Un paso pequeño y concreto para avanzar con tu cliente.</p>
+        <h1>Define tu siguiente paso natural</h1>
+        <p class="muted">Un gesto pequeño, auténtico, que nazca de tu estilo.</p>
         <div class="grid two">
-          <input id="micro" class="input" placeholder="Ej.: Agendar 5 minutos para revisar juntos el punto clave" />
+          <input id="micro" class="input" placeholder="Ej.: Invitarlo a una llamada de 7 minutos para explorar juntos" />
         </div>
         <div class="fb">
-          <h3>Tu frase de poder</h3>
+          <h3>Tu revelación clave</h3>
           <p id="p5-frase" class="muted"></p>
         </div>
         <div class="group">
@@ -131,81 +105,67 @@
       </section>
 
       <section class="step" id="p8">
-    <h1>El Dojo, en una frase</h1>
+        <h1>El Dojo, en esencia</h1>
 
-  <div class="fb">
-    <p>El Dojo es un gimnasio digital de alto rendimiento: un lugar seguro para practicar, ajustar y potenciar tus interacciones de negocios</p>
-  </div>
+        <div class="fb">
+          <p>El Dojo es un laboratorio conversacional: un lugar seguro para ensayar, descubrir y potenciar lo que ya llevas dentro.</p>
+        </div>
 
-  <div class="fb">
-    <h3>Convierte retos en oportunidades:</h3>
-    <ul>
-      <li>Claridad: Cuando sientes que tus mensajes no logran el impacto deseado.</li>
-      <li>Dirección: Para la comunicación que pierde impulso o te desvían del objetivo.</li>
-      <li>Consistencia: Para alinear tu comunicación y transmitir un mensaje más efectivo.</li>
-    </ul>
-  </div>
+        <div class="fb">
+          <h3>No es un curso. No es un simulador. Es un revelador.</h3>
+          <ul>
+            <li><strong>No te enseña qué decir.</strong> Te devuelve tu capacidad de sorprenderte a ti mismo.</li>
+            <li><strong>No corrige.</strong> Revela ángulos que no habías visto.</li>
+            <li><strong>No juzga.</strong> Celebra tu estilo único.</li>
+          </ul>
+        </div>
 
-  <div class="fb">
-    <h3>Cómo funciona</h3>
-    <ul>
-      <li>Tú eliges el área, un estilo de comunicar y uno de los escenarios disponibles.</li>
-      <li>El Dojo acciona tu elección y te devuelve su retroalimentación y recomendaciones.</li>
-        <ul>
-          <li>Validación (qué hiciste bien y por qué),</li>
-          <li>Perspectiva del cliente (qué está pensando),</li>
-          <li>Una frase de poder (breve y recordable),</li>
-          <li>Un micro‑paso concreto (más para potenciar).</li>
-        </ul>
-      </li>
-      <li>Si es seguimiento (follow‑up), te arma WhatsApp/Email/Llamada coherentes; si es conversación en vivo, te da un guion natural de llamada.</li>
-    </ul>
-  </div>
+        <div class="fb">
+          <h3>Cómo funciona</h3>
+          <ul>
+            <li>Eliges un escenario realista.</li>
+            <li>Respondes con tu estilo natural.</li>
+            <li>Recibes una revelación conversacional: no una lección, sino un espejo que te muestra lo invisible.</li>
+            <li>La próxima vez que hables con un cliente… algo nuevo saldrá solo.</li>
+          </ul>
+        </div>
 
-  <div class="fb">
-    <h3>Estilos (elige el que te sirva hoy)</h3>
-    <ul>
-      <li><strong>Calma:</strong> tensión controlada y cuida el vínculo.</li>
-      <li><strong>Curiosidad:</strong> descubre motivaciones con preguntas efectivas.</li>
-      <li><strong>Claridad:</strong> directo, simple, sin adornos.</li>
-      <li><strong>Avance:</strong> micro‑compromisos que impulsan la conversación.</li>
-      <li><strong>Humor:</strong> un toque sutil para generar cercanía.</li>
-    </ul>
-  </div>
+        <div class="fb">
+          <h3>Intenciones conversacionales (elige la que vibre hoy)</h3>
+          <ul>
+            <li><strong>Calma:</strong> Cuando necesitas bajar la tensión y reconectar.</li>
+            <li><strong>Curiosidad:</strong> Cuando quieres descubrir lo que realmente mueve al cliente.</li>
+            <li><strong>Claridad:</strong> Cuando necesitas ir directo al punto, sin adornos.</li>
+            <li><strong>Avance:</strong> Cuando buscas un pequeño compromiso que mueva la conversación.</li>
+            <li><strong>Humor:</strong> Cuando un toque ligero puede abrir puertas serias.</li>
+          </ul>
+        </div>
 
-  <div class="fb">
-    <h3>Cómo obtener el mayor valor en 60 segundos</h3>
-    <ul>
-      <li>Escribe el nombre del cliente (o déjalo en blanco).</li>
-      <li>Elige un escenario, tu acción y copia la frase de poder.</li>
-      <li>Define un siguiente paso que puedas agendar (5–10 min) y comunícalo por tu canal preferido.</li>
-    </ul>
-  </div>
+        <div class="fb">
+          <h3>Cómo sacarle el máximo valor</h3>
+          <ul>
+            <li>No busques “la respuesta correcta”. Busca “lo que se siente verdadero para ti”.</li>
+            <li>Repite escenarios. Cada vez verás algo nuevo.</li>
+            <li>La magia no está en memorizar… está en integrar.</li>
+          </ul>
+        </div>
 
-  <div class="fb">
-    <h3>Para equipos</h3>
-    <ul>
-      <li>Usen el mismo escenario con estilos distintos y comparen resultados.</li>
-      <li>Construyan un banco de estrategias “que funcionan” y potencien su comunicación.</li>
-    </ul>
-  </div>
+        <div class="fb">
+          <h3>Privacidad absoluta</h3>
+          <p>Nada de lo que hagas aquí se guarda, evalúa o comparte. Es tu espacio sagrado.</p>
+        </div>
 
-  <div class="fb">
-    <h3>Privacidad</h3>
-    <p>No guardamos tus resultados. Usa las opciones: Copiar, Compartir o Descargar.</p>
-  </div>
-
-  <div class="group">
-    <button class="btn primary" data-nav="areas" type="button">Entrenar ahora</button>
-  </div>
-</section>
+        <div class="group">
+          <button class="btn primary" data-nav="areas" type="button">Empezar a explorar</button>
+        </div>
+      </section>
 
       <section class="step" id="p9">
         <span class="badge">¡Listo!</span>
         <h1>Gracias, <span id="thanks-name"></span> ✨</h1>
-        <p>Entrenaste en <strong id="thanks-area"></strong>. ¡Gran trabajo!</p>
+        <p>Exploraste en <strong id="thanks-area"></strong>. Lo que descubriste aquí… se activará cuando más lo necesites.</p>
         <div class="group">
-          <button class="btn primary" data-nav="areas" type="button">Entrenar otra área</button>
+          <button class="btn primary" data-nav="areas" type="button">Explorar otra área</button>
           <button class="btn ghost" data-nav="guia" type="button">Guía</button>
         </div>
       </section>
@@ -215,6 +175,6 @@
       </a>
     </div>
   </div>
-    <script src="./app.js?v=wow216" charset="utf-8" defer></script>
- </body>
+  <script src="./app.js?v=revelador2025" charset="utf-8" defer></script>
+</body>
 </html>

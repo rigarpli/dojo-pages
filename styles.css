@@ -1,6 +1,6 @@
 /* ============================================
-   DOJO DE POLIZAR — ESTILOS FINALES v13.0
-   Motor de Principios + UX Optimizada
+   DOJO DE POLIZAR — ESTILOS FINALES v13.1
+   Motor de Principios + UX Optimizada + Grids Responsivos
    ============================================ */
 
 :root {
@@ -20,18 +20,21 @@
 
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-  margin: 0;
   background: var(--bg);
   color: var(--text);
   font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   line-height: 1.6;
+  padding: 0;
+  margin: 0;
 }
 
 #dojoApp {
-  max-width: 1080px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 24px;
 }
@@ -42,8 +45,11 @@ body {
   border: 1px solid var(--stroke);
   border-radius: 18px;
   padding: 24px;
-  padding-bottom: calc(24px + 78px);
+  padding-bottom: calc(24px + 90px); /* Espacio para botones flotantes */
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 header {
@@ -202,62 +208,72 @@ p {
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
 
-/* Áreas y Escenarios: 2 columnas en tablet/desktop */
+/* === GRIDS RESPONSIVOS === */
+
+/* Áreas y Escenarios: 3 columnas en desktop/tablet, 1 en móvil */
+.area-grid.three-col,
+.sc-grid.three-col {
+  display: grid;
+  gap: 16px;
+}
+
 @media (min-width: 768px) {
-  .area-grid,
-  .sc-grid,
-  #esc-options {
+  .area-grid.three-col,
+  .sc-grid.three-col {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Jugadas: SIEMPRE 2 columnas en desktop/tablet, 1 en móvil */
+.jugada-grid {
+  display: grid;
+  gap: 12px;
+}
+
+@media (min-width: 768px) {
+  .jugada-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 16px;
   }
 }
 
-/* Móvil: 1 columna */
-@media (max-width: 767px) {
-  .area-grid,
-  .sc-grid,
-  #esc-options {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-}
-
+/* Tarjetas */
 .area-card,
-.sc-card,
-.jugada-btn {
+.sc-card {
   background: #16252a;
   border: 1px solid var(--stroke);
   border-radius: 14px;
-  padding: 14px;
-  min-height: 100px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.18s ease;
 }
 
 .area-card:hover,
-.sc-card:hover,
-.jugada-btn:hover {
+.sc-card:hover {
   border-color: var(--stroke-2);
-  transform: translateY(-1px);
-}
-
-.sc-card {
-  cursor: pointer;
+  transform: translateY(-2px);
 }
 
 .area-title,
 .sc-title {
   font-weight: 700;
   font-size: 16px;
+  margin-bottom: 6px;
 }
 
 .area-desc,
 .sc-desc {
   color: #cfe0e4;
   font-size: 14px;
-  margin: 6px 0 0;
+  line-height: 1.4;
 }
 
 /* Botones de acción (jugadas) */
 .jugada-btn {
+  background: #16252a;
+  border: 1px solid var(--stroke);
+  border-radius: 14px;
+  padding: 14px;
   white-space: normal;
   word-break: break-word;
   text-align: left;
@@ -265,6 +281,14 @@ p {
   align-items: center;
   font-size: 14px;
   line-height: 1.4;
+  min-height: 80px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.jugada-btn:hover {
+  border-color: var(--stroke-2);
+  transform: translateY(-2px);
 }
 
 .fb {
@@ -301,21 +325,20 @@ p {
   margin: 8px 0;
 }
 
-/* Guía flotante */
+/* Guía flotante - SIEMPRE visible después de p0 */
 .corner-guide {
   position: absolute;
-  left: 50px;
-  bottom: 14px;
+  left: 20px;
+  bottom: 70px;
   z-index: 50;
   background: rgba(0, 0, 0, 0.12);
-  padding: 5px 35px;
+  padding: 8px 16px;
   border-radius: 10px;
   border: 1px solid var(--stroke);
   color: var(--text);
   font-weight: 600;
   font-size: 13px;
   cursor: pointer;
-  display: none;
   transition: transform 0.18s ease, border-color 0.18s ease;
 }
 
@@ -324,21 +347,23 @@ p {
   border-color: var(--stroke-2);
 }
 
-/* Logo */
+/* Logo - SIEMPRE visible */
 .corner-logo {
   position: absolute;
-  right: 14px;
-  bottom: 14px;
+  right: 20px;
+  bottom: 20px;
   z-index: 50;
   background: rgba(0, 0, 0, 0.12);
   padding: 6px 8px;
   border-radius: 10px;
   border: 1px solid var(--stroke);
+  text-decoration: none;
 }
 
 .corner-logo img {
   height: 42px;
   display: block;
+  filter: brightness(1.2);
 }
 
 /* Responsive */
@@ -349,7 +374,7 @@ p {
 
   .card {
     padding: 18px;
-    padding-bottom: calc(18px + 70px);
+    padding-bottom: calc(18px + 80px);
   }
 
   h1 {
@@ -366,14 +391,14 @@ p {
   }
 
   .corner-guide {
-    bottom: 12px;
-    left: 12px;
-    padding: 7px 10px;
+    bottom: 60px;
+    left: 16px;
+    padding: 7px 12px;
     font-size: 12px;
   }
 }
 
-/* Ocultar "Guía" en topnav */
+/* Ocultar "Guía" en topnav - redundante con FAB */
 #dojoApp .topnav [data-nav="guia"] {
   display: none !important;
 }

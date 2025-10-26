@@ -297,7 +297,7 @@
     const escContinue = qs("#esc-continue");
     if(escAnswer) escAnswer.style.display = "none";
     if(toolkit) toolkit.style.display = "none";
-    if(escContinue) escContinue.style.display = "none";
+    //if(escContinue) escContinue.style.display = "none";
   }
 
   // Jugada principal
@@ -324,7 +324,16 @@
       if(ans && pack.feedback) {
         ans.innerHTML = renderFeedback(pack.feedback);
       }
-      
+      // Mostrar botones de utilidad
+const actions = qs("#feedback-actions");
+if(actions) actions.style.display = "flex";
+
+// Extraer frase para usar en botones
+if(pack.feedback) {
+  const lines = pack.feedback.split('\n');
+  const fraseLine = lines.find(line => line.includes('"') && line.match(/"[^"]+"/));
+  S.lastFrase = fraseLine ? fraseLine.match(/"([^"]+)"/)?.[1] || fraseLine.replace(/["]/g, '').trim() : pack.feedback.split('\n')[0] || "Tu revelación clave";
+}
       const toolkit = qs("#toolkit");
       if(toolkit) toolkit.style.display = "none";
       

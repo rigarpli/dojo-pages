@@ -179,3 +179,37 @@ p, .muted { line-height: 1.6; }
   .corner-logo img { height: 36px; }
   .corner-guide { bottom: 12px; left: 12px; padding: 7px 10px; font-size: 12px; }
 }
+/* Grid de 2 columnas para áreas, escenarios y acciones (desktop/tablet) */
+@media (min-width: 768px) {
+  .area-grid,
+  .sc-grid,
+  #esc-options {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .area-card,
+  .sc-card,
+  .jugada-btn {
+    min-height: 120px;
+  }
+
+  .jugada-btn {
+    white-space: normal;
+    word-break: break-word;
+    text-align: left;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+  }
+}
+
+/* Móvil: sigue en 1 columna */
+@media (max-width: 767px) {
+  .area-grid,
+  .sc-grid,
+  #esc-options {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}

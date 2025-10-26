@@ -1,167 +1,72 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dojo de Polizar</title>
-  <link rel="stylesheet" href="./styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dojo de Objetiones | Practica hasta dominar</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div id="dojoApp">
-    <div class="card">
-      <header>
-        <div class="brand">
-          <div class="title">Dojo de Polizar</div>
-          <div class="subtitle">Un espacio seguro para descubrir tu propia grandeza conversacional.</div>
-        </div>
-        <div class="header-controls">
-          <div class="progress"><div class="bar" id="bar"></div></div>
-        </div>
-      </header>
 
-      <nav class="topnav">
-        <button class="navbtn" id="btn-back" type="button">← Volver</button>
-        <button class="navbtn" data-nav="areas" type="button">Áreas</button>
-        <button class="navbtn" data-nav="guia" type="button">Guía</button>
-      </nav>
+  <!-- Contenedor principal -->
+  <div class="container">
 
-      <section class="step active" id="p0">
-        <span class="badge">Bienvenida</span>
-        <h1>Descubre lo que ya sabías… pero no veías</h1>
-        <p>Elige un área y un escenario. Recibirás una revelación conversacional que potenciará tu intuición, no tu libreta de apuntes.</p>
-        <div class="grid two">
-          <input id="nombre" class="input" placeholder="Tu nombre (opcional)" />
-          <input id="cliente" class="input" placeholder="Nombre de tu cliente (opcional)" />
-        </div>
-        <div class="group">
-          <button class="btn primary" id="start" type="button">Entrar al Dojo</button>
-        </div>
-      </section>
+    <!-- Cabecera -->
+    <header class="header">
+      <h1 class="title">🧠 Dojo de Objetiones</h1>
+      <p class="subtitle">Practica hasta que tu respuesta sea natural, no memorizada.</p>
+    </header>
 
-      <section class="step" id="p1">
-        <span class="badge">Paso 1</span>
-        <h1>Elige un área para explorar</h1>
-        <p class="muted">Cada área contiene escenarios reales para practicar sin juicio.</p>
-        <div class="area-grid" id="areas-grid"></div>
-      </section>
+    <!-- Paso 1: Seleccionar escenario -->
+    <section id="step1" class="step active">
+      <h2 class="step-title">Paso 1: Elige tu escenario de práctica</h2>
+      <div class="scenario-grid">
+        <button class="scenario-btn" data-scenario="precio">“Es muy caro”</button>
+        <button class="scenario-btn" data-scenario="necesidad">“No lo necesito ahora”</button>
+        <button class="scenario-btn" data-scenario="confianza">“Ya tengo a alguien”</button>
+        <button class="scenario-btn" data-scenario="comparacion">“Voy a comparar opciones”</button>
+      </div>
+    </section>
 
-      <section class="step" id="p3">
-        <span class="badge">Paso 3</span>
-        <h1>Elige un escenario en <span id="area-title"></span></h1>
-        <div class="sc-grid" id="scen-grid"></div>
-      </section>
+    <!-- Paso 2: Seleccionar intención conversacional -->
+    <section id="step2" class="step hidden">
+      <h2 class="step-title">Paso 2: Selecciona tu intención conversacional</h2>
+      <p class="context-label">Practicando en: <span id="current-scenario">Objeciones tradicionales</span></p>
+      <div class="intent-grid">
+        <button class="intent-btn" data-intent="calma">Calma</button>
+        <button class="intent-btn" data-intent="curiosidad">Curiosidad</button>
+        <button class="intent-btn" data-intent="claridad">Claridad</button>
+        <button class="intent-btn" data-intent="avance">Avance</button>
+        <button class="intent-btn" data-intent="humor">Humor</button>
+      </div>
+    </section>
 
-      <section class="step" id="p4">
-        <span class="badge" id="esc-badge">Escenario</span>
-        <h1 id="esc-title">Título del Escenario</h1>
-        <p class="muted" id="esc-question">Pregunta del escenario.</p>
+    <!-- Paso 3: Seleccionar estilo de respuesta -->
+    <section id="step3" class="step hidden">
+      <h2 class="step-title">Paso 3: Elige cómo responderías tú</h2>
+      <p class="context-label">Con intención de: <span id="current-intent">Calma</span></p>
+      <div class="style-grid">
+        <button class="style-btn" data-style="logico">Lógico<br><small>Datos, estructura, valor tangible</small></button>
+        <button class="style-btn" data-style="empatico">Empático<br><small>Validar, conectar, acompañar</small></button>
+        <button class="style-btn" data-style="estrategico">Estratégico<br><small>Reencuadrar, perspectiva amplia</small></button>
+        <button class="style-btn" data-style="proactivo">Proactivo<br><small>Co-crear, guiar, construir juntos</small></button>
+      </div>
+    </section>
 
-        <div class="grid three" id="esc-options"></div>
+    <!-- Feedback / Resultado -->
+    <section id="feedback" class="step hidden">
+      <div class="feedback-container">
+        <button id="back-btn" class="btn-back">← Volver a elegir estilo</button>
+        <div id="feedback-content" class="feedback-content"></div>
+        <button id="restart-btn" class="btn-restart">🔁 Probar otra ruta</button>
+      </div>
+    </section>
 
-        <div id="esc-answer" class="fb" style="display:none;"></div>
-
-        <!-- ❌ ELIMINADO: Toolkit de plantillas, WhatsApp, Email, Llamada -->
-        <!-- No pertenece a la filosofía del Dojo -->
-
-        <div class="toolkit" id="toolkit" style="display:none;">
-          <!-- Este bloque se mantiene oculto y no se usa. Solo por compatibilidad técnica. -->
-        </div>
-
-        <div class="group" id="esc-continue" style="display:none;">
-          <button class="btn primary" id="to-p5" type="button">Continuar</button>
-        </div>
-      </section>
-
-      <section class="step" id="p5">
-        <span class="badge">Paso 4</span>
-        <h1>Define tu siguiente paso natural</h1>
-        <p class="muted">Un gesto pequeño, auténtico, que nazca de tu estilo.</p>
-        <div class="grid two">
-          <input id="micro" class="input" placeholder="Ej.: Invitarlo a una llamada de 7 minutos para explorar juntos" />
-        </div>
-        <div class="fb">
-          <h3>Tu revelación clave</h3>
-          <p id="p5-frase" class="muted"></p>
-        </div>
-        <div class="group">
-          <button class="btn" id="p5-copy" type="button">Copiar resumen</button>
-          <button class="btn ghost" id="p5-dl" type="button">Descargar .txt</button>
-          <button class="btn" id="btn-wa" type="button">Compartir por WhatsApp</button>
-          <button class="btn primary" id="finish" type="button">Finalizar</button>
-        </div>
-      </section>
-
-      <section class="step" id="p8">
-        <h1>El Dojo, en esencia</h1>
-
-        <div class="fb">
-          <p>El Dojo es un laboratorio conversacional: un lugar seguro para ensayar, descubrir y potenciar lo que ya llevas dentro.</p>
-        </div>
-
-        <div class="fb">
-          <h3>No es un curso. No es un simulador. Es un revelador.</h3>
-          <ul>
-            <li><strong>No te enseña qué decir.</strong> Te devuelve tu capacidad de sorprenderte a ti mismo.</li>
-            <li><strong>No corrige.</strong> Revela ángulos que no habías visto.</li>
-            <li><strong>No juzga.</strong> Celebra tu estilo único.</li>
-          </ul>
-        </div>
-
-        <div class="fb">
-          <h3>Cómo funciona</h3>
-          <ul>
-            <li>Eliges un escenario realista.</li>
-            <li>Respondes con tu estilo natural.</li>
-            <li>Recibes una revelación conversacional: no una lección, sino un espejo que te muestra lo invisible.</li>
-            <li>La próxima vez que hables con un cliente… algo nuevo saldrá solo.</li>
-          </ul>
-        </div>
-
-        <div class="fb">
-          <h3>Intenciones conversacionales (elige la que vibre hoy)</h3>
-          <ul>
-            <li><strong>Calma:</strong> Cuando necesitas bajar la tensión y reconectar.</li>
-            <li><strong>Curiosidad:</strong> Cuando quieres descubrir lo que realmente mueve al cliente.</li>
-            <li><strong>Claridad:</strong> Cuando necesitas ir directo al punto, sin adornos.</li>
-            <li><strong>Avance:</strong> Cuando buscas un pequeño compromiso que mueva la conversación.</li>
-            <li><strong>Humor:</strong> Cuando un toque ligero puede abrir puertas serias.</li>
-          </ul>
-        </div>
-
-        <div class="fb">
-          <h3>Cómo sacarle el máximo valor</h3>
-          <ul>
-            <li>No busques “la respuesta correcta”. Busca “lo que se siente verdadero para ti”.</li>
-            <li>Repite escenarios. Cada vez verás algo nuevo.</li>
-            <li>La magia no está en memorizar… está en integrar.</li>
-          </ul>
-        </div>
-
-        <div class="fb">
-          <h3>Privacidad absoluta</h3>
-          <p>Nada de lo que hagas aquí se guarda, evalúa o comparte. Es tu espacio sagrado.</p>
-        </div>
-
-        <div class="group">
-          <button class="btn primary" data-nav="areas" type="button">Empezar a explorar</button>
-        </div>
-      </section>
-
-      <section class="step" id="p9">
-        <span class="badge">¡Listo!</span>
-        <h1>Gracias, <span id="thanks-name"></span> ✨</h1>
-        <p>Exploraste en <strong id="thanks-area"></strong>. Lo que descubriste aquí… se activará cuando más lo necesites.</p>
-        <div class="group">
-          <button class="btn primary" data-nav="areas" type="button">Explorar otra área</button>
-          <button class="btn ghost" data-nav="guia" type="button">Guía</button>
-        </div>
-      </section>
-
-      <a class="corner-logo" href="https://polizar.com" target="_blank" rel="noopener">
-        <img src="https://polizar.com/wp-content/uploads/2025/04/polizar-logo-b-scaled.webp" alt="Polizar">
-      </a>
-    </div>
   </div>
-  <script src="./app.js?v=revelador2025" charset="utf-8" defer></script>
+
+  <script src="app.js"></script>
 </body>
 </html>

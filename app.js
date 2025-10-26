@@ -277,7 +277,7 @@
         b.type = "button";
         b.dataset.estilo = jugada.estilo;
         b.dataset.texto = jugada.texto;
-        b.textContent = jugada.texto.length > 60 ? jugada.texto.substring(0, 57) + "..." : jugada.texto;
+        b.textContent = jugada.texto.length > 260 ? jugada.texto.substring(0, 257) + "..." : jugada.texto;
         b.title = jugada.texto;
         box.appendChild(b);
       });

@@ -47,14 +47,14 @@
         <span class="badge">Paso 1</span>
         <h1>Elige un área para explorar</h1>
         <p class="muted">Cada área contiene escenarios reales para practicar sin juicio.</p>
-        <div class="area-grid" id="areas-grid"></div>
+        <div class="area-grid three-col" id="areas-grid"></div>
       </section>
 
-      <!-- Paso 3: Escenarios (saltamos p2) -->
+      <!-- Paso 3: Escenarios -->
       <section class="step" id="p3">
         <span class="badge">Paso 2</span>
         <h1>Elige un escenario en <span id="area-title"></span></h1>
-        <div class="sc-grid" id="scen-grid"></div>
+        <div class="sc-grid three-col" id="scen-grid"></div>
       </section>
 
       <!-- Paso 4: Acciones + Feedback -->
@@ -63,13 +63,13 @@
         <h1 id="esc-title">Título del Escenario</h1>
         <p class="muted" id="esc-question">Pregunta del escenario.</p>
 
-        <!-- Grid de acciones (2 columnas en desktop/tablet) -->
-        <div class="grid three" id="esc-options"></div>
+        <!-- Grid de acciones: SIEMPRE 2 columnas en desktop, 1 en móvil -->
+        <div class="jugada-grid" id="esc-options"></div>
 
         <!-- Feedback -->
         <div id="esc-answer" class="fb" style="display:none;"></div>
 
-        <!-- Botones de utilidad (copiar, descargar, etc.) -->
+        <!-- Botones de utilidad -->
         <div class="group" id="feedback-actions" style="display:none; margin-top: 20px;">
           <button class="btn" id="p5-copy" type="button">Copiar revelación</button>
           <button class="btn ghost" id="p5-dl" type="button">Descargar .txt</button>
@@ -116,6 +116,9 @@
           <button class="btn ghost" data-nav="guia" type="button">Guía</button>
         </div>
       </section>
+
+      <!-- Botón Guía Flotante -->
+      <button class="corner-guide" id="btn-guide-fab" type="button">Guía</button>
 
       <!-- Logo -->
       <a class="corner-logo" href="https://polizar.com" target="_blank" rel="noopener">

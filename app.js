@@ -1,12 +1,12 @@
 // ============================================
-// DOJO DE POLIZAR v11.1 - REVELADOR PURO (REPARADO)
-// Feedback renderizado en texto plano con estilos mínimos
+// DOJO DE POLIZAR v13.0 - MOTOR DE PRINCIPIOS
+// Recibe ADN → genera feedback revelador en tiempo real
 // ============================================
 
 (function(){
   "use strict";
 
-  console.log("🚀 Dojo de Polizar v11.1 - Edición Reveladora Reparada");
+  console.log("🚀 Dojo de Polizar v13.0 - Motor de Principios");
 
   const API = "https://index.rgarciaplicet.workers.dev/";
   const plan = new URLSearchParams(location.search).get("plan") || "full";
@@ -84,7 +84,7 @@
     return await r.json();
   }
 
-  // Render feedback como texto plano con saltos preservados
+  // Render feedback como texto plano
   function renderFeedback(text) {
     if (!text) return "<p class='muted'>No se generó feedback.</p>";
     return `<div class="feedback-plain">${esc(text).replace(/\n/g, '<br>')}</div>`;
@@ -270,18 +270,20 @@
     if(!box) return; 
     box.innerHTML = "";
 
-    if(sc.jugadas?.length) {
-      sc.jugadas.forEach(jugada => {
+    // Mostrar acciones en botones (2 columnas en desktop/tablet)
+    if(sc.acciones?.length) {
+      sc.acciones.forEach(accion => {
         const b = document.createElement("button");
         b.className = "btn jugada-btn";
         b.type = "button";
-        b.dataset.estilo = jugada.estilo;
-        b.dataset.texto = jugada.texto;
-        b.textContent = jugada.texto.length > 260 ? jugada.texto.substring(0, 257) + "..." : jugada.texto;
-        b.title = jugada.texto;
+        b.dataset.estilo = accion.tipo;
+        b.dataset.texto = accion.texto_boton;
+        b.textContent = accion.texto_boton;
+        b.title = accion.texto_boton;
         box.appendChild(b);
       });
     } else {
+      // Fallback (no debería ocurrir)
       ["Lógica", "Empática", "Estratégica", "Proactiva"].forEach(j => {
         const b = document.createElement("button");
         b.className = "btn jugada-btn";
@@ -297,10 +299,10 @@
     const escContinue = qs("#esc-continue");
     if(escAnswer) escAnswer.style.display = "none";
     if(toolkit) toolkit.style.display = "none";
-    //if(escContinue) escContinue.style.display = "none";
+    if(escContinue) escContinue.style.display = "none";
   }
 
-  // Jugada principal
+  // Jugada principal — AHORA ENVÍA ADN
   async function runPlay(sc, jugadaEstilo, jugadaTexto) {
     const ans = qs("#esc-answer");
     if(ans) {
@@ -309,6 +311,12 @@
     }
     
     try {
+      // Buscar el ADN correspondiente
+      const accion = sc.acciones.find(a => a.tipo === jugadaEstilo);
+      if (!accion) {
+        throw new Error(`Acción no encontrada: ${jugadaEstilo}`);
+      }
+
       const pack = await ai({
         nombre: S.nombre || "",
         estilo: jugadaEstilo,
@@ -316,6 +324,7 @@
         escenario: sc.title,
         pregunta: sc.question,
         frase_usuario: jugadaTexto,
+        adn_feedback: accion.adn_feedback, // ← ¡ENVÍA EL ADN!
         cliente: S.cliente || ""
       });
       
@@ -324,27 +333,19 @@
       if(ans && pack.feedback) {
         ans.innerHTML = renderFeedback(pack.feedback);
       }
-      // Mostrar botones de utilidad
-const actions = qs("#feedback-actions");
-if(actions) actions.style.display = "flex";
-
-// Extraer frase para usar en botones
-if(pack.feedback) {
-  const lines = pack.feedback.split('\n');
-  const fraseLine = lines.find(line => line.includes('"') && line.match(/"[^"]+"/));
-  S.lastFrase = fraseLine ? fraseLine.match(/"([^"]+)"/)?.[1] || fraseLine.replace(/["]/g, '').trim() : pack.feedback.split('\n')[0] || "Tu revelación clave";
-}
+      
       const toolkit = qs("#toolkit");
       if(toolkit) toolkit.style.display = "none";
       
+      // Extraer primera línea para "Tu revelación clave"
       if(pack.feedback) {
-        const lines = pack.feedback.split('\n');
-        const fraseLine = lines.find(line => line.includes('"') && line.match(/"[^"]+"/));
-        S.lastFrase = fraseLine ? fraseLine.match(/"([^"]+)"/)?.[1] || fraseLine.replace(/["]/g, '').trim() : "Tu revelación aparecerá aquí";
+        S.lastFrase = pack.feedback.split('\n')[0] || "Tu revelación aparecerá aquí";
       }
       
-      const escContinue = qs("#esc-continue");
-      if(escContinue) escContinue.style.display = "block";
+      // Mostrar botones de utilidad
+      const actions = qs("#feedback-actions");
+      if(actions) actions.style.display = "flex";
+      
       scrollTop();
       
     } catch(e) {
@@ -363,15 +364,14 @@ if(pack.feedback) {
     out.textContent = "Generando...";
 
     const sc = (S.content?.scenarios || []).find(x => x.areaId === S.areaId && x.id === S.scenId);
-    const escTitle = qs("#esc-title");
-    const scTitle = sc?.title || (escTitle ? escTitle.textContent : "") || "";
+    if(!sc) { out.textContent = "Escenario no encontrado."; return; }
 
     try {
       const pack = await ai({
         nombre: S.nombre || "",
-        estilo: S.lastJugada || "empatico",
+        estilo: S.lastJugada || "Lógica",
         area: S.areaTitle,
-        escenario: scTitle,
+        escenario: sc.title,
         frase_usuario: input,
         cliente: S.cliente || ""
       });
@@ -409,16 +409,9 @@ if(pack.feedback) {
         const id = t.closest(".area-card .btn").dataset.area;
         const area = (S.content?.areas || []).find(a => a.id === id) || {};
         S.areaId = id; S.areaTitle = area.title || ""; 
-        
-  // Cargar escenarios INMEDIATAMENTE
-  buildScenarios();
-  
-  // Ir directamente a p3
-  nav("p3");
-      }
-      else if(t.closest("[data-style]")) {
-        S.estilo = t.closest("[data-style]").dataset.style; 
-        buildScenarios(); nav("p3");
+        const ctx = qs("#ctx-area"); if(ctx) ctx.textContent = S.areaTitle || "—"; 
+        buildScenarios(); // ← Construye escenarios INMEDIATAMENTE
+        nav("p3"); // ← Salta directamente a p3
       }
       else if(t.closest("[data-scenario]")) {
         const id = t.closest("[data-scenario]").dataset.scenario; 
@@ -426,22 +419,12 @@ if(pack.feedback) {
       }
       else if(t.closest(".jugada-btn")) {
         const btn = t.closest(".jugada-btn");
-        const estilo = btn.dataset.estilo || "empatico";
+        const estilo = btn.dataset.estilo || "Lógica";
         const texto = btn.dataset.texto || btn.textContent;
         const sc = (S.content?.scenarios || []).find(x => x.areaId === S.areaId && x.id === S.scenId);
         if(sc) { S.lastJugada = estilo; S.lastFrase = texto; runPlay(sc, estilo, texto); }
       }
       else if(t.id === "rr-generate") roundTwo();
-      else if(t.closest("#to-p5")) {
-        const frase = qs("#p5-frase");
-        if(frase) frase.textContent = S.lastFrase || "Tu revelación aparecerá aquí.";
-        nav("p5");
-      }
-      else if(t.closest("#btn-wa")) {
-        const escTitle = qs('#esc-title');
-        const msg = `Dojo de Polizar — ${S.areaTitle}\nEscenario: ${escTitle?.textContent || "-"}\nRevelación clave:\n${S.lastFrase || "-"}`;
-        window.open("https://wa.me/?text=" + encodeURIComponent(msg), "_blank");
-      }
       else if(t.closest("#p5-copy")) {
         const escTitle = qs('#esc-title');
         const txt = `Dojo de Polizar — ${S.areaTitle}\nEscenario: ${escTitle?.textContent || "-"}\nRevelación clave:\n${S.lastFrase || "-"}`;
@@ -456,6 +439,11 @@ if(pack.feedback) {
         a.href = url; a.download = `dojo-${slug(S.areaId || 'area')}-${slug(S.scenId || 'escenario')}.txt`;
         document.body.appendChild(a); a.click();
         setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 0);
+      }
+      else if(t.closest("#btn-wa")) {
+        const escTitle = qs('#esc-title');
+        const msg = `Dojo de Polizar — ${S.areaTitle}\nEscenario: ${escTitle?.textContent || "-"}\nRevelación clave:\n${S.lastFrase || "-"}`;
+        window.open("https://wa.me/?text=" + encodeURIComponent(msg), "_blank");
       }
       else if(t.closest("#finish")) {
         const thanksName = qs("#thanks-name");

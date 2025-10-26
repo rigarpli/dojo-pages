@@ -1,122 +1,220 @@
 {
-  "meta": { 
-    "plan": "full", 
-    "version": "seguros-2025-v3-revelador",
+  "meta": {
+    "plan": "full",
+    "version": "seguros-2025-v4-adn",
     "industry": "seguros",
     "disclaimer": "Herramienta de práctica profesional. No constituye formación regulada."
   },
   "areas": [
-    { 
-      "id": "objeciones_clasicas", 
-      "title": "Objeciones tradicionales", 
+    {
+      "id": "objeciones_clasicas",
+      "title": "Objeciones tradicionales",
       "desc": "Precio, desconfianza, comparación",
       "icon": "💭"
     },
-    { 
-      "id": "guerra_digital", 
-      "title": "Competencia digital", 
+    {
+      "id": "guerra_digital",
+      "title": "Competencia digital",
       "desc": "Apps, IA, comparadores online",
       "icon": "🌐"
     },
-    { 
-      "id": "situaciones_limite", 
-      "title": "Casos extremos", 
+    {
+      "id": "situaciones_limite",
+      "title": "Casos extremos",
       "desc": "Post-siniestro, perfiles complejos",
       "icon": "⚠️"
     }
   ],
-  
   "scenarios": [
     {
       "areaId": "objeciones_clasicas",
       "id": "precio_alto_clasico",
-      "type": "in-conversation",
-      "pattern": "resistencia_prima",
-      "keywords": ["caro", "mucho", "precio alto", "costoso"],
       "title": "Es muy caro",
-      "context": "Objeción clásica de precio",
-      "real_challenge": "Ve el seguro como gasto, no inversión",
       "question": "Cliente: 'La verdad está muy caro el seguro'. ¿Cómo responde?",
-      "difficulty": 2,
-      "frequency": "daily",
-      "jugadas": [
+      "acciones": [
         {
-          "texto": "Permítame mostrarle exactamente qué protege cada peso de esa prima, y por qué ese valor va más allá del número.",
-          "estilo": "logica"
+          "tipo": "Lógica",
+          "texto_boton": "Permítame mostrarle exactamente qué protege cada peso de esa prima, y por qué ese valor va más allá del número.",
+          "adn_feedback": {
+            "principio_oculto": "El cliente no cuestiona el precio, pide un mapa claro del riesgo que justifique la inversión.",
+            "nombre_tactica_ciega": "Traducción de Valor",
+            "ejemplo_tactica_frase": "Estos $6,000 anuales no son un gasto. Son un puente que evita caer en un agujero de $45,000.",
+            "protocolo_mental": [
+              "'Es caro' = Muéstrame el mapa del riesgo",
+              "Datos + visualización > datos solos",
+              "Invitar a co-crear el entendimiento > imponerlo"
+            ]
+          }
         },
         {
-          "texto": "Totalmente entiendo que el presupuesto es importante. ¿Qué parte le genera más inquietud del costo?",
-          "estilo": "empatica"
+          "tipo": "Empática",
+          "texto_boton": "Totalmente entiendo que el presupuesto es importante. ¿Qué parte le genera más inquietud del costo?",
+          "adn_feedback": {
+            "principio_oculto": "El cliente no está rechazando el producto, está pidiendo que lo entiendas antes de convencerlo.",
+            "nombre_tactica_ciega": "Postura de Estatus",
+            "ejemplo_tactica_frase": "Señor, con toda honestidad: este seguro no es para todos. Solo es para quienes su prioridad es reponerse ante cualquier imprevisto.",
+            "protocolo_mental": [
+              "'Es caro' = ¿Me entiendes o solo quieres venderme?",
+              "Tras validar, introduce el concepto de tribu exclusiva",
+              "Silencio → deja que él decida si quiere estar en tu tribu"
+            ]
+          }
         },
         {
-          "texto": "¿Le parece caro comparado con qué? Porque cuando lo vemos frente al riesgo real, la perspectiva cambia naturalmente.",
-          "estilo": "estrategica"
+          "tipo": "Estratégica",
+          "texto_boton": "¿Le parece caro comparado con qué? Porque cuando lo vemos frente al riesgo real, la perspectiva cambia naturalmente.",
+          "adn_feedback": {
+            "principio_oculto": "Cuando alguien dice 'es caro', no está comparando números… está comparando mundos: el mundo del ahorro vs el mundo de la tranquilidad.",
+            "nombre_tactica_ciega": "Elección de Futuro",
+            "ejemplo_tactica_frase": "Usted no está comprando un seguro. Está eligiendo un futuro. Uno donde, si pasa algo, usted ya resolvió.",
+            "protocolo_mental": [
+              "'Es caro' = ¿En qué mundo quiero vivir?",
+              "Ofrece dos futuros, no dos precios",
+              "Quien elige el futuro, olvida el costo"
+            ]
+          }
         },
         {
-          "texto": "¿Qué tal si construimos juntos un plan que se sienta cómodo para usted? Usted define lo indispensable, yo adapto la protección.",
-          "estilo": "proactiva"
+          "tipo": "Proactiva",
+          "texto_boton": "¿Qué tal si construimos juntos un plan que se sienta cómodo para usted? Usted define lo indispensable, yo adapto la protección.",
+          "adn_feedback": {
+            "principio_oculto": "Cuando alguien dice 'es caro', no está diciendo 'no'… está diciendo 'muéstrame cómo hacerlo posible'.",
+            "nombre_tactica_ciega": "Co-Creación de Valor",
+            "ejemplo_tactica_frase": "Perfecto. Usted me dice cuánto puede invertir sin que le duela, y yo le armo la mejor protección posible con ese número.",
+            "protocolo_mental": [
+              "'Es caro' = Ayúdame a hacerlo encajar",
+              "Ellos ponen el límite, tú maximizas el valor",
+              "Co-crear > convencer"
+            ]
+          }
         }
       ]
     },
     {
       "areaId": "guerra_digital",
       "id": "apps_vs_humano",
-      "type": "in-conversation",
-      "pattern": "comparacion_digital",
-      "keywords": ["app", "online", "digital", "comparador"],
       "title": "Coticé en 5 apps y usted es el más caro",
-      "context": "Cliente comparó precios online",
-      "real_challenge": "Apps dan 40% menos sin intermediarios",
       "question": "Cliente mostrando su teléfono: 'Tengo 5 cotizaciones, todas más baratas'. ¿Cómo responde?",
-      "difficulty": 5,
-      "frequency": "daily",
-      "jugadas": [
+      "acciones": [
         {
-          "texto": "Tiene toda la razón. Soy $80 más. Esos $80 son acceso directo a mí, incluso a las 2am. ¿Qué valor tiene para usted esa tranquilidad?",
-          "estilo": "logica"
+          "tipo": "Lógica",
+          "texto_boton": "Tiene toda la razón. Soy $80 más. Esos $80 son acceso directo a mí, incluso a las 2am. ¿Qué valor tiene para usted esa tranquilidad?",
+          "adn_feedback": {
+            "principio_oculto": "Cuando compara precios, no busca lo más barato… busca justificar el valor extra que solo un humano puede dar.",
+            "nombre_tactica_ciega": "Contraste de Valor Humano",
+            "ejemplo_tactica_frase": "Esos $80 no son un costo adicional. Son la diferencia entre un ticket automático y una voz humana que le guía en la crisis.",
+            "protocolo_mental": [
+              "Comparación = búsqueda de justificación emocional",
+              "Traducir precio a valor humano tangible",
+              "Preguntar por su experiencia personal > argumentar"
+            ]
+          }
         },
         {
-          "texto": "Qué bueno que investigó. Una pregunta sincera: ¿alguna app mencionó quién estará de su lado cuando más lo necesite?",
-          "estilo": "empatica"
+          "tipo": "Empática",
+          "texto_boton": "Qué bueno que investigó. Una pregunta sincera: ¿alguna app mencionó quién estará de su lado cuando más lo necesite?",
+          "adn_feedback": {
+            "principio_oculto": "Cuando muestra las apps, no está presumiendo… está pidiendo que valides su esfuerzo y le muestres lo que ellas no pueden ofrecer.",
+            "nombre_tactica_ciega": "Validación + Revelación",
+            "ejemplo_tactica_frase": "Gracias por compartir eso. Y precisamente porque investigó, debo ser honesto: ninguna app le garantiza acompañamiento real en una emergencia.",
+            "protocolo_mental": [
+              "Reconocer su esfuerzo > saltar a la venta",
+              "Mostrar lo invisible (acompañamiento) > lo visible (precio)",
+              "Convertir su investigación en puente, no en barrera"
+            ]
+          }
         },
         {
-          "texto": "Perfecto. Las apps venden pólizas. Yo vendo acompañamiento. Son propuestas distintas, con precios distintos. ¿Cuál se alinea con lo que busca?",
-          "estilo": "estrategica"
+          "tipo": "Estratégica",
+          "texto_boton": "Perfecto. Las apps venden pólizas. Yo vendo acompañamiento. Son propuestas distintas, con precios distintos. ¿Cuál se alinea con lo que busca?",
+          "adn_feedback": {
+            "principio_oculto": "Cuando dice 'son más baratas', no está comparando productos… está comparando roles: algoritmo impersonal vs humano comprometido.",
+            "nombre_tactica_ciega": "Reencuadre de Categoría",
+            "ejemplo_tactica_frase": "No estamos en la misma categoría. Ellas venden transacciones. Yo vendo relaciones. ¿Qué prefiere para lo que más le importa?",
+            "protocolo_mental": [
+              "Cambiar el marco: no es precio, es tipo de relación",
+              "Ofrecer elección de identidad, no de producto",
+              "Dejar que ellos definan su propio estándar"
+            ]
+          }
         },
         {
-          "texto": "¿Qué tal si hacemos una prueba rápida? Llame a una app, luego a mí. No para comparar precios, sino para sentir la diferencia en la conexión.",
-          "estilo": "proactiva"
+          "tipo": "Proactiva",
+          "texto_boton": "¿Qué tal si hacemos una prueba rápida? Llame a una app, luego a mí. No para comparar precios, sino para sentir la diferencia en la conexión.",
+          "adn_feedback": {
+            "principio_oculto": "Cuando menciona las apps, no está cerrando… está invitando a una demostración en vivo que confirme (o refute) su percepción.",
+            "nombre_tactica_ciega": "Demostración Sensorial",
+            "ejemplo_tactica_frase": "No me crea. Pruébelo ahora mismo. La diferencia no se explica… se siente en la primera respuesta.",
+            "protocolo_mental": [
+              "Experiencia > explicación",
+              "Confianza corporal mientras ellos prueban",
+              "La diferencia se SIENTE, no se argumenta"
+            ]
+          }
         }
       ]
     },
     {
       "areaId": "situaciones_limite",
       "id": "post_siniestro",
-      "type": "in-conversation",
-      "pattern": "urgencia_tardia",
-      "keywords": ["ya pasó", "ayer", "choqué", "retroactivo"],
       "title": "Ya choqué, ¿ahora sí me ayuda?",
-      "context": "Busca seguro DESPUÉS del accidente",
-      "real_challenge": "Quiere cobertura retroactiva imposible",
       "question": "Cliente: 'Tuve un incidente ayer. Si saco seguro hoy, ¿cuándo puedo reclamar?'",
-      "difficulty": 5,
-      "frequency": "weekly",
-      "jugadas": [
+      "acciones": [
         {
-          "texto": "Entiendo su urgencia. Aunque no puedo cubrir lo de ayer, puedo ayudarle a blindar desde hoy para que esto no vuelva a pasar.",
-          "estilo": "logica"
+          "tipo": "Lógica",
+          "texto_boton": "Entiendo su urgencia. Aunque no puedo cubrir lo de ayer, puedo ayudarle a blindar desde hoy para que esto no vuelva a pasar.",
+          "adn_feedback": {
+            "principio_oculto": "Cuando busca seguro después del siniestro, no está pidiendo fraude… está pidiendo una solución inmediata que restaure su sensación de control.",
+            "nombre_tactica_ciega": "Blindaje Inmediato",
+            "ejemplo_tactica_frase": "No puedo cambiar el pasado, pero puedo garantizarle que este será el último susto que pague de su bolsillo.",
+            "protocolo_mental": [
+              "Verdad dura + solución inmediata",
+              "Pasado cerrado, futuro abierto",
+              "Autoridad que protege, no que castiga"
+            ]
+          }
         },
         {
-          "texto": "Lamento mucho lo que pasó. Aunque no hay cobertura retroactiva, conozco opciones reales para resolver esto juntos. ¿Me permite ayudarle?",
-          "estilo": "empatica"
+          "tipo": "Empática",
+          "texto_boton": "Lamento mucho lo que pasó. Aunque no hay cobertura retroactiva, conozco opciones reales para resolver esto juntos. ¿Me permite ayudarle?",
+          "adn_feedback": {
+            "principio_oculto": "Detrás de la pregunta técnica hay una emoción: vergüenza, frustración, urgencia. Quiere sentirse cuidado, no juzgado.",
+            "nombre_tactica_ciega": "Acompañamiento Práctico",
+            "ejemplo_tactica_frase": "Mire, conozco tres talleres que dan facilidades. Lo ayudo con eso hoy, y también activamos protección para que no vuelva a pasar.",
+            "protocolo_mental": [
+              "Solución presente + protección futura",
+              "Ayuda concreta, no solo palabras",
+              "Manos abiertas = transparencia y apoyo"
+            ]
+          }
         },
         {
-          "texto": "Este momento puede ser el punto de inflexión: ¿quiere que sea el último susto o el primero de muchos? La decisión es suya, y yo estoy aquí para lo que elija.",
-          "estilo": "estrategica"
+          "tipo": "Estratégica",
+          "texto_boton": "Este momento puede ser el punto de inflexión: ¿quiere que sea el último susto o el primero de muchos? La decisión es suya, y yo estoy aquí para lo que elija.",
+          "adn_feedback": {
+            "principio_oculto": "La crisis es una oportunidad para redefinir su relación con el riesgo. No quiere un seguro… quiere evitar repetir esta historia.",
+            "nombre_tactica_ciega": "Elección de Narrativa",
+            "ejemplo_tactica_frase": "Este golpe puede ser su universidad más cara… o su última lección costosa. Usted decide qué historia quiere contar.",
+            "protocolo_mental": [
+              "Crisis = oportunidad de cambio",
+              "Ellos eligen su narrativa futura",
+              "Espacio físico = espacio mental para decidir"
+            ]
+          }
         },
         {
-          "texto": "¿Qué tal si llamamos juntos ahora mismo a un taller que pueda ayudarle? Yo gestiono, usted decide. Resolvamos esto paso a paso, sin presión.",
-          "estilo": "proactiva"
+          "tipo": "Proactiva",
+          "texto_boton": "¿Qué tal si llamamos juntos ahora mismo a un taller que pueda ayudarle? Yo gestiono, usted decide. Resolvamos esto paso a paso, sin presión.",
+          "adn_feedback": {
+            "principio_oculto": "La ansiedad se cura con acción. No quiere teorías… quiere ver movimiento concreto que lo saque del atolladero.",
+            "nombre_tactica_ciega": "Acción Guiada",
+            "ejemplo_tactica_frase": "Pongo el altavoz ahora mismo y llamamos al taller juntos. Yo negocio, usted escucha. Resolvamos esto ya.",
+            "protocolo_mental": [
+              "Acción AHORA, no mañana",
+              "Tú lideras, cliente acompaña",
+              "Movimiento físico = avance psicológico"
+            ]
+          }
         }
       ]
     }

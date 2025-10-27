@@ -1,12 +1,11 @@
 // ============================================
-// DOJO DE POLIZAR v13.0 - MOTOR DE PRINCIPIOS
-// Recibe ADN → genera feedback revelador en tiempo real
+// DOJO DE POLIZAR v13.1 - MOTOR DE PRINCIPIOS + UX OPTIMIZADA
 // ============================================
 
 (function(){
   "use strict";
 
-  console.log("🚀 Dojo de Polizar v13.0 - Motor de Principios");
+  console.log("🚀 Dojo de Polizar v13.1 - Motor de Principios + UX Optimizada");
 
   const API = "https://index.rgarciaplicet.workers.dev/";
   const plan = new URLSearchParams(location.search).get("plan") || "full";
@@ -34,7 +33,7 @@
   const esc = (s) => (s || "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 
   const progress = (id) => {
-    const map = {p0:0, p1:1, p2:2, p3:3, p4:4, p5:5, p8:8, p9:9};
+    const map = {p0:0, p1:1, p3:2, p4:3, p8:8, p9:9}; // ← AJUSTADO: p3 es paso 2, p4 es paso 3
     const pct = Math.max(10, Math.round(((map[id] ?? 0) + 1) / 10 * 100));
     const b = qs("#bar"); 
     if(b) b.style.width = pct + "%";
@@ -48,7 +47,7 @@
   function copy(t) {
     t = t || "";
     if(navigator.clipboard && window.isSecureContext) {
-      navigator.clipboard.writeText(t).then(() => alert("Copiado")).catch(() => fallbackCopy(t));
+      navigator.clipboard.writeText(t).then(() => alert("✅ Copiado")).catch(() => fallbackCopy(t));
     } else fallbackCopy(t);
   }
 
@@ -61,9 +60,9 @@
     a.select();
     try {
       document.execCommand("copy"); 
-      alert("Copiado");
+      alert("✅ Copiado");
     } catch(e) {
-      alert("No se pudo copiar");
+      alert("❌ No se pudo copiar");
     }
     document.body.removeChild(a);
   }
@@ -86,7 +85,8 @@
 
   // Render feedback como texto plano
   function renderFeedback(text) {
-    if (!text) return "<p class='muted'>No se generó feedback.</p>";
+    if (!text || text.trim() === "") 
+      return "<p class='muted'>⚠️ No se generó feedback. Inténtalo de nuevo.</p>";
     return `<div class="feedback-plain">${esc(text).replace(/\n/g, '<br>')}</div>`;
   }
 
@@ -120,7 +120,10 @@
   
   function nav(id) { 
     if(id === currentStep) return; 
-    historySteps.push(id); 
+    // Evitar historial inconsistente al saltar de p1 → p3
+    if (!(currentStep === "p1" && id === "p3")) {
+      historySteps.push(id); 
+    }
     go(id); 
   }
   
@@ -132,15 +135,18 @@
   }
 
   function ensureGuideFab() {
-    const card = qs("#dojoApp .card");
-    if(!card || qs("#btn-guide-fab")) return;
-    const btn = document.createElement("button");
-    btn.id = "btn-guide-fab";
-    btn.className = "corner-guide";
-    btn.type = "button";
-    btn.textContent = "Guía";
-    btn.style.display = "none";
-    card.appendChild(btn);
+    // Ya está en HTML, solo asegurar que exista
+    if (!qs("#btn-guide-fab")) {
+      const card = qs("#dojoApp .card");
+      if(!card) return;
+      const btn = document.createElement("button");
+      btn.id = "btn-guide-fab";
+      btn.className = "corner-guide";
+      btn.type = "button";
+      btn.textContent = "Guía";
+      btn.style.display = "none";
+      card.appendChild(btn);
+    }
   }
 
   // Contenido
@@ -270,7 +276,7 @@
     if(!box) return; 
     box.innerHTML = "";
 
-    // Mostrar acciones en botones (2 columnas en desktop/tablet)
+    // Mostrar acciones en botones (SIEMPRE 2 columnas en desktop/tablet)
     if(sc.acciones?.length) {
       sc.acciones.forEach(accion => {
         const b = document.createElement("button");
@@ -283,7 +289,7 @@
         box.appendChild(b);
       });
     } else {
-      // Fallback (no debería ocurrir)
+      // Fallback
       ["Lógica", "Empática", "Estratégica", "Proactiva"].forEach(j => {
         const b = document.createElement("button");
         b.className = "btn jugada-btn";
@@ -307,7 +313,7 @@
     const ans = qs("#esc-answer");
     if(ans) {
       ans.style.display = "block"; 
-      ans.innerHTML = `<p class="muted">Generando tu revelación…</p>`;
+      ans.innerHTML = `<div class="fb"><p class="muted">🧠 Generando tu revelación conversacional…</p></div>`;
     }
     
     try {
@@ -332,6 +338,8 @@
       
       if(ans && pack.feedback) {
         ans.innerHTML = renderFeedback(pack.feedback);
+        const actions = qs("#feedback-actions");
+        if(actions) actions.style.display = "flex"; // ← FORZAR mostrar acciones
       }
       
       const toolkit = qs("#toolkit");
@@ -342,15 +350,11 @@
         S.lastFrase = pack.feedback.split('\n')[0] || "Tu revelación aparecerá aquí";
       }
       
-      // Mostrar botones de utilidad
-      const actions = qs("#feedback-actions");
-      if(actions) actions.style.display = "flex";
-      
       scrollTop();
       
     } catch(e) {
       console.error("Error:", e);
-      if(ans) ans.innerHTML = `<p class="muted">No pudimos conectar. Intente de nuevo.</p>`;
+      if(ans) ans.innerHTML = `<p class="muted">❌ No pudimos conectar. Intente de nuevo.</p>`;
     }
   }
 
@@ -410,8 +414,8 @@
         const area = (S.content?.areas || []).find(a => a.id === id) || {};
         S.areaId = id; S.areaTitle = area.title || ""; 
         const ctx = qs("#ctx-area"); if(ctx) ctx.textContent = S.areaTitle || "—"; 
-        buildScenarios(); // ← Construye escenarios INMEDIATAMENTE
-        nav("p3"); // ← Salta directamente a p3
+        buildScenarios();
+        nav("p3"); // ← Salta directamente a p3, pero sin romper historial
       }
       else if(t.closest("[data-scenario]")) {
         const id = t.closest("[data-scenario]").dataset.scenario; 
@@ -419,10 +423,22 @@
       }
       else if(t.closest(".jugada-btn")) {
         const btn = t.closest(".jugada-btn");
+        if (btn.disabled) return; // ← Evitar doble clic
+        btn.disabled = true;
+        btn.textContent = "Generando…";
+
         const estilo = btn.dataset.estilo || "Lógica";
         const texto = btn.dataset.texto || btn.textContent;
         const sc = (S.content?.scenarios || []).find(x => x.areaId === S.areaId && x.id === S.scenId);
-        if(sc) { S.lastJugada = estilo; S.lastFrase = texto; runPlay(sc, estilo, texto); }
+        if(sc) { 
+          S.lastJugada = estilo; 
+          S.lastFrase = texto; 
+          runPlay(sc, estilo, texto)
+            .finally(() => {
+              btn.disabled = false;
+              btn.textContent = texto;
+            });
+        }
       }
       else if(t.id === "rr-generate") roundTwo();
       else if(t.closest("#p5-copy")) {

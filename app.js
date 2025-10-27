@@ -310,53 +310,50 @@
 
   // Jugada principal — AHORA ENVÍA ADN
   async function runPlay(sc, jugadaEstilo, jugadaTexto) {
-    const ans = qs("#esc-answer");
-    if(ans) {
-      ans.style.display = "block"; 
-      ans.innerHTML = `<div class="fb"><p class="muted">🧠 Generando tu revelación conversacional…</p></div>`;
+  const ans = qs("#esc-answer");
+  if(ans) {
+    ans.style.display = "block";
+    // Mostrar loader animado
+    ans.innerHTML = `
+      <div class="loader-container">
+        <div class="spinner"></div>
+        <p class="muted">🧠 Generando tu revelación conversacional<span class="dots">...</span></p>
+      </div>
+    `;
+  }
+  
+  try {
+    const accion = sc.acciones.find(a => a.tipo === jugadaEstilo);
+    if (!accion) {
+      throw new Error(`Acción no encontrada: ${jugadaEstilo}`);
+    }
+
+    const pack = await ai({
+      nombre: S.nombre || "",
+      estilo: jugadaEstilo,
+      area: S.areaTitle,
+      escenario: sc.title,
+      pregunta: sc.question,
+      frase_usuario: jugadaTexto,
+      adn_feedback: accion.adn_feedback,
+      cliente: S.cliente || ""
+    });
+    
+    S.pack = pack;
+    
+    if(ans && pack.feedback) {
+      ans.innerHTML = renderFeedback(pack.feedback);
+      const actions = qs("#feedback-actions");
+      if(actions) actions.style.display = "flex";
     }
     
-    try {
-      // Buscar el ADN correspondiente
-      const accion = sc.acciones.find(a => a.tipo === jugadaEstilo);
-      if (!accion) {
-        throw new Error(`Acción no encontrada: ${jugadaEstilo}`);
-      }
-
-      const pack = await ai({
-        nombre: S.nombre || "",
-        estilo: jugadaEstilo,
-        area: S.areaTitle,
-        escenario: sc.title,
-        pregunta: sc.question,
-        frase_usuario: jugadaTexto,
-        adn_feedback: accion.adn_feedback, // ← ¡ENVÍA EL ADN!
-        cliente: S.cliente || ""
-      });
-      
-      S.pack = pack;
-      
-      if(ans && pack.feedback) {
-        ans.innerHTML = renderFeedback(pack.feedback);
-        const actions = qs("#feedback-actions");
-        if(actions) actions.style.display = "flex"; // ← FORZAR mostrar acciones
-      }
-      
-      const toolkit = qs("#toolkit");
-      if(toolkit) toolkit.style.display = "none";
-      
-      // Extraer primera línea para "Tu revelación clave"
-      if(pack.feedback) {
-        S.lastFrase = pack.feedback.split('\n')[0] || "Tu revelación aparecerá aquí";
-      }
-      
-      scrollTop();
-      
-    } catch(e) {
-      console.error("Error:", e);
-      if(ans) ans.innerHTML = `<p class="muted">❌ No pudimos conectar. Intente de nuevo.</p>`;
-    }
+    scrollTop();
+    
+  } catch(e) {
+    console.error("Error:", e);
+    if(ans) ans.innerHTML = `<p class="muted">❌ No pudimos conectar. Intente de nuevo.</p>`;
   }
+}
 
   // Segunda ronda (opcional)
   async function roundTwo() {

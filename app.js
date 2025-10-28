@@ -11,7 +11,7 @@
 
   const API = "https://index.rgarciaplicet.workers.dev/";
   const plan = new URLSearchParams(location.search).get("plan") || "full";
-  const CONTENT_URL = `/content.full.json`;
+  const CONTENT_URL = `./content.full.json`;
 
   const S = {
     nombre: "", 

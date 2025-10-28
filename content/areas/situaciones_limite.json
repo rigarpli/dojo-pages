@@ -1,0 +1,68 @@
+{
+  "areaId": "situaciones_limite",
+  "scenarios": [
+    {
+      "id": "post_siniestro",
+      "title": "Ya choqué, ¿ahora sí me ayuda?",
+      "question": "Cliente: 'Tuve un incidente ayer. Si saco seguro hoy, ¿cuándo puedo reclamar?'",
+      "acciones": [
+        {
+          "tipo": "Lógica",
+          "texto_boton": "Entiendo su urgencia. Aunque no puedo cubrir lo de ayer, puedo ayudarle a blindar desde hoy para que esto no vuelva a pasar.",
+          "adn_feedback": {
+            "principio_oculto": "Cuando busca seguro después del siniestro, no está pidiendo fraude… está pidiendo una solución inmediata que restaure su sensación de control.",
+            "nombre_tactica_ciega": "Blindaje Inmediato",
+            "ejemplo_tactica_frase": "No puedo cambiar el pasado, pero puedo garantizarle que este será el último susto que pague de su bolsillo.",
+            "protocolo_mental": [
+              "Verdad dura + solución inmediata",
+              "Pasado cerrado, futuro abierto",
+              "Autoridad que protege, no que castiga"
+            ]
+          }
+        },
+        {
+          "tipo": "Empática",
+          "texto_boton": "Lamento mucho lo que pasó. Aunque no hay cobertura retroactiva, conozco opciones reales para resolver esto juntos. ¿Me permite ayudarle?",
+          "adn_feedback": {
+            "principio_oculto": "Detrás de la pregunta técnica hay una emoción: vergüenza, frustración, urgencia. Quiere sentirse cuidado, no juzgado.",
+            "nombre_tactica_ciega": "Acompañamiento Práctico",
+            "ejemplo_tactica_frase": "Mire, conozco tres talleres que dan facilidades. Lo ayudo con eso hoy, y también activamos protección para que no vuelva a pasar.",
+            "protocolo_mental": [
+              "Solución presente + protección futura",
+              "Ayuda concreta, no solo palabras",
+              "Manos abiertas = transparencia y apoyo"
+            ]
+          }
+        },
+        {
+          "tipo": "Estratégica",
+          "texto_boton": "Este momento puede ser el punto de inflexión: ¿quiere que sea el último susto o el primero de muchos? La decisión es suya, y yo estoy aquí para lo que elija.",
+          "adn_feedback": {
+            "principio_oculto": "La crisis es una oportunidad para redefinir su relación con el riesgo. No quiere un seguro… quiere evitar repetir esta historia.",
+            "nombre_tactica_ciega": "Elección de Narrativa",
+            "ejemplo_tactica_frase": "Este golpe puede ser su universidad más cara… o su última lección costosa. Usted decide qué historia quiere contar.",
+            "protocolo_mental": [
+              "Crisis = oportunidad de cambio",
+              "Ellos eligen su narrativa futura",
+              "Espacio físico = espacio mental para decidir"
+            ]
+          }
+        },
+        {
+          "tipo": "Proactiva",
+          "texto_boton": "¿Qué tal si llamamos juntos ahora mismo a un taller que pueda ayudarle? Yo gestiono, usted decide. Resolvamos esto paso a paso, sin presión.",
+          "adn_feedback": {
+            "principio_oculto": "La ansiedad se cura con acción. No quiere teorías… quiere ver movimiento concreto que lo saque del atolladero.",
+            "nombre_tactica_ciega": "Acción Guiada",
+            "ejemplo_tactica_frase": "Pongo el altavoz ahora mismo y llamamos al taller juntos. Yo negocio, usted escucha. Resolvamos esto ya.",
+            "protocolo_mental": [
+              "Acción AHORA, no mañana",
+              "Tú lideras, cliente acompaña",
+              "Movimiento físico = avance psicológico"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

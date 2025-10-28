@@ -11,7 +11,7 @@
 
   const API = "https://index.rgarciaplicet.workers.dev/";
   const plan = new URLSearchParams(location.search).get("plan") || "full";
-  const CONTENT_URL = `./content.${plan}.json`;
+  const CONTENT_URL = `/content.full.json`;
 
   const S = {
     nombre: "", 
@@ -233,8 +233,15 @@
     });
   }
 
-  function buildScenarios() {
-    const list = (S.content?.scenarios || []).filter(x => x.areaId === S.areaId);
+  async function buildScenarios() {
+  try {
+    // Cargar solo la área seleccionada
+    const areaData = await fetch(`./content/areas/${S.areaId}.json`).then(r => {
+      if (!r.ok) throw new Error("Área no encontrada");
+      return r.json();
+    });
+
+    const list = areaData.scenarios || [];
     const titleEl = qs("#area-title"); 
     if(titleEl) titleEl.textContent = S.areaTitle || "";
     
@@ -259,7 +266,12 @@
         <p class="sc-desc">${esc(q)}</p>`;
       grid.appendChild(d);
     });
+  } catch (e) {
+    console.error("❌ Error cargando escenarios:", e.message);
+    const grid = qs("#scen-grid");
+    if(grid) grid.innerHTML = `<div class="fb"><p class="muted">Error al cargar escenarios. Intente recargar.</p></div>`;
   }
+}
 
   function buildScenarioView(sid) {
     const sc = (S.content?.scenarios || []).find(x => x.areaId === S.areaId && x.id === sid);

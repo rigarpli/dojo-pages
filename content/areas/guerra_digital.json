@@ -1,0 +1,68 @@
+{
+  "areaId": "guerra_digital",
+  "scenarios": [
+    {
+      "id": "apps_vs_humano",
+      "title": "Coticé en 5 apps y usted es el más caro",
+      "question": "Cliente mostrando su teléfono: 'Tengo 5 cotizaciones, todas más baratas'. ¿Cómo responde?",
+      "acciones": [
+        {
+          "tipo": "Lógica",
+          "texto_boton": "Tiene toda la razón. Soy $80 más. Esos $80 son acceso directo a mí, incluso a las 2am. ¿Qué valor tiene para usted esa tranquilidad?",
+          "adn_feedback": {
+            "principio_oculto": "Cuando compara precios, no busca lo más barato… busca justificar el valor extra que solo un humano puede dar.",
+            "nombre_tactica_ciega": "Contraste de Valor Humano",
+            "ejemplo_tactica_frase": "Esos $80 no son un costo adicional. Son la diferencia entre un ticket automático y una voz humana que le guía en la crisis.",
+            "protocolo_mental": [
+              "Comparación = búsqueda de justificación emocional",
+              "Traducir precio a valor humano tangible",
+              "Preguntar por su experiencia personal > argumentar"
+            ]
+          }
+        },
+        {
+          "tipo": "Empática",
+          "texto_boton": "Qué bueno que investigó. Una pregunta sincera: ¿alguna app mencionó quién estará de su lado cuando más lo necesite?",
+          "adn_feedback": {
+            "principio_oculto": "Cuando muestra las apps, no está presumiendo… está pidiendo que valides su esfuerzo y le muestres lo que ellas no pueden ofrecer.",
+            "nombre_tactica_ciega": "Validación + Revelación",
+            "ejemplo_tactica_frase": "Gracias por compartir eso. Y precisamente porque investigó, debo ser honesto: ninguna app le garantiza acompañamiento real en una emergencia.",
+            "protocolo_mental": [
+              "Reconocer su esfuerzo > saltar a la venta",
+              "Mostrar lo invisible (acompañamiento) > lo visible (precio)",
+              "Convertir su investigación en puente, no en barrera"
+            ]
+          }
+        },
+        {
+          "tipo": "Estratégica",
+          "texto_boton": "Perfecto. Las apps venden pólizas. Yo vendo acompañamiento. Son propuestas distintas, con precios distintos. ¿Cuál se alinea con lo que busca?",
+          "adn_feedback": {
+            "principio_oculto": "Cuando dice 'son más baratas', no está comparando productos… está comparando roles: algoritmo impersonal vs humano comprometido.",
+            "nombre_tactica_ciega": "Reencuadre de Categoría",
+            "ejemplo_tactica_frase": "No estamos en la misma categoría. Ellas venden transacciones. Yo vendo relaciones. ¿Qué prefiere para lo que más le importa?",
+            "protocolo_mental": [
+              "Cambiar el marco: no es precio, es tipo de relación",
+              "Ofrecer elección de identidad, no de producto",
+              "Dejar que ellos definan su propio estándar"
+            ]
+          }
+        },
+        {
+          "tipo": "Proactiva",
+          "texto_boton": "¿Qué tal si hacemos una prueba rápida? Llame a una app, luego a mí. No para comparar precios, sino para sentir la diferencia en la conexión.",
+          "adn_feedback": {
+            "principio_oculto": "Cuando menciona las apps, no está cerrando… está invitando a una demostración en vivo que confirme (o refute) su percepción.",
+            "nombre_tactica_ciega": "Demostración Sensorial",
+            "ejemplo_tactica_frase": "No me crea. Pruébelo ahora mismo. La diferencia no se explica… se siente en la primera respuesta.",
+            "protocolo_mental": [
+              "Experiencia > explicación",
+              "Confianza corporal mientras ellos prueban",
+              "La diferencia se SIENTE, no se argumenta"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

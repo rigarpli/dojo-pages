@@ -24,6 +24,29 @@
       "desc": "Post-siniestro, perfiles complejos",
       "icon": "⚠️"
     },
-    // ... añade las otras 4 áreas aquí
+    {
+      "id": "renovaciones",
+      "title": "Renovaciones",
+      "desc": "Clientes que quieren mejorar o cambiar su póliza",
+      "icon": "🔄"
+    },
+    {
+      "id": "upsell_crossell",
+      "title": "Upsell & Crossell",
+      "desc": "Vender más sin ser invasivo",
+      "icon": "📈"
+    },
+    {
+      "id": "clientes_dificiles",
+      "title": "Clientes difíciles",
+      "desc": "Manejo de objeciones agresivas o emocionales",
+      "icon": "🥊"
+    },
+    {
+      "id": "cierre_ventas",
+      "title": "Cierre de ventas",
+      "desc": "Técnicas para cerrar sin presión",
+      "icon": "🎯"
+    }
   ]
 }

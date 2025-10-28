@@ -1,0 +1,27 @@
+{
+  "areaId": "objeciones_clasicas",
+  "scenarios": [
+    {
+      "id": "precio_alto_clasico",
+      "title": "Es muy caro",
+      "question": "Cliente: 'La verdad está muy caro el seguro'. ¿Cómo responde?",
+      "acciones": [
+        {
+          "tipo": "Lógica",
+          "texto_boton": "Permítame mostrarle exactamente qué protege cada peso de esa prima, y por qué ese valor va más allá del número.",
+          "adn_feedback": {
+            "principio_oculto": "El cliente no cuestiona el precio, pide un mapa claro del riesgo que justifique la inversión.",
+            "nombre_tactica_ciega": "Traducción de Valor",
+            "ejemplo_tactica_frase": "Estos $6,000 anuales no son un gasto. Son un puente que evita caer en un agujero de $45,000.",
+            "protocolo_mental": [
+              "'Es caro' = Muéstrame el mapa del riesgo",
+              "Datos + visualización > datos solos",
+              "Invitar a co-crear el entendimiento > imponerlo"
+            ]
+          }
+        },
+        // ... otras acciones y escenarios de esta área
+      ]
+    }
+  ]
+}

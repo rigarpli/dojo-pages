@@ -235,21 +235,31 @@
 
   async function buildScenarios() {
   try {
-    // Cargar solo la área seleccionada
+    console.log("🔍 Cargando escenarios para área:", S.areaId);
+    
     const areaData = await fetch(`./content/areas/${S.areaId}.json`).then(r => {
-      if (!r.ok) throw new Error("Área no encontrada");
+      if (!r.ok) throw new Error(`HTTP ${r.status}: Área no encontrada`);
       return r.json();
     });
 
+    console.log("✅ Área cargada:", areaData);
+
     const list = areaData.scenarios || [];
+    console.log("📊 Escenarios encontrados:", list.length);
+
     const titleEl = qs("#area-title"); 
     if(titleEl) titleEl.textContent = S.areaTitle || "";
     
     const grid = qs("#scen-grid"); 
-    if(!grid) return; 
+    if(!grid) {
+      console.error("❌ #scen-grid no encontrado");
+      return;
+    }
+    
     grid.innerHTML = "";
     
     if(!list.length) {
+      console.warn("⚠️ No se encontraron escenarios para esta área");
       grid.innerHTML = `<div class="fb"><p class="muted">No hay escenarios para esta área.</p></div>`;
       return;
     }
@@ -266,8 +276,10 @@
         <p class="sc-desc">${esc(q)}</p>`;
       grid.appendChild(d);
     });
+
+    console.log("🎉 Escenarios renderizados correctamente");
   } catch (e) {
-    console.error("❌ Error cargando escenarios:", e.message);
+    console.error("💥 Error crítico en buildScenarios:", e.message);
     const grid = qs("#scen-grid");
     if(grid) grid.innerHTML = `<div class="fb"><p class="muted">Error al cargar escenarios. Intente recargar.</p></div>`;
   }

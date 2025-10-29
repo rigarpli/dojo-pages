@@ -246,6 +246,7 @@
       console.log("✅ Área cargada:", areaData);
 
       const list = areaData.scenarios || [];
+      S.scenarios = list; // ← ¡GUARDA LOS ESCENARIOS EN S!
       console.log("📊 Escenarios encontrados:", list.length);
 
       const titleEl = qs("#area-title"); 
@@ -287,59 +288,59 @@
   }
 
   // ⚡ FUNCIÓN CORREGIDA: BUSCA ESCENARIO SOLO POR ID (NO POR AREAID)
-  function buildScenarioView(sid) {
-    console.log("🎯 Construyendo vista para escenario:", sid);
-    
-    // Buscar escenario SOLO por ID (asumimos que es único globalmente)
-    const sc = (S.content?.scenarios || []).find(x => x.id === sid);
-    if(!sc) {
-      console.error("❌ Escenario no encontrado:", sid);
-      nav("p3");
-      return;
-    }
-
-    console.log("✅ Escenario encontrado:", sc.title);
-
-    const escBadge = qs("#esc-badge");
-    const escTitle = qs("#esc-title");
-    const escQuestion = qs("#esc-question");
-    if(escBadge) escBadge.textContent = "Escenario — " + (S.areaTitle || "");
-    if(escTitle) escTitle.textContent = sc.title;
-    if(escQuestion) escQuestion.textContent = sc.question || ("Cliente: " + sc.title + ". ¿Cómo responde?");
-
-    const box = qs("#esc-options"); 
-    if(!box) return; 
-    box.innerHTML = "";
-
-    if(sc.acciones?.length) {
-      sc.acciones.forEach(accion => {
-        const b = document.createElement("button");
-        b.className = "btn jugada-btn";
-        b.type = "button";
-        b.dataset.estilo = accion.tipo;
-        b.dataset.texto = accion.texto_boton;
-        b.textContent = accion.texto_boton;
-        b.title = accion.texto_boton;
-        box.appendChild(b);
-      });
-    } else {
-      ["Lógica", "Empática", "Estratégica", "Proactiva"].forEach(j => {
-        const b = document.createElement("button");
-        b.className = "btn jugada-btn";
-        b.type = "button";
-        b.dataset.jugada = j;
-        b.textContent = j;
-        box.appendChild(b);
-      });
-    }
-
-    const escAnswer = qs("#esc-answer");
-    const toolkit = qs("#toolkit");
-    const escContinue = qs("#esc-continue");
-    if(escAnswer) escAnswer.style.display = "none";
-    if(toolkit) toolkit.style.display = "none";
-    if(escContinue) escContinue.style.display = "none";
+function buildScenarioView(sid) {
+  console.log("🎯 Construyendo vista para escenario:", sid);
+  
+  // Buscar escenario en S.scenarios (cargado por buildScenarios)
+  const sc = (S.scenarios || []).find(x => x.id === sid);
+  if(!sc) {
+    console.error("❌ Escenario no encontrado:", sid);
+    nav("p3");
+    return;
   }
+
+  console.log("✅ Escenario encontrado:", sc.title);
+
+  const escBadge = qs("#esc-badge");
+  const escTitle = qs("#esc-title");
+  const escQuestion = qs("#esc-question");
+  if(escBadge) escBadge.textContent = "Escenario — " + (S.areaTitle || "");
+  if(escTitle) escTitle.textContent = sc.title;
+  if(escQuestion) escQuestion.textContent = sc.question || ("Cliente: " + sc.title + ". ¿Cómo responde?");
+
+  const box = qs("#esc-options"); 
+  if(!box) return; 
+  box.innerHTML = "";
+
+  if(sc.acciones?.length) {
+    sc.acciones.forEach(accion => {
+      const b = document.createElement("button");
+      b.className = "btn jugada-btn";
+      b.type = "button";
+      b.dataset.estilo = accion.tipo;
+      b.dataset.texto = accion.texto_boton;
+      b.textContent = accion.texto_boton;
+      b.title = accion.texto_boton;
+      box.appendChild(b);
+    });
+  } else {
+    ["Lógica", "Empática", "Estratégica", "Proactiva"].forEach(j => {
+      const b = document.createElement("button");
+      b.className = "btn jugada-btn";
+      b.type = "button";
+      b.dataset.jugada = j;
+      b.textContent = j;
+      box.appendChild(b);
+    });
+  }
+
+  const escAnswer = qs("#esc-answer");
+  const toolkit = qs("#toolkit");
+  const escContinue = qs("#esc-continue");
+  if(escAnswer) escAnswer.style.display = "none";
+  if(toolkit) toolkit.style.display = "none";
+  if(escContinue) escContinue.style.display = "none";
+}
 
   // ⚡ FUNCIÓN CORREGIDA: AHORA ENVÍA EL ADN CORRECTO DE CADA ACCIÓN
   async function runPlay(sc, jugadaEstilo, jugadaTexto) {

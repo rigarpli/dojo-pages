@@ -1,17 +1,18 @@
 // ============================================
-// DOJO DE POLIZAR v14.0 - MOTOR DE PRINCIPIOS + INTEGRACIÓN IA CORREGIDA
-// Corrección crítica: cada acción ahora envía SU ADN específico.
+// DOJO DE POLIZAR v15.0 - MOTOR DE PRINCIPIOS + INTEGRACIÓN IA + BÚSQUEDA UNIFICADA
+// Corrección crítica: buildScenarioView ahora busca SOLO por ID (no por áreaId).
+// Logs detallados para depuración.
 // Revisado 5 veces. Sin parches. Listo para producción.
 // ============================================
 
 (function(){
   "use strict";
 
-  console.log("🚀 Dojo de Polizar v14.0 - Motor de Principios + Integración IA Corregida");
+  console.log("🚀 Dojo de Polizar v15.0 - Motor de Principios + Búsqueda Unificada");
 
   const API = "https://index.rgarciaplicet.workers.dev/";
   const plan = new URLSearchParams(location.search).get("plan") || "full";
-  const CONTENT_URL = `./content.full.json`;
+  const CONTENT_URL = `/content.full.json`;
 
   const S = {
     nombre: "", 
@@ -234,60 +235,70 @@
   }
 
   async function buildScenarios() {
-  try {
-    console.log("🔍 Cargando escenarios para área:", S.areaId);
-    
-    const areaData = await fetch(`./content/areas/${S.areaId}.json`).then(r => {
-      if (!r.ok) throw new Error(`HTTP ${r.status}: Área no encontrada`);
-      return r.json();
-    });
+    try {
+      console.log("🔍 Cargando escenarios para área:", S.areaId);
+      
+      const areaData = await fetch(`./content/areas/${S.areaId}.json`).then(r => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}: Área no encontrada`);
+        return r.json();
+      });
 
-    console.log("✅ Área cargada:", areaData);
+      console.log("✅ Área cargada:", areaData);
 
-    const list = areaData.scenarios || [];
-    console.log("📊 Escenarios encontrados:", list.length);
+      const list = areaData.scenarios || [];
+      console.log("📊 Escenarios encontrados:", list.length);
 
-    const titleEl = qs("#area-title"); 
-    if(titleEl) titleEl.textContent = S.areaTitle || "";
-    
-    const grid = qs("#scen-grid"); 
-    if(!grid) {
-      console.error("❌ #scen-grid no encontrado");
-      return;
+      const titleEl = qs("#area-title"); 
+      if(titleEl) titleEl.textContent = S.areaTitle || "";
+      
+      const grid = qs("#scen-grid"); 
+      if(!grid) {
+        console.error("❌ #scen-grid no encontrado");
+        return;
+      }
+      
+      grid.innerHTML = "";
+      
+      if(!list.length) {
+        console.warn("⚠️ No se encontraron escenarios para esta área");
+        grid.innerHTML = `<div class="fb"><p class="muted">No hay escenarios para esta área.</p></div>`;
+        return;
+      }
+      
+      list.forEach(sc => {
+        const q = sc.question || ("Cliente: " + sc.title + ". ¿Cómo responde?");
+        const d = document.createElement("div");
+        d.className = "sc-card"; 
+        d.setAttribute("data-scenario", sc.id);
+        const difficulty = sc.difficulty || 3;
+        const stars = "⭐".repeat(difficulty);
+        d.innerHTML = `
+          <div class="sc-title">${esc(sc.title)} <span style="float:right;font-size:12px">${stars}</span></div>
+          <p class="sc-desc">${esc(q)}</p>`;
+        grid.appendChild(d);
+      });
+
+      console.log("🎉 Escenarios renderizados correctamente");
+    } catch (e) {
+      console.error("💥 Error crítico en buildScenarios:", e.message);
+      const grid = qs("#scen-grid");
+      if(grid) grid.innerHTML = `<div class="fb"><p class="muted">Error al cargar escenarios. Intente recargar.</p></div>`;
     }
-    
-    grid.innerHTML = "";
-    
-    if(!list.length) {
-      console.warn("⚠️ No se encontraron escenarios para esta área");
-      grid.innerHTML = `<div class="fb"><p class="muted">No hay escenarios para esta área.</p></div>`;
-      return;
-    }
-    
-    list.forEach(sc => {
-      const q = sc.question || ("Cliente: " + sc.title + ". ¿Cómo responde?");
-      const d = document.createElement("div");
-      d.className = "sc-card"; 
-      d.setAttribute("data-scenario", sc.id);
-      const difficulty = sc.difficulty || 3;
-      const stars = "⭐".repeat(difficulty);
-      d.innerHTML = `
-        <div class="sc-title">${esc(sc.title)} <span style="float:right;font-size:12px">${stars}</span></div>
-        <p class="sc-desc">${esc(q)}</p>`;
-      grid.appendChild(d);
-    });
-
-    console.log("🎉 Escenarios renderizados correctamente");
-  } catch (e) {
-    console.error("💥 Error crítico en buildScenarios:", e.message);
-    const grid = qs("#scen-grid");
-    if(grid) grid.innerHTML = `<div class="fb"><p class="muted">Error al cargar escenarios. Intente recargar.</p></div>`;
   }
-}
 
+  // ⚡ FUNCIÓN CORREGIDA: BUSCA ESCENARIO SOLO POR ID (NO POR AREAID)
   function buildScenarioView(sid) {
-    const sc = (S.content?.scenarios || []).find(x => x.areaId === S.areaId && x.id === sid);
-    if(!sc) { nav("p3"); return; }
+    console.log("🎯 Construyendo vista para escenario:", sid);
+    
+    // Buscar escenario SOLO por ID (asumimos que es único globalmente)
+    const sc = (S.content?.scenarios || []).find(x => x.id === sid);
+    if(!sc) {
+      console.error("❌ Escenario no encontrado:", sid);
+      nav("p3");
+      return;
+    }
+
+    console.log("✅ Escenario encontrado:", sc.title);
 
     const escBadge = qs("#esc-badge");
     const escTitle = qs("#esc-title");
@@ -305,7 +316,7 @@
         const b = document.createElement("button");
         b.className = "btn jugada-btn";
         b.type = "button";
-        b.dataset.estilo = accion.tipo; // ← CRÍTICO: debe coincidir con el "tipo" en content.full.json
+        b.dataset.estilo = accion.tipo;
         b.dataset.texto = accion.texto_boton;
         b.textContent = accion.texto_boton;
         b.title = accion.texto_boton;
@@ -375,7 +386,7 @@
         escenario: sc.title,
         pregunta: sc.question,
         frase_usuario: jugadaTexto,
-        adn_feedback: accion.adn_feedback, // ← ¡ENVÍA EL ADN CORRECTO!
+        adn_feedback: accion.adn_feedback,
         cliente: S.cliente || ""
       });
       
@@ -404,7 +415,7 @@
     if(!input) { out.textContent = "Escribe la nueva objeción."; return; }
     out.textContent = "Generando...";
 
-    const sc = (S.content?.scenarios || []).find(x => x.areaId === S.areaId && x.id === S.scenId);
+    const sc = (S.content?.scenarios || []).find(x => x.id === S.scenId);
     if(!sc) { out.textContent = "Escenario no encontrado."; return; }
 
     try {
@@ -456,7 +467,10 @@
       }
       else if(t.closest("[data-scenario]")) {
         const id = t.closest("[data-scenario]").dataset.scenario; 
-        S.scenId = id; buildScenarioView(id); nav("p4");
+        console.log("🎯 Seleccionando escenario:", id);
+        S.scenId = id; 
+        buildScenarioView(id); 
+        nav("p4");
       }
       else if(t.closest(".jugada-btn")) {
         const btn = t.closest(".jugada-btn");
@@ -466,7 +480,7 @@
 
         const estilo = btn.dataset.estilo || "Lógica";
         const texto = btn.dataset.texto || btn.textContent;
-        const sc = (S.content?.scenarios || []).find(x => x.areaId === S.areaId && x.id === S.scenId);
+        const sc = (S.content?.scenarios || []).find(x => x.id === S.scenId);
         if(sc) { 
           S.lastJugada = estilo; 
           S.lastFrase = texto; 

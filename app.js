@@ -409,39 +409,42 @@ function buildScenarioView(sid) {
 
   // Segunda ronda (opcional)
   async function roundTwo() {
-    const out = qs("#rr-output"); 
-    if(!out) return;
-    const input = (qs("#rr-text")?.value || "").trim();
-    out.style.display = "block";
-    if(!input) { out.textContent = "Escribe la nueva objeción."; return; }
-    out.textContent = "Generando...";
+  const out = qs("#rr-output"); 
+  if(!out) return;
+  const input = (qs("#rr-text")?.value || "").trim();
+  out.style.display = "block";
+  if(!input) { out.textContent = "Escribe la nueva objeción."; return; }
+  out.textContent = "Generando...";
 
-    const sc = (S.content?.scenarios || []).find(x => x.id === S.scenId);
-    if(!sc) { out.textContent = "Escenario no encontrado."; return; }
-
-    try {
-      const pack = await ai({
-        nombre: S.nombre || "",
-        estilo: S.lastJugada || "Lógica",
-        area: S.areaTitle,
-        escenario: sc.title,
-        frase_usuario: input,
-        cliente: S.cliente || ""
-      });
-      
-      if(pack?.feedback) {
-        S.pack = pack;
-        const escAnswer = qs("#esc-answer");
-        if(escAnswer) escAnswer.innerHTML = renderFeedback(pack.feedback);
-        out.textContent = "↑ Mira tu nueva revelación arriba";
-      } else {
-        out.textContent = "No se pudo generar.";
-      }
-    } catch(e) {
-      out.textContent = "Error de conexión.";
-    }
+  // CORRECTO: Buscar en S.scenarios
+  const sc = (S.scenarios || []).find(x => x.id === S.scenId);
+  if(!sc) { 
+    out.textContent = "Escenario no encontrado."; 
+    return; 
   }
 
+  try {
+    const pack = await ai({
+      nombre: S.nombre || "",
+      estilo: S.lastJugada || "Lógica",
+      area: S.areaTitle,
+      escenario: sc.title,
+      frase_usuario: input,
+      cliente: S.cliente || ""
+    });
+    
+    if(pack?.feedback) {
+      S.pack = pack;
+      const escAnswer = qs("#esc-answer");
+      if(escAnswer) escAnswer.innerHTML = renderFeedback(pack.feedback);
+      out.textContent = "↑ Mira tu nueva revelación arriba";
+    } else {
+      out.textContent = "No se pudo generar.";
+    }
+  } catch(e) {
+    out.textContent = "Error de conexión.";
+  }
+}
   // Eventos
   function wireEvents() {
     ensureGuideFab();
@@ -474,24 +477,30 @@ function buildScenarioView(sid) {
         nav("p4");
       }
       else if(t.closest(".jugada-btn")) {
-        const btn = t.closest(".jugada-btn");
-        if (btn.disabled) return;
-        btn.disabled = true;
-        btn.textContent = "Generando…";
+  const btn = t.closest(".jugada-btn");
+  if (btn.disabled) return;
+  btn.disabled = true;
+  btn.textContent = "Generando…";
 
-        const estilo = btn.dataset.estilo || "Lógica";
-        const texto = btn.dataset.texto || btn.textContent;
-        const sc = (S.content?.scenarios || []).find(x => x.id === S.scenId);
-        if(sc) { 
-          S.lastJugada = estilo; 
-          S.lastFrase = texto; 
-          runPlay(sc, estilo, texto)
-            .finally(() => {
-              btn.disabled = false;
-              btn.textContent = texto;
-            });
-        }
-      }
+  const estilo = btn.dataset.estilo || "Lógica";
+  const texto = btn.dataset.texto || btn.textContent;
+  
+  // CORRECTO: Buscar en S.scenarios (cargado por buildScenarios)
+  const sc = (S.scenarios || []).find(x => x.id === S.scenId);
+  if(sc) { 
+    S.lastJugada = estilo; 
+    S.lastFrase = texto; 
+    runPlay(sc, estilo, texto)
+      .finally(() => {
+        btn.disabled = false;
+        btn.textContent = texto;
+      });
+  } else {
+    console.error("❌ Escenario no encontrado en S.scenarios:", S.scenId);
+    btn.disabled = false;
+    btn.textContent = texto;
+  }
+}
       else if(t.id === "rr-generate") roundTwo();
       else if(t.closest("#p5-copy")) {
         const escTitle = qs('#esc-title');

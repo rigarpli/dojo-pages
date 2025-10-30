@@ -502,26 +502,43 @@ function buildScenarioView(sid) {
   }
 }
       else if(t.id === "rr-generate") roundTwo();
-      else if(t.closest("#p5-copy")) {
-        const escTitle = qs('#esc-title');
-        const txt = `Dojo de Polizar — ${S.areaTitle}\nEscenario: ${escTitle?.textContent || "-"}\nRevelación clave:\n${S.lastFrase || "-"}`;
-        copy(txt);
-      }
-      else if(t.closest("#p5-dl")) {
-        const escTitle = qs('#esc-title');
-        const txt = `Dojo de Polizar — ${S.areaTitle}\nEscenario: ${escTitle?.textContent || "-"}\nRevelación clave:\n${S.lastFrase || "-"}`;
-        const blob = new Blob([txt], {type: "text/plain;charset=utf-8"});
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url; a.download = `dojo-${slug(S.areaId || 'area')}-${slug(S.scenId || 'escenario')}.txt`;
-        document.body.appendChild(a); a.click();
-        setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 0);
-      }
-      else if(t.closest("#btn-wa")) {
-        const escTitle = qs('#esc-title');
-        const msg = `Dojo de Polizar — ${S.areaTitle}\nEscenario: ${escTitle?.textContent || "-"}\nRevelación clave:\n${S.lastFrase || "-"}`;
-        window.open("https://wa.me/?text=" + encodeURIComponent(msg), "_blank");
-      }
+else if(t.closest("#p5-copy")) {
+  if (!S.pack?.feedback) {
+    alert("No hay feedback para copiar.");
+    return;
+  }
+  const escTitle = qs('#esc-title');
+  const txt = `Dojo de Polizar — ${S.areaTitle}\nEscenario: ${escTitle?.textContent || "-"}\n\n${S.pack.feedback}`;
+  copy(txt);
+}
+else if(t.closest("#p5-dl")) {
+  if (!S.pack?.feedback) {
+    alert("No hay feedback para descargar.");
+    return;
+  }
+  const escTitle = qs('#esc-title');
+  const txt = `Dojo de Polizar — ${S.areaTitle}\nEscenario: ${escTitle?.textContent || "-"}\n\n${S.pack.feedback}`;
+  const blob = new Blob([txt], {type: "text/plain;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; 
+  a.download = `dojo-${slug(S.areaId || 'area')}-${slug(S.scenId || 'escenario')}.txt`;
+  document.body.appendChild(a); 
+  a.click();
+  setTimeout(() => { 
+    URL.revokeObjectURL(url); 
+    a.remove(); 
+  }, 0);
+}
+else if(t.closest("#btn-wa")) {
+  if (!S.pack?.feedback) {
+    alert("No hay feedback para compartir.");
+    return;
+  }
+  const escTitle = qs('#esc-title');
+  const msg = `Dojo de Polizar — ${S.areaTitle}\nEscenario: ${escTitle?.textContent || "-"}\n\n${S.pack.feedback}`;
+  window.open("https://wa.me/?text=" + encodeURIComponent(msg), "_blank");
+}
       else if(t.closest("#finish")) {
         const thanksName = qs("#thanks-name");
         const thanksArea = qs("#thanks-area");

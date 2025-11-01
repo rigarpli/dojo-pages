@@ -438,3 +438,59 @@ p {
   40% { content: '..'; }
   60%, 100% { content: '...'; }
 }
+
+/* Imágenes de fondo para áreas */
+.area-card[data-area="objeciones_clasicas"] {
+  background-image: url('./images/objeciones_clasicas_bg.jpg');
+  background-size: cover;
+  background-position: center;
+}
+.area-card[data-area="guerra_digital"] {
+  background-image: url('./images/guerra_digital_bg.jpg');
+  background-size: cover;
+  background-position: center;
+}
+.area-card[data-area="situaciones_limite"] {
+  background-image: url('./images/situaciones_limite_bg.jpg');
+  background-size: cover;
+  background-position: center;
+}
+.area-card[data-area="renovaciones"] {
+  background-image: url('./images/renovaciones_bg.jpg');
+  background-size: cover;
+  background-position: center;
+}
+.area-card[data-area="upsell_crossell"] {
+  background-image: url('./images/upsell_crossell_bg.jpg');
+  background-size: cover;
+  background-position: center;
+}
+.area-card[data-area="clientes_dificiles"] {
+  background-image: url('./images/clientes_dificiles_bg.jpg');
+  background-size: cover;
+  background-position: center;
+}
+.area-card[data-area="cierre_ventas"] {
+  background-image: url('./images/cierre_ventas_bg.jpg');
+  background-size: cover;
+  background-position: center;
+}
+
+/* Overlay oscuro para mejorar legibilidad */
+.area-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4); /* Oscurece la imagen para que el texto se lea */
+  border-radius: 14px;
+  z-index: 1;
+}
+
+/* Contenido sobre el overlay */
+.area-card > * {
+  position: relative;
+  z-index: 2;
+}

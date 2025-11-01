@@ -494,3 +494,86 @@ p {
   position: relative;
   z-index: 2;
 }
+
+/* Vista de lista para escenarios */
+.sc-grid.list-view .sc-card {
+  grid-template-columns: 1fr !important;
+  padding: 12px !important;
+  min-height: auto !important;
+}
+
+.sc-grid.list-view .sc-title {
+  font-size: 16px !important;
+  margin-bottom: 4px !important;
+}
+
+.sc-grid.list-view .sc-desc {
+  font-size: 13px !important;
+  line-height: 1.4 !important;
+}
+
+/* Estilos distintivos para cada tipo de acción */
+.jugada-btn[data-estilo="Lógica"] {
+  border-left: 4px solid #00B8FF; /* Azul cielo */
+  background: #16252a;
+}
+
+.jugada-btn[data-estilo="Empática"] {
+  border-left: 4px solid #FF67BF; /* Rosa cálido */
+  background: #16252a;
+}
+
+.jugada-btn[data-estilo="Estratégica"] {
+  border-left: 4px solid #8827FF; /* Púrpura profundo */
+  background: #16252a;
+}
+
+.jugada-btn[data-estilo="Proactiva"] {
+  border-left: 4px solid #00C853; /* Verde vibrante */
+  background: #16252a;
+}
+
+/* Íconos pequeños (opcional) */
+.jugada-btn[data-estilo="Lógica"]::before {
+  content: "📊 ";
+}
+.jugada-btn[data-estilo="Empática"]::before {
+  content: "❤️ ";
+}
+.jugada-btn[data-estilo="Estratégica"]::before {
+  content: "🎯 ";
+}
+.jugada-btn[data-estilo="Proactiva"]::before {
+  content: "🤝 ";
+}
+
+/* Animaciones secuenciales para el feedback */
+.feedback-animated {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.feedback-section {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeInUp 0.4s forwards;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Íconos animados en títulos */
+.feedback-section strong {
+  display: inline-block;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}

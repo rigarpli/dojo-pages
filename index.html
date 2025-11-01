@@ -12,15 +12,15 @@
 <body>
   <div id="dojoApp">
     <div class="card">
-      <header>
-        <div class="brand">
-          <div class="title">Dojo de Polizar</div>
-          <div class="subtitle">Un espacio seguro para descubrir tu propia grandeza conversacional.</div>
-        </div>
-        <div class="header-controls">
-          <div class="progress"><div class="bar" id="bar"></div></div>
-        </div>
-      </header>
+     <header id="dojo-header">
+  <div class="brand">
+    <div class="title">Dojo de Polizar</div>
+    <div class="subtitle">Un espacio seguro para descubrir tu propia grandeza conversacional.</div>
+  </div>
+  <div class="header-controls">
+    <div class="progress"><div class="bar" id="bar"></div></div>
+  </div>
+    </header>
 
       <nav class="topnav">
         <button class="navbtn" id="btn-back" type="button">← Volver</button>
@@ -55,6 +55,9 @@
         <span class="badge">Paso 2</span>
         <h1>Elige un escenario en <span id="area-title"></span></h1>
         <div class="sc-grid three-col" id="scen-grid"></div>
+      <div class="group" style="margin-top: 20px;">
+  <button class="btn ghost" id="toggle-view" type="button">Ver como lista</button>
+</div>
       </section>
 
       <!-- Paso 4: Acciones + Feedback -->

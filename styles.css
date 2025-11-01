@@ -441,7 +441,7 @@ p {
 
 /* Imágenes de fondo para áreas */
 .area-card[data-area="objeciones_clasicas"] {
-  background-image: url('./images/objeciones_clasicas_bg.jpg');
+  background-image: url('./images/objeciones_clasicas_bg.png');
   background-size: cover;
   background-position: center;
 }

@@ -300,50 +300,55 @@
     }
   }
 
-  function buildScenarioView(sid) {
-    const sc = (S.content?.scenarios || []).find(x => x.areaId === S.areaId && x.id === sid);
-    if(!sc) { nav("p3"); return; }
-
-    const escBadge = qs("#esc-badge");
-    const escTitle = qs("#esc-title");
-    const escQuestion = qs("#esc-question");
-    if(escBadge) escBadge.textContent = "Escenario — " + (S.areaTitle || "");
-    if(escTitle) escTitle.textContent = sc.title;
-    if(escQuestion) escQuestion.textContent = sc.question || ("Cliente: " + sc.title + ". ¿Cómo responde?");
-
-    const box = qs("#esc-options"); 
-    if(!box) return; 
-    box.innerHTML = "";
-
-    if(sc.acciones?.length) {
-      sc.acciones.forEach(accion => {
-        const b = document.createElement("button");
-        b.className = "btn jugada-btn";
-        b.type = "button";
-        b.dataset.estilo = accion.tipo; // ← Para estilos distintivos
-        b.dataset.texto = accion.texto_boton;
-        b.textContent = accion.texto_boton;
-        b.title = accion.texto_boton;
-        box.appendChild(b);
-      });
-    } else {
-      ["Lógica", "Empática", "Estratégica", "Proactiva"].forEach(j => {
-        const b = document.createElement("button");
-        b.className = "btn jugada-btn";
-        b.type = "button";
-        b.dataset.jugada = j;
-        b.textContent = j;
-        box.appendChild(b);
-      });
-    }
-
-    const escAnswer = qs("#esc-answer");
-    const toolkit = qs("#toolkit");
-    const escContinue = qs("#esc-continue");
-    if(escAnswer) escAnswer.style.display = "none";
-    if(toolkit) toolkit.style.display = "none";
-    if(escContinue) escContinue.style.display = "none";
+function buildScenarioView(sid) {
+  // Buscar escenario en S.scenarios (no en S.content)
+  const sc = (S.scenarios || []).find(x => x.id === sid);
+  if(!sc) {
+    console.error("❌ Escenario no encontrado:", sid);
+    nav("p3");
+    return;
   }
+
+  const escBadge = qs("#esc-badge");
+  const escTitle = qs("#esc-title");
+  const escQuestion = qs("#esc-question");
+  if(escBadge) escBadge.textContent = "Escenario — " + (S.areaTitle || "");
+  if(escTitle) escTitle.textContent = sc.title;
+  if(escQuestion) escQuestion.textContent = sc.question || ("Cliente: " + sc.title + ". ¿Cómo responde?");
+
+  const box = qs("#esc-options"); 
+  if(!box) return; 
+  box.innerHTML = "";
+
+  if(sc.acciones?.length) {
+    sc.acciones.forEach(accion => {
+      const b = document.createElement("button");
+      b.className = "btn jugada-btn";
+      b.type = "button";
+      b.dataset.estilo = accion.tipo;
+      b.dataset.texto = accion.texto_boton;
+      b.textContent = accion.texto_boton;
+      b.title = accion.texto_boton;
+      box.appendChild(b);
+    });
+  } else {
+    ["Lógica", "Empática", "Estratégica", "Proactiva"].forEach(j => {
+      const b = document.createElement("button");
+      b.className = "btn jugada-btn";
+      b.type = "button";
+      b.dataset.jugada = j;
+      b.textContent = j;
+      box.appendChild(b);
+    });
+  }
+
+  const escAnswer = qs("#esc-answer");
+  const toolkit = qs("#toolkit");
+  const escContinue = qs("#esc-continue");
+  if(escAnswer) escAnswer.style.display = "none";
+  if(toolkit) toolkit.style.display = "none";
+  if(escContinue) escContinue.style.display = "none";
+}
 
   // ⚡ FUNCIÓN CORREGIDA: AHORA ENVÍA EL ADN CORRECTO DE CADA ACCIÓN
   async function runPlay(sc, jugadaEstilo, jugadaTexto) {
@@ -408,39 +413,43 @@
   }
 
   // Segunda ronda (opcional)
-  async function roundTwo() {
-    const out = qs("#rr-output"); 
-    if(!out) return;
-    const input = (qs("#rr-text")?.value || "").trim();
-    out.style.display = "block";
-    if(!input) { out.textContent = "Escribe la nueva objeción."; return; }
-    out.textContent = "Generando...";
+async function roundTwo() {
+  const out = qs("#rr-output"); 
+  if(!out) return;
+  const input = (qs("#rr-text")?.value || "").trim();
+  out.style.display = "block";
+  if(!input) { out.textContent = "Escribe la nueva objeción."; return; }
+  out.textContent = "Generando...";
 
-    const sc = (S.content?.scenarios || []).find(x => x.areaId === S.areaId && x.id === S.scenId);
-    if(!sc) { out.textContent = "Escenario no encontrado."; return; }
-
-    try {
-      const pack = await ai({
-        nombre: S.nombre || "",
-        estilo: S.lastJugada || "Lógica",
-        area: S.areaTitle,
-        escenario: sc.title,
-        frase_usuario: input,
-        cliente: S.cliente || ""
-      });
-      
-      if(pack?.feedback) {
-        S.pack = pack;
-        const escAnswer = qs("#esc-answer");
-        if(escAnswer) escAnswer.innerHTML = renderFeedback(pack.feedback);
-        out.textContent = "↑ Mira tu nueva revelación arriba";
-      } else {
-        out.textContent = "No se pudo generar.";
-      }
-    } catch(e) {
-      out.textContent = "Error de conexión.";
-    }
+  // Buscar escenario en S.scenarios (no en S.content)
+  const sc = (S.scenarios || []).find(x => x.id === S.scenId);
+  if(!sc) { 
+    out.textContent = "Escenario no encontrado."; 
+    return; 
   }
+
+  try {
+    const pack = await ai({
+      nombre: S.nombre || "",
+      estilo: S.lastJugada || "Lógica",
+      area: S.areaTitle,
+      escenario: sc.title,
+      frase_usuario: input,
+      cliente: S.cliente || ""
+    });
+    
+    if(pack?.feedback) {
+      S.pack = pack;
+      const escAnswer = qs("#esc-answer");
+      if(escAnswer) escAnswer.innerHTML = renderFeedback(pack.feedback);
+      out.textContent = "↑ Mira tu nueva revelación arriba";
+    } else {
+      out.textContent = "No se pudo generar.";
+    }
+  } catch(e) {
+    out.textContent = "Error de conexión.";
+  }
+}
 
   // Eventos
   function wireEvents() {
@@ -474,25 +483,31 @@
         buildScenarioView(id); 
         nav("p4");
       }
-      else if(t.closest(".jugada-btn")) {
-        const btn = t.closest(".jugada-btn");
-        if (btn.disabled) return;
-        btn.disabled = true;
-        btn.textContent = "Generando…";
+else if(t.closest(".jugada-btn")) {
+  const btn = t.closest(".jugada-btn");
+  if (btn.disabled) return;
+  btn.disabled = true;
+  btn.textContent = "Generando…";
 
-        const estilo = btn.dataset.estilo || "Lógica";
-        const texto = btn.dataset.texto || btn.textContent;
-        const sc = (S.content?.scenarios || []).find(x => x.areaId === S.areaId && x.id === S.scenId);
-        if(sc) { 
-          S.lastJugada = estilo; 
-          S.lastFrase = texto; 
-          runPlay(sc, estilo, texto)
-            .finally(() => {
-              btn.disabled = false;
-              btn.textContent = texto;
-            });
-        }
-      }
+  const estilo = btn.dataset.estilo || "Lógica";
+  const texto = btn.dataset.texto || btn.textContent;
+  
+  // Buscar escenario en S.scenarios (no en S.content)
+  const sc = (S.scenarios || []).find(x => x.id === S.scenId);
+  if(sc) { 
+    S.lastJugada = estilo; 
+    S.lastFrase = texto; 
+    runPlay(sc, estilo, texto)
+      .finally(() => {
+        btn.disabled = false;
+        btn.textContent = texto;
+      });
+  } else {
+    console.error("❌ Escenario no encontrado en S.scenarios:", S.scenId);
+    btn.disabled = false;
+    btn.textContent = texto;
+  }
+}
       else if(t.id === "rr-generate") roundTwo();
       else if(t.closest("#p5-copy")) {
         const escTitle = qs('#esc-title');

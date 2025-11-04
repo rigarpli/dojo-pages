@@ -250,7 +250,7 @@
       d.className = "area-card";
       d.dataset.area = a.id;
       // ✅ Aplicar imagen de fondo desde JS (mejor control)
-      d.style.backgroundImage = `url('./images/${a.id}_bg.jpg')`;
+      d.style.backgroundImage = `url('./images/${a.id}_bg.jpg'), url('./images/${a.id}_bg.png')`;;
       d.innerHTML = `
         <div class="area-title">${a.icon || "📋"} ${esc(a.title)}</div>
         <p class="area-desc">${esc(a.desc || "")}</p>

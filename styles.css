@@ -616,3 +616,49 @@ p {
 #dojo-header.bg-upsell_crossell { background-image: url('./images/upsell_crossell_bg.jpg'); }
 #dojo-header.bg-clientes_dificiles { background-image: url('./images/clientes_dificiles_bg.jpg'); }
 #dojo-header.bg-cierre_ventas { background-image: url('./images/cierre_ventas_bg.jpg'); }
+
+/* === BANNER DE ÁREA === */
+.area-banner {
+  height: 180px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+  display: none; /* Oculto por defecto */
+}
+
+.area-banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  z-index: 1;
+}
+
+.area-banner h2 {
+  color: white;
+  font-size: 28px;
+  font-weight: 700;
+  text-align: center;
+  z-index: 2;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  padding: 0 20px;
+}
+
+/* Clases dinámicas para fondos */
+.area-banner.bg-objeciones_clasicas { background-image: url('./images/objeciones_clasicas_bg.png'); }
+.area-banner.bg-guerra_digital { background-image: url('./images/guerra_digital_bg.jpg'); }
+.area-banner.bg-situaciones_limite { background-image: url('./images/situaciones_limite_bg.jpg'); }
+.area-banner.bg-renovaciones { background-image: url('./images/renovaciones_bg.jpg'); }
+.area-banner.bg-upsell_crossell { background-image: url('./images/upsell_crossell_bg.jpg'); }
+.area-banner.bg-clientes_dificiles { background-image: url('./images/clientes_dificiles_bg.jpg'); }
+.area-banner.bg-cierre_ventas { background-image: url('./images/cierre_ventas_bg.jpg'); }

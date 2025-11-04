@@ -245,16 +245,31 @@
 
   async function buildScenarios() {
     try {
-      const areaData = await fetch(`./content/areas/${S.areaId}.json`).then(r => {
-        if (!r.ok) throw new Error("Área no encontrada");
-        return r.json();
-      });
+     const areaData = await fetch(`./content/areas/${S.areaId}.json`).then(r => {
+      if (!r.ok) throw new Error("Área no encontrada");
+      return r.json();
+    });
 
+    // ✅ ¡ESTA LÍNEA ES LA CLAVE QUE FALTABA!
+    S.scenarios = areaData.scenarios || [];
+      
       // Actualizar imagen de fondo del header
-      const header = qs("#dojo-header");
-      if(header) {
-        header.style.backgroundImage = `url('./images/${S.areaId}_bg.jpg')`;
-      }
+      // Limpiar clases anteriores de fondo
+const header = qs("#dojo-header");
+if(header) {
+  // Remover todas las clases bg-* anteriores
+  header.classList.remove(
+    "bg-objeciones_clasicas",
+    "bg-guerra_digital",
+    "bg-situaciones_limite",
+    "bg-renovaciones",
+    "bg-upsell_crossell",
+    "bg-clientes_dificiles",
+    "bg-cierre_ventas"
+  );
+  // Añadir la nueva clase
+  header.classList.add(`bg-${S.areaId}`);
+}
 
       const list = areaData.scenarios || [];
       const titleEl = qs("#area-title"); 

@@ -327,7 +327,7 @@ function buildScenarioView(sid) {
   const escBadge = qs("#esc-badge");
   const escTitle = qs("#esc-title");
   const escQuestion = qs("#esc-question");
-  if(escBadge) escBadge.textContent = "Escenario — " + (S.areaTitle || "");
+  if(escBadge) escBadge.textContent = "Área — " + (S.areaTitle || "");
   if(escTitle) escTitle.textContent = sc.title;
   if(escQuestion) escQuestion.textContent = sc.question || ("Cliente: " + sc.title + ". ¿Cómo responde?");
 

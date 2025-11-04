@@ -238,20 +238,23 @@ p {
 }
 
 /* Tarjetas */
-.area-card,
-.sc-card {
+.area-card {
+  position: relative; /* ← ESTO ES CLAVE */
   background: #16252a;
   border: 1px solid var(--stroke);
   border-radius: 14px;
   padding: 16px;
   cursor: pointer;
-  transition: all 0.18s ease;
+  transition: transform 0.18s ease, border-color 0.18s ease; /* Solo anima lo necesario */
+  will-change: transform;
+  backface-visibility: hidden;
 }
 
-.area-card:hover,
-.sc-card:hover {
+.area-card:hover {
   border-color: var(--stroke-2);
   transform: translateY(-2px);
+  will-change: transform;
+  backface-visibility: hidden;
 }
 
 .area-title,
@@ -577,3 +580,39 @@ p {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.05); }
 }
+
+/* === Fondos dinámicos para header por área === */
+#dojo-header {
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 18px 18px 0 0;
+  overflow: hidden;
+}
+
+#dojo-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.3); /* Oscurece para legibilidad */
+  z-index: 1;
+  border-radius: inherit;
+}
+
+#dojo-header > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Fondos específicos */
+#dojo-header.bg-objeciones_clasicas { background-image: url('./images/objeciones_clasicas_bg.png'); }
+#dojo-header.bg-guerra_digital { background-image: url('./images/guerra_digital_bg.jpg'); }
+#dojo-header.bg-situaciones_limite { background-image: url('./images/situaciones_limite_bg.jpg'); }
+#dojo-header.bg-renovaciones { background-image: url('./images/renovaciones_bg.jpg'); }
+#dojo-header.bg-upsell_crossell { background-image: url('./images/upsell_crossell_bg.jpg'); }
+#dojo-header.bg-clientes_dificiles { background-image: url('./images/clientes_dificiles_bg.jpg'); }
+#dojo-header.bg-cierre_ventas { background-image: url('./images/cierre_ventas_bg.jpg'); }

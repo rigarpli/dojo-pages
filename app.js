@@ -252,7 +252,7 @@
       // ✅ Aplicar imagen de fondo desde JS (mejor control)
       // ✅ Usa RUTA ABSOLUTA desde la raíz del sitio
 const imagePath = `/images/${a.id}_bg.jpg`;
-d.style.backgroundImage = `linear-gradient(rgba(47, 67, 72, 0.6), rgba(47, 67, 72, 0.6)), url('${imagePath}')`;
+d.style.backgroundImage = `linear-gradient(rgba(47, 67, 72, 0.05), rgba(47, 67, 72, 0.05)), url('${imagePath}')`;
       d.innerHTML = `
         <div class="area-title">${a.icon || "📋"} ${esc(a.title)}</div>
         <p class="area-desc">${esc(a.desc || "")}</p>

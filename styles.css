@@ -612,6 +612,11 @@ p {
 }
 
 /* === VISTA DE LISTA PARA ESCENARIOS === */
+.sc-grid.list-view {
+  grid-template-columns: 1fr !important;
+  gap: 12px !important;
+}
+
 .sc-grid.list-view .sc-card {
   display: flex;
   flex-direction: column;
@@ -619,44 +624,31 @@ p {
   min-height: auto !important;
   background: #1b2a2f;
   border-left: 4px solid var(--accent2);
-}
-.sc-grid.list-view .sc-card {
-  flex-direction: row;
-  align-items: center;
-  gap: 16px;
-  padding: 12px 16px !important;
+  width: 100%;
 }
 
-.sc-grid.list-view .sc-title {
-  font-size: 16px !important;
-  margin-bottom: 4px !important;
-}
-.sc-grid.list-view .sc-title {
-  flex: 1;
-  margin-bottom: 0 !important;
-}
-
-.sc-grid.list-view .sc-desc {
-  font-size: 13px !important;
-  line-height: 1.5 !important;
-  color: #dfe6e8;
-}
-.sc-grid.list-view .sc-desc {
-  flex: 2;
-  font-style: italic;
-}
-
-/* Efecto hover en modo lista */
-.sc-grid.list-view .sc-card:hover {
+*.sc-grid.list-view .sc-card:hover {
   border-left-color: var(--accent1);
   background: #1f3035;
   transform: translateX(4px);
 }
 
-/* Estrellas en modo lista */
-.sc-grid.list-view .sc-title span {
+*.sc-grid.list-view .sc-title {
+  font-size: 16px !important;
+  margin-bottom: 4px !important;
+  flex: 1;
+}
+
+*.sc-grid.list-view .sc-desc {
+  font-size: 13px !important;
+  line-height: 1.5 !important;
+  color: #dfe6e8;
+  flex: 2;
+  font-style: italic;
+}
+
+*.sc-grid.list-view .sc-title span {
   font-size: 14px !important;
   color: #FFD700;
 }
-
 

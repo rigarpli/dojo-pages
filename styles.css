@@ -654,10 +654,34 @@ p {
 }
 
 /* Clases dinámicas para fondos */
-.area-banner.bg-objeciones_clasicas { background-image: url('./images/objeciones_clasicas_bg.png'); }
-.area-banner.bg-guerra_digital { background-image: url('./images/guerra_digital_bg.jpg'); }
-.area-banner.bg-situaciones_limite { background-image: url('./images/situaciones_limite_bg.jpg'); }
-.area-banner.bg-renovaciones { background-image: url('./images/renovaciones_bg.jpg'); }
-.area-banner.bg-upsell_crossell { background-image: url('./images/upsell_crossell_bg.jpg'); }
-.area-banner.bg-clientes_dificiles { background-image: url('./images/clientes_dificiles_bg.jpg'); }
-.area-banner.bg-cierre_ventas { background-image: url('./images/cierre_ventas_bg.jpg'); }
+.area-banner.bg-objeciones_clasicas { background-image: url('/images/objeciones_clasicas_bg.jpg'); }
+.area-banner.bg-guerra_digital { background-image: url('/images/guerra_digital_bg.jpg'); }
+.area-banner.bg-situaciones_limite { background-image: url('/images/situaciones_limite_bg.jpg'); }
+.area-banner.bg-renovaciones { background-image: url('/images/renovaciones_bg.jpg'); }
+.area-banner.bg-upsell_crossell { background-image: url('/images/upsell_crossell_bg.jpg'); }
+.area-banner.bg-clientes_dificiles { background-image: url('/images/clientes_dificiles_bg.jpg'); }
+.area-banner.bg-cierre_ventas { background-image: url('/images/cierre_ventas_bg.jpg'); }
+
+/* Solo para desarrollo — muestra borde rojo si la imagen falla */
+.area-card {
+  border: 3px solid transparent;
+}
+
+.area-card::after {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: red;
+  opacity: 0.1;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Si la imagen carga, oculta el indicador */
+.area-card[style*="background-image: url(\"/images/"]::after {
+  display: none;
+}

@@ -1,5 +1,5 @@
 /* ============================================
-   DOJO DE POLIZAR — ESTILOS FINALES v13.1
+   DOJO DE POLIZAR — ESTILOS FINALES v13.2 (LIMPIO + OPTIMIZADO)
    Motor de Principios + UX Optimizada + Grids Responsivos
    ============================================ */
 
@@ -29,8 +29,6 @@ body {
   color: var(--text);
   font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   line-height: 1.6;
-  padding: 0;
-  margin: 0;
 }
 
 #dojoApp {
@@ -45,7 +43,7 @@ body {
   border: 1px solid var(--stroke);
   border-radius: 18px;
   padding: 24px;
-  padding-bottom: calc(24px + 90px); /* Espacio para botones flotantes */
+  padding-bottom: calc(24px + 90px);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
   min-height: 100vh;
   display: flex;
@@ -209,8 +207,6 @@ p {
 }
 
 /* === GRIDS RESPONSIVOS === */
-
-/* Áreas y Escenarios: 3 columnas en desktop/tablet, 1 en móvil */
 .area-grid.three-col,
 .sc-grid.three-col {
   display: grid;
@@ -224,7 +220,6 @@ p {
   }
 }
 
-/* Jugadas: SIEMPRE 2 columnas en desktop/tablet, 1 en móvil */
 .jugada-grid {
   display: grid;
   gap: 12px;
@@ -237,15 +232,15 @@ p {
   }
 }
 
-/* Tarjetas */
+/* === TARJETAS DE ÁREA — ESTILOS BASE (el fondo viene desde JS) === */
 .area-card {
-  position: relative; /* ← ESTO ES CLAVE */
-  background: #16252a;
+  position: relative;
+  background: #16252a; /* Fallback si falla la imagen */
   border: 1px solid var(--stroke);
   border-radius: 14px;
   padding: 16px;
   cursor: pointer;
-  transition: transform 0.18s ease, border-color 0.18s ease; /* Solo anima lo necesario */
+  transition: transform 0.18s ease, border-color 0.18s ease;
   will-change: transform;
   backface-visibility: hidden;
 }
@@ -253,8 +248,26 @@ p {
 .area-card:hover {
   border-color: var(--stroke-2);
   transform: translateY(-2px);
-  will-change: transform;
-  backface-visibility: hidden;
+}
+
+/* Overlay oscuro para mejorar legibilidad sobre imágenes */
+.area-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Oscurece la imagen */
+  border-radius: 14px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Contenido encima del overlay */
+.area-card > * {
+  position: relative;
+  z-index: 2;
 }
 
 .area-title,
@@ -271,7 +284,7 @@ p {
   line-height: 1.4;
 }
 
-/* Botones de acción (jugadas) */
+/* Botones de acción */
 .jugada-btn {
   background: #16252a;
   border: 1px solid var(--stroke);
@@ -311,7 +324,7 @@ p {
   color: transparent;
 }
 
-/* Feedback revelador */
+/* Feedback */
 .feedback-plain {
   background: #16252a;
   border: 1px solid var(--stroke);
@@ -328,7 +341,7 @@ p {
   margin: 8px 0;
 }
 
-/* Guía flotante - SIEMPRE visible después de p0 */
+/* Guía flotante */
 .corner-guide {
   position: absolute;
   left: 20px;
@@ -350,7 +363,7 @@ p {
   border-color: var(--stroke-2);
 }
 
-/* Logo - SIEMPRE visible */
+/* Logo */
 .corner-logo {
   position: absolute;
   right: 20px;
@@ -401,12 +414,12 @@ p {
   }
 }
 
-/* Ocultar "Guía" en topnav - redundante con FAB */
+/* Ocultar "Guía" en topnav */
 #dojoApp .topnav [data-nav="guia"] {
   display: none !important;
 }
 
-/* Loader animado */
+/* Loader */
 .loader-container {
   display: flex;
   flex-direction: column;
@@ -442,115 +455,30 @@ p {
   60%, 100% { content: '...'; }
 }
 
-/* Imágenes de fondo para áreas */
-.area-card[data-area="objeciones_clasicas"] {
-  background-image: url('./images/objeciones_clasicas_bg.png');
-  background-size: cover;
-  background-position: center;
-}
-.area-card[data-area="guerra_digital"] {
-  background-image: url('./images/guerra_digital_bg.jpg');
-  background-size: cover;
-  background-position: center;
-}
-.area-card[data-area="situaciones_limite"] {
-  background-image: url('./images/situaciones_limite_bg.jpg');
-  background-size: cover;
-  background-position: center;
-}
-.area-card[data-area="renovaciones"] {
-  background-image: url('./images/renovaciones_bg.jpg');
-  background-size: cover;
-  background-position: center;
-}
-.area-card[data-area="upsell_crossell"] {
-  background-image: url('./images/upsell_crossell_bg.jpg');
-  background-size: cover;
-  background-position: center;
-}
-.area-card[data-area="clientes_dificiles"] {
-  background-image: url('./images/clientes_dificiles_bg.jpg');
-  background-size: cover;
-  background-position: center;
-}
-.area-card[data-area="cierre_ventas"] {
-  background-image: url('./images/cierre_ventas_bg.jpg');
-  background-size: cover;
-  background-position: center;
-}
-
-/* Overlay oscuro para mejorar legibilidad */
-.area-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.4); /* Oscurece la imagen para que el texto se lea */
-  border-radius: 14px;
-  z-index: 1;
-}
-
-/* Contenido sobre el overlay */
-.area-card > * {
-  position: relative;
-  z-index: 2;
-}
-
-/* Vista de lista para escenarios */
-.sc-grid.list-view .sc-card {
-  grid-template-columns: 1fr !important;
-  padding: 12px !important;
-  min-height: auto !important;
-}
-
-.sc-grid.list-view .sc-title {
-  font-size: 16px !important;
-  margin-bottom: 4px !important;
-}
-
-.sc-grid.list-view .sc-desc {
-  font-size: 13px !important;
-  line-height: 1.4 !important;
-}
-
-/* Estilos distintivos para cada tipo de acción */
+/* Estilos por tipo de acción */
 .jugada-btn[data-estilo="Lógica"] {
-  border-left: 4px solid #00B8FF; /* Azul cielo */
-  background: #16252a;
+  border-left: 4px solid #00B8FF;
 }
 
 .jugada-btn[data-estilo="Empática"] {
-  border-left: 4px solid #FF67BF; /* Rosa cálido */
-  background: #16252a;
+  border-left: 4px solid #FF67BF;
 }
 
 .jugada-btn[data-estilo="Estratégica"] {
-  border-left: 4px solid #8827FF; /* Púrpura profundo */
-  background: #16252a;
+  border-left: 4px solid #8827FF;
 }
 
 .jugada-btn[data-estilo="Proactiva"] {
-  border-left: 4px solid #00C853; /* Verde vibrante */
-  background: #16252a;
+  border-left: 4px solid #00C853;
 }
 
-/* Íconos pequeños (opcional) */
-.jugada-btn[data-estilo="Lógica"]::before {
-  content: "📊 ";
-}
-.jugada-btn[data-estilo="Empática"]::before {
-  content: "❤️ ";
-}
-.jugada-btn[data-estilo="Estratégica"]::before {
-  content: "🎯 ";
-}
-.jugada-btn[data-estilo="Proactiva"]::before {
-  content: "🤝 ";
-}
+/* Íconos */
+.jugada-btn[data-estilo="Lógica"]::before { content: "📊 "; }
+.jugada-btn[data-estilo="Empática"]::before { content: "❤️ "; }
+.jugada-btn[data-estilo="Estratégica"]::before { content: "🎯 "; }
+.jugada-btn[data-estilo="Proactiva"]::before { content: "🤝 "; }
 
-/* Animaciones secuenciales para el feedback */
+/* Animaciones feedback */
 .feedback-animated {
   display: flex;
   flex-direction: column;
@@ -570,7 +498,6 @@ p {
   }
 }
 
-/* Íconos animados en títulos */
 .feedback-section strong {
   display: inline-block;
   animation: pulse 2s infinite;
@@ -581,40 +508,12 @@ p {
   50% { transform: scale(1.05); }
 }
 
-/* === Fondos dinámicos para header por área === */
+/* === HEADER (ya no se usa para fondos de área) === */
 #dojo-header {
   position: relative;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
   border-radius: 18px 18px 0 0;
   overflow: hidden;
 }
-
-#dojo-header::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-  border-radius: inherit;
-}
-
-#dojo-header > * {
-  position: relative;
-  z-index: 2;
-}
-
-/* Fondos específicos */
-#dojo-header.bg-objeciones_clasicas { background-image: url('/images/objeciones_clasicas_bg.png'); }
-#dojo-header.bg-guerra_digital { background-image: url('/images/guerra_digital_bg.jpg'); }
-#dojo-header.bg-situaciones_limite { background-image: url('/images/situaciones_limite_bg.jpg'); }
-#dojo-header.bg-renovaciones { background-image: url('/images/renovaciones_bg.jpg'); }
-#dojo-header.bg-upsell_crossell { background-image: url('/images/upsell_crossell_bg.jpg'); }
-#dojo-header.bg-clientes_dificiles { background-image: url('/images/clientes_dificiles_bg.jpg'); }
-#dojo-header.bg-cierre_ventas { background-image: url('/images/cierre_ventas_bg.jpg'); }
 
 /* === BANNER DE ÁREA === */
 .area-banner {
@@ -623,13 +522,14 @@ p {
   background-position: center;
   background-repeat: no-repeat;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: center;
+  align-items: center;
   margin: 20px 0;
   border-radius: 16px;
   position: relative;
   overflow: hidden;
-  display: none; /* Oculto por defecto */
+  display: none;
 }
 
 .area-banner::before {
@@ -643,17 +543,29 @@ p {
   z-index: 1;
 }
 
-.area-banner h2 {
-  color: white;
-  font-size: 28px;
-  font-weight: 700;
+.area-banner .banner-content {
   text-align: center;
   z-index: 2;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
   padding: 0 20px;
 }
 
-/* Clases dinámicas para fondos */
+.area-banner .banner-title {
+  color: white;
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 0 8px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.area-banner .banner-subtitle {
+  color: rgba(255,255,255,0.9);
+  font-size: 16px;
+  font-weight: 400;
+  margin: 0;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+/* Fondos específicos — RUTAS ABSOLUTAS */
 .area-banner.bg-objeciones_clasicas { background-image: url('/images/objeciones_clasicas_bg.jpg'); }
 .area-banner.bg-guerra_digital { background-image: url('/images/guerra_digital_bg.jpg'); }
 .area-banner.bg-situaciones_limite { background-image: url('/images/situaciones_limite_bg.jpg'); }
@@ -661,27 +573,3 @@ p {
 .area-banner.bg-upsell_crossell { background-image: url('/images/upsell_crossell_bg.jpg'); }
 .area-banner.bg-clientes_dificiles { background-image: url('/images/clientes_dificiles_bg.jpg'); }
 .area-banner.bg-cierre_ventas { background-image: url('/images/cierre_ventas_bg.jpg'); }
-
-/* Solo para desarrollo — muestra borde rojo si la imagen falla */
-.area-card {
-  border: 3px solid transparent;
-}
-
-.area-card::after {
-  content: '';
-  display: block;
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  background: red;
-  opacity: 0.1;
-  pointer-events: none;
-  z-index: 9999;
-}
-
-/* Si la imagen carga, oculta el indicador */
-.area-card[style*="background-image: url(\"/images/"]::after {
-  display: none;
-}

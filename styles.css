@@ -236,13 +236,16 @@ p {
 .area-card {
   position: relative;
   background: #16252a; /* Fallback si falla la imagen */
-  border: 1px solid var(--stroke);
+  border: 1px solid rgb(91, 91, 91);
   border-radius: 14px;
   padding: 16px;
   cursor: pointer;
   transition: transform 0.18s ease, border-color 0.18s ease;
   will-change: transform;
   backface-visibility: hidden;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: bottom;
 }
 
 .area-card:hover {
@@ -258,7 +261,7 @@ p {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5); /* Oscurece la imagen */
+  background: rgba(0, 0, 0, 0.2); /* Oscurece la imagen */
   border-radius: 14px;
   z-index: 1;
   pointer-events: none;
@@ -268,6 +271,10 @@ p {
 .area-card > * {
   position: relative;
   z-index: 2;
+}
+
+.area-title {
+  text-shadow: 1px 2px 4px black;
 }
 
 .area-title,
@@ -282,6 +289,10 @@ p {
   color: #cfe0e4;
   font-size: 14px;
   line-height: 1.4;
+}
+.area-desc {
+   padding-right: 110px;
+   text-shadow: -2px 2px 4px black
 }
 
 /* Botones de acción */

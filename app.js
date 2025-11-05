@@ -311,10 +311,35 @@ d.style.backgroundImage = `linear-gradient(rgba(47, 67, 72, 0.6), rgba(47, 67, 7
         banner.classList.add(`bg-${S.areaId}`);
         banner.style.display = "flex";
         
-        // Actualizar título del banner
-        const bannerTitle = qs("#area-banner-title");
-        if(bannerTitle) bannerTitle.textContent = S.areaTitle || "";
-      }
+        // ✅ CONFIGURAR BANNER DE ÁREA (título + subtítulo)
+const banner = qs("#area-banner");
+if(banner) {
+  // Limpiar clases anteriores
+  banner.classList.remove(
+    "bg-objeciones_clasicas",
+    "bg-guerra_digital",
+    "bg-situaciones_limite",
+    "bg-renovaciones",
+    "bg-upsell_crossell",
+    "bg-clientes_dificiles",
+    "bg-cierre_ventas"
+  );
+  // Añadir nueva clase
+  banner.classList.add(`bg-${S.areaId}`);
+  banner.style.display = "flex";
+  
+  // Actualizar título
+  const bannerTitle = qs("#area-banner-title");
+  if(bannerTitle) bannerTitle.textContent = S.areaTitle || "";
+  
+  // ✅ ¡NUEVO! Actualizar subtítulo
+  const bannerSubtitle = qs("#area-banner-subtitle");
+  if(bannerSubtitle) {
+    // Buscar el objeto del área para obtener su descripción
+    const area = (S.content?.areas || []).find(a => a.id === S.areaId);
+    bannerSubtitle.textContent = area?.desc || ""; // ← ¡Aquí está la magia!
+  }
+}
 
       const list = S.scenarios;
       const titleEl = qs("#area-title"); 

@@ -263,128 +263,90 @@ d.style.backgroundImage = `linear-gradient(rgba(47, 67, 72, 0.6), rgba(47, 67, 7
     });
   }
 
-  // ✅ FUNCIÓN ACTUALIZADA: CARGA ESCENARIOS Y CONFIGURA BANNER DE ÁREA
-  async function buildScenarios() {
-    try {
-      // 🔄 OPCIÓN 1 (actual): cargar un solo archivo por área
-      const areaData = await fetch(`./content/areas/${S.areaId}.json`).then(r => {
-        if (!r.ok) throw new Error("Área no encontrada");
-        return r.json();
-      });
+// ✅ FUNCIÓN ACTUALIZADA: CARGA ESCENARIOS Y CONFIGURA BANNER DE ÁREA
+async function buildScenarios() {
+  try {
+    // 🔄 OPCIÓN 1 (actual): cargar un solo archivo por área
+    const areaData = await fetch(`./content/areas/${S.areaId}.json`).then(r => {
+      if (!r.ok) throw new Error("Área no encontrada");
+      return r.json();
+    });
 
-      // 🔄 OPCIÓN 2 (comentada): cargar múltiples archivos (descomenta si quieres usarla)
-      /*
-      const indexResponse = await fetch(`./content/areas/${S.areaId}/index.json`);
-      if (!indexResponse.ok) throw new Error("Índice no encontrado");
-      const indexData = await indexResponse.json();
-      
-      const scenarioPromises = indexData.scenarios.map(scId => 
-        fetch(`./content/areas/${S.areaId}/${scId}.json`)
-          .then(r => r.json())
-          .catch(e => {
-            console.warn(`❌ No se pudo cargar escenario: ${scId}`, e);
-            return null;
-          })
+    // ✅ ASIGNAR A ESTADO GLOBAL (¡ESTO ES CLAVE!)
+    S.scenarios = areaData.scenarios || [];
+
+    // ✅ CONFIGURAR BANNER DE ÁREA (título + subtítulo)
+    const banner = qs("#area-banner");
+    if(banner) {
+      // Limpiar clases anteriores
+      banner.classList.remove(
+        "bg-objeciones_clasicas",
+        "bg-guerra_digital",
+        "bg-situaciones_limite",
+        "bg-renovaciones",
+        "bg-upsell_crossell",
+        "bg-clientes_dificiles",
+        "bg-cierre_ventas"
       );
+      // Añadir nueva clase
+      banner.classList.add(`bg-${S.areaId}`);
+      banner.style.display = "flex";
       
-      let scenarios = await Promise.all(scenarioPromises);
-      scenarios = scenarios.filter(sc => sc !== null);
-      */
+      // Actualizar título
+      const bannerTitle = qs("#area-banner-title");
+      if(bannerTitle) bannerTitle.textContent = S.areaTitle || "";
+      
+      // ✅ Actualizar subtítulo
+      const bannerSubtitle = qs("#area-banner-subtitle");
+      if(bannerSubtitle) {
+        const area = (S.content?.areas || []).find(a => a.id === S.areaId);
+        bannerSubtitle.textContent = area?.desc || "";
+      }
+    }
 
-      // ✅ ASIGNAR A ESTADO GLOBAL (¡ESTO ES CLAVE!)
-      S.scenarios = areaData.scenarios || []; // ← ¡NO OLVIDAR ESTA LÍNEA!
-
-      // ✅ CONFIGURAR BANNER DE ÁREA (no el header principal)
-      const banner = qs("#area-banner");
-      if(banner) {
-        // Limpiar clases anteriores
-        banner.classList.remove(
-          "bg-objeciones_clasicas",
-          "bg-guerra_digital",
-          "bg-situaciones_limite",
-          "bg-renovaciones",
-          "bg-upsell_crossell",
-          "bg-clientes_dificiles",
-          "bg-cierre_ventas"
-        );
-        // Añadir nueva clase
-        banner.classList.add(`bg-${S.areaId}`);
-        banner.style.display = "flex";
-        
-        // ✅ CONFIGURAR BANNER DE ÁREA (título + subtítulo)
-// ✅ CONFIGURAR BANNER DE ÁREA (título + subtítulo)
-const banner = qs("#area-banner");
-if(banner) {
-  // Limpiar clases anteriores
-  banner.classList.remove(
-    "bg-objeciones_clasicas",
-    "bg-guerra_digital",
-    "bg-situaciones_limite",
-    "bg-renovaciones",
-    "bg-upsell_crossell",
-    "bg-clientes_dificiles",
-    "bg-cierre_ventas"
-  );
-  // Añadir nueva clase
-  banner.classList.add(`bg-${S.areaId}`);
-  banner.style.display = "flex";
-  
-  // Actualizar título
-  const bannerTitle = qs("#area-banner-title");
-  if(bannerTitle) bannerTitle.textContent = S.areaTitle || "";
-  
-  // ✅ ¡CORREGIDO! Actualizar subtítulo
-  const bannerSubtitle = qs("#area-banner-subtitle");
-  if(bannerSubtitle) {
-    // Buscar el objeto del área para obtener su descripción
-    const area = (S.content?.areas || []).find(a => a.id === S.areaId);
-    bannerSubtitle.textContent = area?.desc || ""; // ← ¡Esto sí funciona!
+    const list = S.scenarios;
+    const titleEl = qs("#area-title"); 
+    if(titleEl) titleEl.textContent = S.areaTitle || "";
+    
+    const grid = qs("#scen-grid"); 
+    if(!grid) return; 
+    grid.innerHTML = "";
+    
+    if(!list.length) {
+      grid.innerHTML = `<div class="fb"><p class="muted">No hay escenarios para esta área.</p></div>`;
+      return;
+    }
+    
+    // Aplicar vista guardada
+    const isListView = localStorage.getItem('scenariosView') === 'list';
+    if (isListView) {
+      grid.classList.add('list-view');
+      const toggleBtn = qs("#toggle-view");
+      if(toggleBtn) toggleBtn.textContent = "Ver como cuadrícula";
+    } else {
+      grid.classList.remove('list-view');
+      const toggleBtn = qs("#toggle-view");
+      if(toggleBtn) toggleBtn.textContent = "Ver como lista";
+    }
+    
+    list.forEach(sc => {
+      const q = sc.question || ("Cliente: " + sc.title + ". ¿Cómo responde?");
+      const d = document.createElement("div");
+      d.className = "sc-card"; 
+      d.setAttribute("data-scenario", sc.id);
+      const difficulty = sc.difficulty || 3;
+      const stars = "⭐".repeat(difficulty);
+      d.innerHTML = `
+        <div class="sc-title">${esc(sc.title)} <span style="float:right;font-size:12px">${stars}</span></div>
+        <p class="sc-desc">${esc(q)}</p>`;
+      grid.appendChild(d);
+    });
+  } catch (e) {
+    console.error("❌ Error cargando escenarios:", e.message);
+    const grid = qs("#scen-grid");
+    if(grid) grid.innerHTML = `<div class="fb"><p class="muted">Error al cargar escenarios. Intente recargar.</p></div>`;
   }
 }
-  
-        const list = S.scenarios;
-      const titleEl = qs("#area-title"); 
-      if(titleEl) titleEl.textContent = S.areaTitle || "";
-      
-      const grid = qs("#scen-grid"); 
-      if(!grid) return; 
-      grid.innerHTML = "";
-      
-      if(!list.length) {
-        grid.innerHTML = `<div class="fb"><p class="muted">No hay escenarios para esta área.</p></div>`;
-        return;
-      }
-      
-      // Aplicar vista guardada
-      const isListView = localStorage.getItem('scenariosView') === 'list';
-      if (isListView) {
-        grid.classList.add('list-view');
-        const toggleBtn = qs("#toggle-view");
-        if(toggleBtn) toggleBtn.textContent = "Ver como cuadrícula";
-      } else {
-        grid.classList.remove('list-view');
-        const toggleBtn = qs("#toggle-view");
-        if(toggleBtn) toggleBtn.textContent = "Ver como lista";
-      }
-      
-      list.forEach(sc => {
-        const q = sc.question || ("Cliente: " + sc.title + ". ¿Cómo responde?");
-        const d = document.createElement("div");
-        d.className = "sc-card"; 
-        d.setAttribute("data-scenario", sc.id);
-        const difficulty = sc.difficulty || 3;
-        const stars = "⭐".repeat(difficulty);
-        d.innerHTML = `
-          <div class="sc-title">${esc(sc.title)} <span style="float:right;font-size:12px">${stars}</span></div>
-          <p class="sc-desc">${esc(q)}</p>`;
-        grid.appendChild(d);
-      });
-    } catch (e) {
-      console.error("❌ Error cargando escenarios:", e.message);
-      const grid = qs("#scen-grid");
-      if(grid) grid.innerHTML = `<div class="fb"><p class="muted">Error al cargar escenarios. Intente recargar.</p></div>`;
-    }
-  }
 
   function buildScenarioView(sid) {
     const sc = (S.scenarios || []).find(x => x.id === sid);

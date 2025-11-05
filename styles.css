@@ -248,6 +248,10 @@ p {
   background-position: bottom;
 }
 
+.area-card .btn.primary {
+  background: linear-gradient(to right, #191919, #454545, #292929);
+}
+
 .area-card:hover {
   border-color: var(--stroke-2);
   transform: translateY(-2px);
@@ -286,7 +290,7 @@ p {
 
 .area-desc,
 .sc-desc {
-  color: #cfe0e4;
+  color: #fff;
   font-size: 14px;
   line-height: 1.4;
 }

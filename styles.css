@@ -725,10 +725,11 @@ p {
       background-position: right;
    }
    #p0 .grid.two {
-  padding: 30px;
+  padding: 25px;
 }
    #p0 .group {
-      padding-left: 30px;
+      padding-left: 25px;
+      margin-top: 1px;
    }
 }
 

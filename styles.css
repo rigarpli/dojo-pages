@@ -721,5 +721,8 @@ p {
       padding-right: 75px;
       font-size: 25px;
    }
+   .area-banner {
+      background-position: right;
+   }
 }
 

@@ -588,11 +588,11 @@ async function buildScenarios() {
         if (isListView) {
           grid.classList.remove('list-view');
           localStorage.setItem('scenariosView', 'grid');
-          t.textContent = "Ver como lista";
+          t.innerHTML = "🖼️ Ver como cuadrícula";
         } else {
           grid.classList.add('list-view');
           localStorage.setItem('scenariosView', 'list');
-          t.textContent = "Ver como cuadrícula";
+          t.innerHTML = "📋 Ver como lista";
         }
       }
     });

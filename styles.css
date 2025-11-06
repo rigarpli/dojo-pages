@@ -724,5 +724,11 @@ p {
    .area-banner {
       background-position: right;
    }
+   #p0 .grid.two {
+  padding: 30px;
+}
+   #p0 .group {
+      padding-left: 30px;
+   }
 }
 

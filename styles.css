@@ -59,6 +59,13 @@ header {
   margin-bottom: 10px;
 }
 
+img.logo-image
+ {
+    width: 240px;
+    height: auto;
+    padding: 30px 0 0 30px;
+}
+
 .title {
   font-weight: 800;
   font-size: 22px;
@@ -139,8 +146,12 @@ p {
 }
 #p0 .grid.two {
   display: inline-block;
+   margin-top: 20px;
 }
-
+#p1 p.muted
+ {
+    margin-bottom: 20px;
+}
 .muted {
   color: var(--muted);
 }

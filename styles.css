@@ -740,4 +740,8 @@ p {
    .sc-grid.list-view .sc-card .sc-desc {
   padding: 1px;
 }
+   p.muted {
+  padding: 5px 0 15px 0;
+  line-height: 1.3;
+}
 }

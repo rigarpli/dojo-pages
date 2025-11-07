@@ -134,6 +134,12 @@ p {
   color: #dfe6e8;
   line-height: 1.6;
 }
+#p0 .input {
+  margin-top: 15px;
+}
+#p0 .grid.two {
+  display: inline-block;
+}
 
 .muted {
   color: var(--muted);
@@ -224,6 +230,7 @@ p {
   display: grid;
   gap: 12px;
 }
+
 
 @media (min-width: 768px) {
   .jugada-grid {

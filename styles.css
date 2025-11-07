@@ -764,8 +764,8 @@ p {
   line-height: 1.3;
 }
    img.logo-image {
-      padding-top: 15px;
-      width: 220px;
+      padding-top: 15px 0 0 0;
+      width: 175px;
       height: auto;
    }
    .brand {

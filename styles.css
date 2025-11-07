@@ -583,9 +583,9 @@ p {
 /* Fondos específicos — RUTAS ABSOLUTAS */
 .area-banner.bg-objeciones_clasicas { background-image: url("images/objeciones_clasicas_banner.jpg"); }
 .area-banner.bg-guerra_digital { background-image: url("/images/guerra_digital_banner.jpg"); }
-.area-banner.bg-situaciones_limite { background-image: url('/images/situaciones_limite_banner.jpg'); }
+.area-banner.bg-situaciones_limite { background-image: url('/images/situaciones_limites_banner.jpg'); }
 .area-banner.bg-renovaciones { background-image: url('/images/renovaciones_banner.jpg'); }
-.area-banner.bg-upsell_crossell { background-image: url('/images/upsell_crossell_banner.jpg'); }
+.area-banner.bg-upsell_crossell { background-image: url('/images/upsell_crossells_banner.jpg'); }
 .area-banner.bg-clientes_dificiles { background-image: url('/images/clientes_dificiles_banner.jpg'); }
 .area-banner.bg-cierre_ventas { background-image: url('/images/cierre_ventas_banner.jpg'); }
 

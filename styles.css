@@ -736,4 +736,8 @@ p {
    }
    h1 {
       line-height: 1.3;
-
+   }
+   .sc-grid.list-view .sc-card .sc-desc {
+  padding: 1px;
+}
+}

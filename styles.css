@@ -743,7 +743,7 @@ p {
       background-position: right;
    }
    #p0 .grid.two {
-  padding: 2px;
+  padding: 2px 30px 20px 30px;
 }
    #p0 .group {
       padding-left: 25px;

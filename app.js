@@ -264,24 +264,45 @@ d.style.backgroundImage = `linear-gradient(rgba(47, 67, 72, 0.05), rgba(47, 67, 
   }
 
 // ✅ FUNCIÓN ACTUALIZADA: CARGA ESCENARIOS Y CONFIGURA BANNER DE ÁREA
+// ✅ FUNCIÓN ACTUALIZADA: CARGA ESCENARIOS Y CONFIGURA BANNER DE ÁREA
 async function buildScenarios() {
   try {
-// 🚀 OPCIÓN 2 (nueva): cargar desde index.json + archivos individuales
-const indexResponse = await fetch(`./content/areas/${S.areaId}/index.json`);
-if (!indexResponse.ok) throw new Error(`Índice no encontrado para área: ${S.areaId}`);
-const indexData = await indexResponse.json();
+    // 🕵️‍♂️ DEBUG: Ver qué ruta está usando
+    console.log("🔍 Intentando cargar índice desde:", `/content/areas/${S.areaId}/index.json`);
 
-const scenarioPromises = indexData.scenarioIds.map(async id => {
-  const scenResponse = await fetch(`./content/areas/${S.areaId}/${id}.json`);
-  if (!scenResponse.ok) {
-    console.warn(`⚠️ Escenario no encontrado: ${id}`);
-    return null;
-  }
-  return await scenResponse.json();
-});
+    // 🚀 OPCIÓN 2 (nueva): cargar desde index.json + archivos individuales
+    const indexResponse = await fetch(`/content/areas/${S.areaId}/index.json`);
+    
+    // 🕵️‍♂️ DEBUG: Ver qué recibió realmente
+    const rawText = await indexResponse.text();
+    console.log("📄 Respuesta cruda recibida:", rawText);
 
-const scenarios = await Promise.all(scenarioPromises);
-S.scenarios = scenarios.filter(s => s !== null);
+    // Si no es OK, tirar error antes de parsear
+    if (!indexResponse.ok) {
+      throw new Error(`Índice no encontrado para área: ${S.areaId}. Estado: ${indexResponse.status}`);
+    }
+
+    // Parsear el texto como JSON
+    const indexData = JSON.parse(rawText);
+
+    // Cargar cada escenario individualmente
+    const scenarioPromises = indexData.scenarioIds.map(async id => {
+      const scenUrl = `/content/areas/${S.areaId}/${id}.json`;
+      console.log(`🔍 Cargando escenario: ${scenUrl}`);
+      const scenResponse = await fetch(scenUrl);
+      
+      if (!scenResponse.ok) {
+        console.warn(`⚠️ Escenario no encontrado: ${id} (HTTP ${scenResponse.status})`);
+        return null;
+      }
+      
+      const scenText = await scenResponse.text();
+      console.log(`📄 Escenario ${id} crudo:`, scenText);
+      return JSON.parse(scenText);
+    });
+
+    const scenarios = await Promise.all(scenarioPromises);
+    S.scenarios = scenarios.filter(s => s !== null);
 
     // ✅ CONFIGURAR BANNER DE ÁREA (título + subtítulo)
     const banner = qs("#area-banner");
@@ -311,6 +332,50 @@ S.scenarios = scenarios.filter(s => s !== null);
         bannerSubtitle.textContent = area?.desc || "";
       }
     }
+
+    const list = S.scenarios;
+    const titleEl = qs("#area-title"); 
+    if(titleEl) titleEl.textContent = S.areaTitle || "";
+    
+    const grid = qs("#scen-grid"); 
+    if(!grid) return; 
+    grid.innerHTML = "";
+    
+    if(!list.length) {
+      grid.innerHTML = `<div class="fb"><p class="muted">No hay escenarios para esta área.</p></div>`;
+      return;
+    }
+    
+    // Aplicar vista guardada
+    const isListView = localStorage.getItem('scenariosView') === 'list';
+    if (isListView) {
+      grid.classList.add('list-view');
+      const toggleBtn = qs("#toggle-view");
+      if(toggleBtn) toggleBtn.textContent = "Ver como cuadrícula";
+    } else {
+      grid.classList.remove('list-view');
+      const toggleBtn = qs("#toggle-view");
+      if(toggleBtn) toggleBtn.textContent = "Ver como lista";
+    }
+    
+    list.forEach(sc => {
+      const q = sc.question || ("Cliente: " + sc.title + ". ¿Cómo responde?");
+      const d = document.createElement("div");
+      d.className = "sc-card"; 
+      d.setAttribute("data-scenario", sc.id);
+      const difficulty = sc.difficulty || 3;
+      const stars = "⭐".repeat(difficulty);
+      d.innerHTML = `
+        <div class="sc-title">${esc(sc.title)} <span style="float:right;font-size:12px">${stars}</span></div>
+        <p class="sc-desc">${esc(q)}</p>`;
+      grid.appendChild(d);
+    });
+  } catch (e) {
+    console.error("❌ Error cargando escenarios:", e.message);
+    const grid = qs("#scen-grid");
+    if(grid) grid.innerHTML = `<div class="fb"><p class="muted">Error al cargar escenarios. Intente recargar.</p></div>`;
+  }
+}
 
     const list = S.scenarios;
     const titleEl = qs("#area-title"); 

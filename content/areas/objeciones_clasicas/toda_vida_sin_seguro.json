@@ -1,0 +1,63 @@
+{
+  "id": "toda_vida_sin_seguro",
+  "title": "Toda mi vida sin seguro… y ni un rasguño. ¿Para qué lo quiero ahora?",
+  "question": "Cliente cruza los brazos y dice con seguridad: 'He vivido 45 años sin póliza y jamás tuve un problema. ¿Por qué empezar ahora?' ¿Cómo respondes?",
+  "acciones": [
+    {
+      "tipo": "Lógica",
+      "texto_boton": "Exacto. Y por eso mismo, su historial es su mayor riesgo. La estadística dice: cuanto más tiempo sin incidente, más expuesto está al primero… y será el más caro.",
+      "adn_feedback": {
+        "principio_oculto": "Cuando presume su suerte, no está presumiendo… está revelando su punto ciego: confunde ausencia de crisis con gestión de riesgo.",
+        "nombre_tactica_ciega": "Paradoja Estadística",
+        "ejemplo_tactica_frase": "Su tranquilidad actual es el mejor indicador de su vulnerabilidad futura. No es mala suerte… es probabilidad acumulada.",
+        "protocolo_mental": [
+          "No contradecir su experiencia > validarla",
+          "Traducir 'nunca pasó nada' a 'el costo del primer error será catastrófico'",
+          "Mostrar el riesgo como inversión preventiva, no como gasto"
+        ]
+      }
+    },
+    {
+      "tipo": "Empática",
+      "texto_boton": "Me encanta su actitud. De verdad. Pero permítame una pregunta sincera: ¿qué pasaría si HOY ocurre lo que nunca ha ocurrido… y no tiene respaldo?",
+      "adn_feedback": {
+        "principio_oculto": "Cuando dice 'nunca me pasó nada', no está siendo arrogante… está pidiendo que le ayudes a visualizar lo invisible sin asustarlo.",
+        "nombre_tactica_ciega": "Puente Sensorial",
+        "ejemplo_tactica_frase": "No se trata de que le pase algo… sino de cómo se sentirá usted si le pasa, y no tiene a nadie detrás. Eso sí duele.",
+        "protocolo_mental": [
+          "Reconocer su fortaleza > no minimizarla",
+          "Invitarlo a imaginar, no a temer",
+          "Convertir el 'nunca' en '¿y si hoy es el día?'"
+        ]
+      }
+    },
+    {
+      "tipo": "Estratégica",
+      "texto_boton": "Usted no compra seguro para lo probable. Lo compra para lo IMPROBABLE… pero devastador. Como paracaídas: inútil hasta que salva tu vida.",
+      "adn_feedback": {
+        "principio_oculto": "Cuando minimiza el seguro, no está rechazando el producto… está subestimando el costo emocional y financiero de lo impredecible.",
+        "nombre_tactica_ciega": "Metáfora de Supervivencia",
+        "ejemplo_tactica_frase": "No se asegura contra lo común. Se asegura contra lo que cambiaría TODO en un segundo. Eso no tiene precio… tiene valor incalculable.",
+        "protocolo_mental": [
+          "Cambiar marco: de 'gasto' a 'blindaje existencial'",
+          "Usar analogías visuales (paracaídas, airbag, red)",
+          "Dejar que ellos midan el impacto, no tú"
+        ]
+      }
+    },
+    {
+      "tipo": "Proactiva",
+      "texto_boton": "Hagamos un ejercicio rápido: imagine que mañana ocurre lo impensable. ¿Quiere estar explicándole a su familia por qué no tenía respaldo… o abrazándolos tranquilo?",
+      "adn_feedback": {
+        "principio_oculto": "Cuando niega la necesidad, no está siendo irresponsable… está invitando a una demostración emocional de consecuencias reales.",
+        "nombre_tactica_ciega": "Futuro Inmediato",
+        "ejemplo_tactica_frase": "No hablemos de pólizas. Hablemos de las caras que verá al otro lado de la mesa si esto falla. Eso sí mueve decisiones.",
+        "protocolo_mental": [
+          "Conectar con identidad (padre, proveedor, protector)",
+          "Experiencia > explicación",
+          "La decisión no es racional… es emocionalmente inevitable"
+        ]
+      }
+    }
+  ]
+}

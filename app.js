@@ -265,6 +265,7 @@ d.style.backgroundImage = `linear-gradient(rgba(47, 67, 72, 0.05), rgba(47, 67, 
 
 // ✅ FUNCIÓN ACTUALIZADA: CARGA ESCENARIOS Y CONFIGURA BANNER DE ÁREA
 // ✅ FUNCIÓN ACTUALIZADA: CARGA ESCENARIOS Y CONFIGURA BANNER DE ÁREA
+// ✅ FUNCIÓN ACTUALIZADA: CARGA ESCENARIOS Y CONFIGURA BANNER DE ÁREA
 async function buildScenarios() {
   try {
     // 🕵️‍♂️ DEBUG: Ver qué ruta está usando
@@ -370,7 +371,7 @@ async function buildScenarios() {
         <p class="sc-desc">${esc(q)}</p>`;
       grid.appendChild(d);
     });
-  } catch (e) {
+  } catch (e) { // ← ¡Esta es la línea 417! Ahora sí está bien colocada.
     console.error("❌ Error cargando escenarios:", e.message);
     const grid = qs("#scen-grid");
     if(grid) grid.innerHTML = `<div class="fb"><p class="muted">Error al cargar escenarios. Intente recargar.</p></div>`;

@@ -1,6 +1,6 @@
 {
   "areaId": "objeciones_clasicas",
-  "scenarios": [
+  "scenarioIds": [
     "apps_vs_humano",
     "no_me_fio_de_nadie",
     "ya_tengo_cobertura"

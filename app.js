@@ -266,14 +266,22 @@ d.style.backgroundImage = `linear-gradient(rgba(47, 67, 72, 0.05), rgba(47, 67, 
 // ✅ FUNCIÓN ACTUALIZADA: CARGA ESCENARIOS Y CONFIGURA BANNER DE ÁREA
 async function buildScenarios() {
   try {
-    // 🔄 OPCIÓN 1 (actual): cargar un solo archivo por área
-    const areaData = await fetch(`./content/areas/${S.areaId}.json`).then(r => {
-      if (!r.ok) throw new Error("Área no encontrada");
-      return r.json();
-    });
+// 🚀 OPCIÓN 2 (nueva): cargar desde index.json + archivos individuales
+const indexResponse = await fetch(`./content/areas/${S.areaId}/index.json`);
+if (!indexResponse.ok) throw new Error(`Índice no encontrado para área: ${S.areaId}`);
+const indexData = await indexResponse.json();
 
-    // ✅ ASIGNAR A ESTADO GLOBAL (¡ESTO ES CLAVE!)
-    S.scenarios = areaData.scenarios || [];
+const scenarioPromises = indexData.scenarioIds.map(async id => {
+  const scenResponse = await fetch(`./content/areas/${S.areaId}/${id}.json`);
+  if (!scenResponse.ok) {
+    console.warn(`⚠️ Escenario no encontrado: ${id}`);
+    return null;
+  }
+  return await scenResponse.json();
+});
+
+const scenarios = await Promise.all(scenarioPromises);
+S.scenarios = scenarios.filter(s => s !== null);
 
     // ✅ CONFIGURAR BANNER DE ÁREA (título + subtítulo)
     const banner = qs("#area-banner");

@@ -474,25 +474,30 @@
       
       S.pack = pack;
       
-      if(ans && pack.feedback) {
+if(ans && pack.feedback) {
   ans.innerHTML = renderFeedback(pack.feedback);
   const actions = qs("#feedback-actions");
   if(actions) actions.style.display = "flex";
   
-  // ✅ SCROLL AUTOMÁTICO AL FEEDBACK (con offset para dejar espacio)
+  // ✅ ACTIVAR ANIMACIÓN DE ENTRADA
+  setTimeout(() => {
+    if(ans) ans.classList.add('show'); // ← ¡ESTA LÍNEA FALTABA!
+  }, 50); // Pequeño delay para asegurar que el DOM esté listo
+  
+  // ✅ SCROLL AUTOMÁTICO AL FEEDBACK
   setTimeout(() => {
     const feedbackSection = qs("#esc-answer");
     if(feedbackSection) {
       const rect = feedbackSection.getBoundingClientRect();
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      const offsetTop = rect.top + scrollTop - 80; // 80px de margen superior
+      const offsetTop = rect.top + scrollTop - 80;
       
       window.scrollTo({
         top: offsetTop,
         behavior: 'smooth'
       });
     }
-  }, 100); // Pequeño delay para asegurar que el DOM esté listo
+  }, 300); // Delay aumentado para móviles
 }
       
     } catch(e) {

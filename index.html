@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dojo de Polizar</title>
+  <title>Polizarium</title>
   <link rel="stylesheet" href="./styles.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,11 +14,7 @@
     <div class="card">
       <header id="dojo-header">
   <div class="brand">
-    <!-- Reemplaza: <div class="title">Dojo de Polizar</div> -->
-    
-    <!-- Agrega esta línea en su lugar: -->
-    <img src="https://dojo-pages.pages.dev/images/polizariumlogo.png" alt="Logotipo de Polizar Dojo" class="logo-image">
-    
+    <img src="https://dojo-pages.pages.dev/images/polizariumlogo.png" alt="Logotipo de Polizarium" class="logo-image">
     <div class="subtitle">Un espacio seguro para descubrir tu propia grandeza conversacional.</div>
   </div>
   <div class="header-controls">
@@ -26,7 +22,6 @@
   </div>
 </header>
      
-<!-- ✅ BANNER DE ÁREA CON TÍTULO + SUBTÍTULO -->
 <div id="area-banner" class="area-banner">
   <div class="banner-content">
     <h2 id="area-banner-title" class="banner-title">—</h2>
@@ -39,7 +34,6 @@
         <button class="navbtn" data-nav="guia" type="button">Guía</button>
       </nav>
 
-      <!-- Paso 0: Bienvenida -->
       <section class="step active" id="p0">
         <span class="badge">Bienvenida</span>
         <h1>Descubre lo que ya sabías… pero no veías</h1>
@@ -49,11 +43,10 @@
           <input id="cliente" class="input" placeholder="Nombre de tu cliente (opcional)" />
         </div>
         <div class="group">
-          <button class="btn primary" id="start" type="button">Entrar al Dojo</button>
+          <button class="btn primary" id="start" type="button">Entrar al Polizarium</button>
         </div>
       </section>
 
-      <!-- Paso 1: Áreas -->
       <section class="step" id="p1">
         <span class="badge">Paso 1</span>
         <h1>Elige un área para explorar</h1>
@@ -61,7 +54,6 @@
         <div class="area-grid three-col" id="areas-grid"></div>
       </section>
 
-     <!-- Paso 3: Escenarios -->
 <section class="step" id="p3">
   <span class="badge">Paso 2</span>
   <div class="header-with-toggle">
@@ -73,19 +65,22 @@
   <div class="sc-grid three-col" id="scen-grid"></div>
 </section>
 
-      <!-- Paso 4: Acciones + Feedback -->
       <section class="step" id="p4">
         <span class="badge" id="esc-badge">Escenario</span>
         <h1 id="esc-title">Título del Escenario</h1>
         <p class="muted" id="esc-question">Pregunta del escenario.</p>
 
-        <!-- Grid de acciones: SIEMPRE 2 columnas en desktop, 1 en móvil -->
-        <div class="jugada-grid" id="esc-options"></div>
+        <!-- ✅ CAMBIO CLAVE: TEXTAREA LIBRE EN VEZ DE BOTONES -->
+        <div id="esc-options">
+          <textarea id="user-response" 
+                    placeholder="¿Cómo responderías TÚ? Escribe con tus propias palabras..." 
+                    rows="4"
+                    style="width:100%; padding:12px; border-radius:12px; border:1px solid var(--stroke); background:#16252a; color:#e8f1f3; margin-bottom:16px;"></textarea>
+          <button class="btn primary" id="reveal-adn" type="button">Revelar mi ADN conversacional</button>
+        </div>
 
-        <!-- Feedback -->
         <div id="esc-answer" class="fb" style="display:none;"></div>
 
-        <!-- Botones de utilidad -->
         <div class="group" id="feedback-actions" style="display:none; margin-top: 20px;">
           <button class="btn" id="p5-copy" type="button">Copiar revelación</button>
           <button class="btn ghost" id="p5-dl" type="button">Descargar .txt</button>
@@ -94,11 +89,10 @@
         </div>
       </section>
 
-      <!-- Guía -->
       <section class="step" id="p8">
-        <h1>El Dojo, en esencia</h1>
+        <h1>Polizarium, en esencia</h1>
         <div class="fb">
-          <p>El Dojo es un laboratorio conversacional: un lugar seguro para ensayar, descubrir y potenciar lo que ya llevas dentro.</p>
+          <p>Polizarium es un laboratorio conversacional: un lugar seguro para ensayar, descubrir y potenciar lo que ya llevas dentro.</p>
         </div>
         <div class="fb">
           <h3>No es un curso. No es un simulador. Es un revelador.</h3>
@@ -122,7 +116,6 @@
         </div>
       </section>
 
-      <!-- Final -->
       <section class="step" id="p9">
         <span class="badge">¡Listo!</span>
         <h1>Gracias, <span id="thanks-name"></span> ✨</h1>
@@ -133,15 +126,13 @@
         </div>
       </section>
 
-      <!-- Botón Guía Flotante -->
       <button class="corner-guide" id="btn-guide-fab" type="button">Guía</button>
 
-      <!-- Logo -->
       <a class="corner-logo" href="https://polizar.com" target="_blank" rel="noopener">
         <img src="https://polizar.com/wp-content/uploads/2025/04/polizar-logo-b-scaled.webp" alt="Polizar">
       </a>
     </div>
   </div>
-  <script src="./app.js?v=adn2025" charset="utf-8" defer></script>
+  <script src="./app.js?v=polizarium1" charset="utf-8" defer></script>
 </body>
 </html>

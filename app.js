@@ -475,12 +475,25 @@
       S.pack = pack;
       
       if(ans && pack.feedback) {
-        ans.innerHTML = renderFeedback(pack.feedback);
-        const actions = qs("#feedback-actions");
-        if(actions) actions.style.display = "flex";
-      }
+  ans.innerHTML = renderFeedback(pack.feedback);
+  const actions = qs("#feedback-actions");
+  if(actions) actions.style.display = "flex";
+  
+  // ✅ SCROLL AUTOMÁTICO AL FEEDBACK (con offset para dejar espacio)
+  setTimeout(() => {
+    const feedbackSection = qs("#esc-answer");
+    if(feedbackSection) {
+      const rect = feedbackSection.getBoundingClientRect();
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const offsetTop = rect.top + scrollTop - 80; // 80px de margen superior
       
-      scrollTop();
+      window.scrollTo({
+        top: offsetTop,
+        behavior: 'smooth'
+      });
+    }
+  }, 100); // Pequeño delay para asegurar que el DOM esté listo
+}
       
     } catch(e) {
       console.error("💥 Error crítico en runPlay:", e.message);

@@ -86,54 +86,50 @@
   }
 
   function renderFeedback(text) {
-    if (!text || text.trim() === "") 
-      return "<p class='muted'>⚠️ No se generó feedback. Inténtalo de nuevo.</p>";
-    
-    let data;
-    try {
-      data = JSON.parse(text);
-    } catch(e) {
-      return `<p class="muted">❌ Feedback inválido.</p>`;
-    }
-
-    const r = data.revelacion;
-    return `
-      <div class="feedback-animated">
-        <div class="feedback-section" style="animation-delay: 0ms;">
-          <strong>1️⃣ TUS MOVIMIENTOS INCONSCIENTES:</strong><br>
-          ${Array.isArray(r.movimientos_inconscientes) ? r.movimientos_inconscientes.map(p => `• ${esc(p)}`).join('<br>') : 'No disponible'}
-        </div>
-        <div class="feedback-section" style="animation-delay: 300ms;">
-          <strong>2️⃣ LA REACCIÓN INVISIBLE DEL CLIENTE:</strong><br>
-          ${Array.isArray(r.reaccion_invisible) ? r.reaccion_invisible.map(p => `• ${esc(p)}`).join('<br>') : 'No disponible'}
-        </div>
-        <div class="feedback-section" style="animation-delay: 600ms;">
-          <strong>3️⃣ TU PUNTO CIEGO:</strong><br>
-          ${esc(r.punto_ciego || 'No disponible')}
-        </div>
-        <div class="feedback-section" style="animation-delay: 900ms;">
-          <strong>4️⃣ ARQUETIPO DETECTADO:</strong><br>
-          <strong>${esc(r.arquetipo?.estilo || 'No detectado')}</strong> → ${esc(r.arquetipo?.porque || 'No disponible')}
-        </div>
-        <div class="feedback-section" style="animation-delay: 1200ms;">
-          <strong>5️⃣ EL ERROR DE TIMING:</strong><br>
-          ${Array.isArray(r.error_timing) ? r.error_timing.map(p => `• ${esc(p)}`).join('<br>') : 'No disponible'}
-        </div>
-        <div class="feedback-section" style="animation-delay: 1500ms;">
-          <strong>6️⃣ TU EVOLUCIÓN (tu estilo, amplificado):</strong><br>
-          “${esc(r.evolucion || 'No disponible')}”
-        </div>
-        <div class="feedback-section" style="animation-delay: 1800ms;">
-          <strong>7️⃣ LA PREGUNTA QUE CAMBIA TODO:</strong><br>
-          <strong>“${esc(r.pregunta_definitiva || 'No disponible')}”</strong>
-        </div>
-        <div class="feedback-section" style="animation-delay: 2100ms; background: rgba(0, 184, 255, 0.1); border-left: 4px solid #00B8FF; padding: 16px; border-radius: 8px;">
-          <strong style="color: #00B8FF; font-size: 18px;">8️⃣ TU FIRMA ÚNICA (lo que SOLO TÚ tienes):</strong><br>
-          <span style="font-size: 16px; line-height: 1.6;">${esc(r.firma_unica || 'No disponible')}</span>
-        </div>
-      </div>
-    `;
+  if (!text || text.trim() === "") 
+    return "<p class='muted'>⚠️ No se generó feedback. Inténtalo de nuevo.</p>";
+  
+  let data;
+  try {
+    data = JSON.parse(text);
+  } catch(e) {
+    return `<p class="muted">❌ Feedback inválido.</p>`;
   }
+
+  const r = data.revelacion;
+  return `
+    <div class="feedback-animated">
+      <div class="feedback-section" style="animation-delay: 0ms;">
+        <strong>1️⃣ Patrones percibidos en tu acción:</strong><br>
+        ${Array.isArray(r.patrones_percibidos) ? r.patrones_percibidos.map(p => `• ${esc(p)}`).join('<br>') : 'No disponible'}
+      </div>
+      <div class="feedback-section" style="animation-delay: 300ms;">
+        <strong>2️⃣ Impresiones generadas en tu cliente:</strong><br>
+        ${Array.isArray(r.impresiones_cliente) ? r.impresiones_cliente.map(p => `• ${esc(p)}`).join('<br>') : 'No disponible'}
+      </div>
+      <div class="feedback-section" style="animation-delay: 600ms;">
+        <strong>3️⃣ Detalles de tu zona ciega:</strong><br>
+        ${esc(r.zona_ciega || 'No disponible')}
+      </div>
+      <div class="feedback-section" style="animation-delay: 900ms;">
+        <strong>4️⃣ Estilo de enfoque captado:</strong><br>
+        <strong>${esc(r.estilo_enfoque?.estilo || 'No detectado')}</strong> → ${esc(r.estilo_enfoque?.porque || 'No disponible')}
+      </div>
+      <div class="feedback-section" style="animation-delay: 1200ms;">
+        <strong>5️⃣ Guía para potenciar tu acción:</strong><br>
+        “${esc(r.guia_potenciar || 'No disponible')}”
+      </div>
+      <div class="feedback-section" style="animation-delay: 1500ms;">
+        <strong>6️⃣ Una pregunta para revelar lo inexpresado:</strong><br>
+        <strong>“${esc(r.pregunta_reveladora || 'No disponible')}”</strong>
+      </div>
+      <div class="feedback-section" style="animation-delay: 1800ms; background: rgba(0, 184, 255, 0.1); border-left: 4px solid #00B8FF; padding: 16px; border-radius: 8px;">
+        <strong style="color: #00B8FF; font-size: 18px;">7️⃣ Tu firma única:</strong><br>
+        <span style="font-size: 16px; line-height: 1.6;">${esc(r.firma_unica || 'No disponible')}</span>
+      </div>
+    </div>
+  `;
+}
 
   // Navegación
   let currentStep = "p0", historySteps = ["p0"];

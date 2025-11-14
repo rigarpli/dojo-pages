@@ -85,7 +85,7 @@
     return await r.json();
   }
 
-  function renderFeedback(text) {
+function renderFeedback(text) {
   if (!text || text.trim() === "") 
     return "<p class='muted'>⚠️ No se generó feedback. Inténtalo de nuevo.</p>";
   
@@ -99,33 +99,17 @@
   const r = data.revelacion;
   return `
     <div class="feedback-animated">
-      <div class="feedback-section" style="animation-delay: 0ms;">
-        <strong>1️⃣ Patrones percibidos en tu acción:</strong><br>
-        ${Array.isArray(r.patrones_percibidos) ? r.patrones_percibidos.map(p => `• ${esc(p)}`).join('<br>') : 'No disponible'}
+      <div class="feedback-section" style="animation-delay: 0ms; background: rgba(255, 103, 191, 0.1); border-left: 4px solid #FF67BF; padding: 16px; border-radius: 8px;">
+        <strong style="color: #FF67BF; font-size: 18px;">✨ LO QUE TU FRASE YA CONTENÍA (Y NO VISTE):</strong><br>
+        <span style="font-size: 16px; line-height: 1.6;">${esc(r.lo_que_contenia || 'No disponible')}</span>
       </div>
-      <div class="feedback-section" style="animation-delay: 300ms;">
-        <strong>2️⃣ Impresiones generadas en tu cliente:</strong><br>
-        ${Array.isArray(r.impresiones_cliente) ? r.impresiones_cliente.map(p => `• ${esc(p)}`).join('<br>') : 'No disponible'}
+      <div class="feedback-section" style="animation-delay: 600ms; background: rgba(136, 39, 255, 0.1); border-left: 4px solid #8827FF; padding: 16px; border-radius: 8px;">
+        <strong style="color: #8827FF; font-size: 18px;">🗣️ ASÍ RESUENA TU MISMO MENSAJE (CON MÁS PODER):</strong><br>
+        <span style="font-size: 16px; line-height: 1.6;">“${esc(r.frase_afinada || 'No disponible')}”</span>
       </div>
-      <div class="feedback-section" style="animation-delay: 600ms;">
-        <strong>3️⃣ Detalles de tu zona ciega:</strong><br>
-        ${esc(r.zona_ciega || 'No disponible')}
-      </div>
-      <div class="feedback-section" style="animation-delay: 900ms;">
-        <strong>4️⃣ Estilo de enfoque captado:</strong><br>
-        <strong>${esc(r.estilo_enfoque?.estilo || 'No detectado')}</strong> → ${esc(r.estilo_enfoque?.porque || 'No disponible')}
-      </div>
-      <div class="feedback-section" style="animation-delay: 1200ms;">
-        <strong>5️⃣ Guía para potenciar tu acción:</strong><br>
-        “${esc(r.guia_potenciar || 'No disponible')}”
-      </div>
-      <div class="feedback-section" style="animation-delay: 1500ms;">
-        <strong>6️⃣ Una pregunta para revelar lo inexpresado:</strong><br>
-        <strong>“${esc(r.pregunta_reveladora || 'No disponible')}”</strong>
-      </div>
-      <div class="feedback-section" style="animation-delay: 1800ms; background: rgba(0, 184, 255, 0.1); border-left: 4px solid #00B8FF; padding: 16px; border-radius: 8px;">
-        <strong style="color: #00B8FF; font-size: 18px;">7️⃣ Tu firma única:</strong><br>
-        <span style="font-size: 16px; line-height: 1.6;">${esc(r.firma_unica || 'No disponible')}</span>
+      <div class="feedback-section" style="animation-delay: 1200ms; background: rgba(0, 184, 255, 0.1); border-left: 4px solid #00B8FF; padding: 16px; border-radius: 8px;">
+        <strong style="color: #00B8FF; font-size: 18px;">🔑 LA REVELACIÓN QUE CAMBIA TODO:</strong><br>
+        <span style="font-size: 16px; line-height: 1.6;">${esc(r.llave_maestra || 'No disponible')}</span>
       </div>
     </div>
   `;

@@ -1,4 +1,11 @@
 {
   "areaId": "renovaciones",
-  "scenarioIds": []
+  "title": "Renovaciones",
+  "scenarioIds": [
+    "subida_precio",
+    "cliente_duda_renovar",
+    "todo_bien_no_ve_valor",
+    "renovacion_ultima_hora",
+    "comparacion_competencia"
+  ]
 }

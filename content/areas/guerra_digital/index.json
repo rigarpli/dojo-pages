@@ -1,4 +1,11 @@
 {
   "areaId": "guerra_digital",
-  "scenarioIds": []
+  "title": "Guerra Digital",
+  "scenarioIds": [
+    "comparacion_precios_online",
+    "captura_pantalla_otro_agente",
+    "bot_dice_que_es_mas_barato",
+    "cotizacion_express",
+    "cliente_solo_quiere_precio"
+  ]
 }

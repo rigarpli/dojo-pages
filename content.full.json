@@ -1,52 +1,53 @@
 {
-  "meta": {
-    "plan": "full",
-    "version": "seguros-2025-v4-adn",
-    "industry": "seguros",
-    "disclaimer": "Herramienta de práctica profesional. No constituye formación regulada."
-  },
   "areas": [
     {
       "id": "objeciones_clasicas",
-      "title": "Objeciones tradicionales",
-      "desc": "Precio, desconfianza, comparación",
-      "icon": "💭"
+      "title": "Objeciones Clásicas",
+      "desc": "Respuestas maestras para las objeciones más comunes en venta de seguros.",
+      "icon": "🛡️",
+      "index": "content/areas/objeciones_clasicas/index.json"
     },
     {
       "id": "guerra_digital",
-      "title": "Competencia digital",
-      "desc": "Apps, IA, comparadores online",
-      "icon": "🌐"
+      "title": "Guerra Digital",
+      "desc": "Escenarios reales con clientes que investigan en internet y desafían tu criterio.",
+      "icon": "🌐",
+      "index": "content/areas/guerra_digital/index.json"
     },
     {
       "id": "situaciones_limite",
-      "title": "Casos extremos",
-      "desc": "Post-siniestro, perfiles complejos",
-      "icon": "⚠️"
+      "title": "Situaciones Límite",
+      "desc": "Momentos críticos donde el cliente está a punto de irse o explotar.",
+      "icon": "⚠️",
+      "index": "content/areas/situaciones_limite/index.json"
     },
     {
       "id": "renovaciones",
       "title": "Renovaciones",
-      "desc": "Clientes que quieren mejorar o cambiar su póliza",
-      "icon": "🔄"
+      "desc": "Cómo convertir una renovación en una conexión y no en una fuga.",
+      "icon": "♻️",
+      "index": "content/areas/renovaciones/index.json"
     },
     {
       "id": "upsell_crossell",
-      "title": "Upsell & Crossell",
-      "desc": "Vender más sin ser invasivo",
-      "icon": "📈"
+      "title": "Upsell & Cross-Sell",
+      "desc": "Oportunidades doradas escondidas dentro de cada conversación.",
+      "icon": "💎",
+      "index": "content/areas/upsell_crossell/index.json"
     },
     {
       "id": "clientes_dificiles",
-      "title": "Clientes difíciles",
-      "desc": "Manejo de objeciones agresivas o emocionales",
-      "icon": "🥊"
+      "title": "Clientes Difíciles",
+      "desc": "Gestión emocional y estratégica con personalidades retadoras.",
+      "icon": "🔥",
+      "index": "content/areas/clientes_dificiles/index.json"
     },
     {
       "id": "cierre_ventas",
-      "title": "Cierre de ventas",
-      "desc": "Técnicas para cerrar sin presión",
-      "icon": "🎯"
+      "title": "Cierre de Ventas",
+      "desc": "Últimos metros antes de la victoria: cierres elegantes y contundentes.",
+      "icon": "🏁",
+      "index": "content/areas/cierre_ventas/index.json"
     }
   ]
 }

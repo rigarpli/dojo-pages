@@ -1,4 +1,11 @@
 {
   "areaId": "cierre_ventas",
-  "scenarioIds": []
+  "title": "Cierre de Ventas",
+  "scenarioIds": [
+    "miedo_a_decidir",
+    "necesito_pensarlo",
+    "comparando_con_otro",
+    "cierre_sutil",
+    "cliente_indeciso"
+  ]
 }

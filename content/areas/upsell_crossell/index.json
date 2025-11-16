@@ -1,4 +1,12 @@
 {
   "areaId": "upsell_crossell",
-  "scenarioIds": []
+  "title": "Upsell & Cross-Sell",
+  "scenarioIds": [
+    "mayor_cobertura",
+    "poliza_complementaria",
+    "familia_sin_proteger",
+    "proteccion_gap",
+    "cliente_con_minimo"
+  ]
 }
+

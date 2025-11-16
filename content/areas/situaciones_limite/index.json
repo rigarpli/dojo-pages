@@ -1,4 +1,11 @@
 {
   "areaId": "situaciones_limite",
-  "scenarioIds": []
+  "title": "Situaciones Límite",
+  "scenarioIds": [
+    "accidente_reciente",
+    "pago_vencido_estres",
+    "cliente_llorando",
+    "amenaza_cancelacion",
+    "cliente_enojado"
+  ]
 }

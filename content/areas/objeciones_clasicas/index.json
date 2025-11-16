@@ -1,14 +1,4 @@
 {
-  "scenarioIds": [
-    "oc_01_peligro_invisible",
-    "oc_02_demasiado_caro",
-    "oc_03_no_lo_necesito",
-    "oc_04_despues_veo",
-    "oc_05_tengo_otro_agente"
-  ]
-}
-
-{
   "areaId": "objeciones_clasicas",
   "title": "Objeciones Clásicas",
   "scenarioIds": [

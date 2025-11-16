@@ -7,3 +7,16 @@
     "oc_05_tengo_otro_agente"
   ]
 }
+
+{
+  "areaId": "objeciones_clasicas",
+  "title": "Objeciones Clásicas",
+  "scenarioIds": [
+    "muy_caro",
+    "lo_tengo_con_otro",
+    "lo_veo_luego",
+    "no_creo_necesitarlo",
+    "ahora_no_puedo"
+  ]
+}
+

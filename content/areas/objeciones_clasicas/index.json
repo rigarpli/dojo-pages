@@ -1,6 +1,9 @@
 {
-  "areaId": "objeciones_clasicas",
   "scenarioIds": [
-    "toda_vida_sin_seguro"
-    ]
+    "oc_01_peligro_invisible",
+    "oc_02_demasiado_caro",
+    "oc_03_no_lo_necesito",
+    "oc_04_despues_veo",
+    "oc_05_tengo_otro_agente"
+  ]
 }

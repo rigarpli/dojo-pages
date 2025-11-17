@@ -124,15 +124,61 @@
   // NAVEGACIÓN
   // ================================
   let currentStep = "p0";
-  function go(id){
-    qsa(".step").forEach(x=>x.classList.remove("active"));
-    const target = qs(`#${id}`);
-    if (target) {
-      target.classList.add("active");
-      currentStep = id;
-      window.scrollTo({top:0, behavior:"smooth"});
+function go(id){
+  qsa(".step").forEach(x=>x.classList.remove("active"));
+  const target = qs(`#${id}`);
+  if (target) {
+    target.classList.add("active");
+    currentStep = id;
+    window.scrollTo({top:0, behavior:"smooth"});
+  }
+
+  // Control de botones de navegación según la pantalla
+  const topnav = qs(".topnav");
+  const backBtn = qs("#btn-back");
+  const areasBtn = qs('[data-nav="areas"]');
+  const guideFab = qs("#btn-guide-fab");
+  const banner = qs("#area-banner");
+
+  // Mostrar/ocultar topnav
+  if (topnav) {
+    // No mostrar topnav en p0 (bienvenida)
+    topnav.style.display = (id === "p0") ? "none" : "flex";
+  }
+
+  // Botón "← Volver"
+  if (backBtn) {
+    // Solo tiene sentido a partir de p3 en adelante
+    backBtn.style.display = (id === "p3" || id === "p4" || id === "p8" || id === "p9")
+      ? "inline-flex"
+      : "none";
+  }
+
+  // Botón "Áreas" (topnav e interiores con data-nav="areas")
+  if (areasBtn) {
+    // No mostrar en p0 ni p1 (porque ya estás en áreas); sí en p3, p4, p8, p9
+    areasBtn.style.display = (id === "p3" || id === "p4" || id === "p8" || id === "p9")
+      ? "inline-flex"
+      : "none";
+  }
+
+  // FAB Guía (esquina inferior)
+  if (guideFab) {
+    // No mostrar en p0, opcional en p1 según gusto; sí en p3, p4, p9
+    guideFab.style.display = (id === "p3" || id === "p4" || id === "p9")
+      ? "inline-flex"
+      : "none";
+  }
+
+  // Banner de área: solo en p3 y p4
+  if (banner) {
+    if (id === "p3" || id === "p4") {
+      banner.style.display = "flex";
+    } else {
+      banner.style.display = "none";
     }
   }
+}
 
   // ================================
   // CONTENIDO DESDE LOADER

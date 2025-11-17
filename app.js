@@ -1,17 +1,19 @@
-// Versión PRO propuesta del app.js — estructura limpia, modular y con efectos fluidos
-// NOTA: Esta es una base optimizada y pulida. No incluye tus estilos CSS ni HTML,
-// pero está diseñada para conectarse exactamente igual a tu worker actual.
+// Versión PRO + LOADER de app.js — conectada al Worker Loader de contenido
+// - Áreas: se leen de https://polizarium-loader.../areas
+// - Escenarios: se leen de https://polizarium-loader.../areas/:areaId
+// - Feedback IA: sigue usando tu worker actual (index.rgarciaplicet.workers.dev)
 
 (function(){
   "use strict";
 
-  console.log("🔥 Polizarium PRO — app.js optimizado y unificado");
+  console.log("🔥 Polizarium PRO — app.js conectado al Loader de contenido");
 
   // ================================
   // CONFIG
   // ================================
-  const API = "https://index.rgarciaplicet.workers.dev/";
-  const CONTENT_URL = `./content.full.json`;
+  const LOADER_BASE = "https://polizarium-loader.rgarciaplicet.workers.dev";
+  const CONTENT_URL = `${LOADER_BASE}/areas`; // lista de áreas (Loader)
+  const API = "https://index.rgarciaplicet.workers.dev/"; // Worker de feedback IA (sin cambios)
 
   // ================================
   // ESTADO GLOBAL
@@ -22,7 +24,7 @@
     areaId: "",
     areaTitle: "",
     scenId: "",
-    content: null,
+    content: null,   // aquí guardamos { areas: [...] } del Loader
     scenarios: [],
     lastFrase: "",
     pack: null
@@ -36,7 +38,7 @@
   // ================================
   const qs = (s, sc=document) => sc.querySelector(s);
   const qsa = (s, sc=document) => Array.from(sc.querySelectorAll(s));
-  const esc = (s="") => s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  const esc = (s="") => s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]);
 
   async function ai(payload){
     const r = await fetch(API,{
@@ -84,7 +86,7 @@
   }
 
   // ================================
-  // CONTENIDO
+  // CONTENIDO DESDE LOADER
   // ================================
   function startFetchContent(){
     if(contentReady || contentFetching) return;
@@ -93,15 +95,18 @@
     fetch(CONTENT_URL)
       .then(r => r.json())
       .then(data => {
+        // Loader devuelve { areas: [...] }
         S.content = data;
         contentReady = true;
+        buildAreas();
       })
-      .catch(err => console.error("Error cargando contenido", err))
+      .catch(err => console.error("Error cargando contenido desde Loader", err))
       .finally(()=> contentFetching=false);
   }
 
   function buildAreas(){
-    const grid = qs("#areas-grid"); if(!grid) return;
+    const grid = qs("#areas-grid"); 
+    if(!grid) return;
     const areas = S.content?.areas || [];
     grid.innerHTML = "";
 
@@ -115,29 +120,35 @@
   }
 
   async function buildScenarios(){
-    const indexR = await fetch(`/content/areas/${S.areaId}/index.json`);
-    const index = await indexR.json();
+    // Ahora llamamos al Loader: GET /areas/:areaId
+    if(!S.areaId) return;
+    const url = `${LOADER_BASE}/areas/${S.areaId}`;
 
-    const promises = index.scenarioIds.map(async id=>{
-      const r = await fetch(`/content/areas/${S.areaId}/${id}.json`);
-      if(r.ok) return await r.json();
-      return null;
-    });
+    try {
+      const res = await fetch(url);
+      if(!res.ok){
+        console.error("Error cargando escenarios desde Loader", res.status);
+        return;
+      }
+      const data = await res.json();
+      // data = { area_id, title, escenarios: [...] }
+      S.scenarios = data.escenarios || [];
 
-    S.scenarios = (await Promise.all(promises)).filter(Boolean);
-
-    const grid = qs("#scen-grid");
-    grid.innerHTML="";
-    S.scenarios.forEach(sc=>{
-      const d = document.createElement("div");
-      d.className="sc-card";
-      d.dataset.scenario = sc.id;
-      d.innerHTML = `
-        <div class='sc-title'>${esc(sc.title)}</div>
-        <p>${esc(sc.question)}</p>
-      `;
-      grid.appendChild(d);
-    });
+      const grid = qs("#scen-grid");
+      grid.innerHTML="";
+      S.scenarios.forEach(sc=>{
+        const d = document.createElement("div");
+        d.className="sc-card";
+        d.dataset.scenario = sc.id;
+        d.innerHTML = `
+          <div class='sc-title'>${esc(sc.title)}</div>
+          <p>${esc(sc.question)}</p>
+        `;
+        grid.appendChild(d);
+      });
+    } catch (err) {
+      console.error("Error en buildScenarios con Loader:", err);
+    }
   }
 
   function buildScenarioView(sid){
@@ -173,7 +184,13 @@
 
       S.pack = pack;
       ans.innerHTML = renderFeedback(pack.feedback);
+      ans.classList.add("show");
+
+      // Mostrar acciones de feedback si existen
+      const actions = qs("#feedback-actions");
+      if (actions) actions.style.display = "flex";
     } catch(e){
+      console.error("Error en runPlay:", e);
       ans.innerHTML = `<p class='muted'>❌ Error generando</p>`;
     }
   }
@@ -186,7 +203,11 @@
       S.nombre = qs("#nombre").value.trim();
       S.cliente = qs("#cliente").value.trim();
       go("p1");
-      buildAreas();
+      // Si el contenido ya está listo, buildAreas ya se ejecutó.
+      // Si no, startFetchContent se encargará.
+      if(!contentReady){
+        startFetchContent();
+      }
     });
 
     document.addEventListener("click", e=>{
@@ -215,6 +236,7 @@
         if(!userResponse){ alert("Escribe tu respuesta"); return; }
         const sc = S.scenarios.find(x=>x.id===S.scenId);
         runPlay(sc, userResponse);
+        return;
       }
     });
   }
@@ -223,6 +245,7 @@
   // INIT
   // ================================
   function init(){
+    // Empezamos a precargar las áreas desde el Loader
     startFetchContent();
     wireEvents();
     go("p0");

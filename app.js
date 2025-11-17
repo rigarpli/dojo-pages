@@ -224,10 +224,15 @@
     }
   });
 
-  // Botón "Áreas"
-  qsa("[data-nav='areas']").forEach(btn=>{
+    // Botón "Áreas" y "Guía"
+  qsa("[data-nav]").forEach(btn=>{
     btn.addEventListener("click", ()=>{
-      go("p1");
+      const nav = btn.getAttribute("data-nav");
+      if (nav === "areas") {
+        go("p1");
+      } else if (nav === "guia") {
+        go("p8");
+      }
     });
   });
 

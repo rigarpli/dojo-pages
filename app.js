@@ -113,20 +113,32 @@
       .finally(()=> contentFetching=false);
   }
 
-  function buildAreas(){
+    function buildAreas(){
     const grid = qs("#areas-grid"); 
     if(!grid) return;
     const areas = S.content?.areas || [];
     grid.innerHTML = "";
 
+    if (!areas.length) {
+      grid.innerHTML = `<div class="fb"><p class="muted">No hay áreas disponibles.</p></div>`;
+      return;
+    }
+
     areas.forEach(a=>{
       const d = document.createElement("div");
       d.className = "area-card";
       d.dataset.area = a.id;
-      // clase para bg según área (usa tus CSS .area-card.bg-<id>)
-      d.classList.add(`bg-${a.id}`);
+
+      // 💡 Fondo como antes: imagen por área + overlay suave
+      const imagePath = `/images/${a.id}_bg.jpg`;
+      d.style.backgroundImage = `linear-gradient(rgba(47, 67, 72, 0.05), rgba(47, 67, 72, 0.05)), url('${imagePath}')`;
+
       d.innerHTML = `
-        <div class='area-title'>${a.icon || "📌"} ${esc(a.title)}</div>
+        <div class="area-title">${a.icon || "📋"} ${esc(a.title)}</div>
+        <p class="area-desc">${esc(a.desc || "")}</p>
+        <div class="group">
+          <button class="btn primary" data-area="${esc(a.id)}" type="button">Entrar</button>
+        </div>
       `;
       grid.appendChild(d);
     });
@@ -281,12 +293,19 @@
     document.addEventListener("click", e=>{
       const t = e.target;
 
-      if(t.closest(".area-card")){
-        const id = t.closest(".area-card").dataset.area;
-        const area = S.content.areas.find(a=>a.id===id);
+            // Click en botón "Entrar" dentro de la tarjeta de área
+      if (t.closest(".area-card .btn")) {
+        const btn = t.closest(".area-card .btn");
+        const id = btn.dataset.area;
+        const area = (S.content?.areas || []).find(a => a.id === id);
         if (!area) return;
+
         S.areaId = id;
-        S.areaTitle = area.title;
+        S.areaTitle = area.title || "";
+
+        const ctx = qs("#area-title");
+        if (ctx) ctx.textContent = S.areaTitle || "—";
+
         buildScenarios();
         go("p3");
         return;

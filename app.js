@@ -46,6 +46,44 @@
     "'": '&#39;'
   }[m]));
 
+    function copy(t) {
+    t = t || "";
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(t)
+        .then(() => alert("✅ Copiado"))
+        .catch(() => fallbackCopy(t));
+    } else {
+      fallbackCopy(t);
+    }
+  }
+
+  function fallbackCopy(t) {
+    const a = document.createElement("textarea");
+    a.value = t;
+    a.style.position = "fixed";
+    a.style.left = "-9999px";
+    document.body.appendChild(a);
+    a.select();
+    try {
+      document.execCommand("copy");
+      alert("✅ Copiado");
+    } catch(e) {
+      alert("❌ No se pudo copiar");
+    }
+    document.body.removeChild(a);
+  }
+
+  function slug(s) {
+    s = s || "";
+    try {
+      s = s.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    } catch(e) {}
+    return s.toLowerCase()
+      .replace(/[^\w]+/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "");
+  }
+  
   async function ai(payload){
     const r = await fetch(API,{
       method:"POST",
@@ -230,6 +268,8 @@
       });
 
       S.pack = pack;
+      S.lastFrase = fraseUsuario; // guardamos lo que el corredor escribió
+      
       ans.innerHTML = renderFeedback(pack.feedback);
       ans.classList.add("show");
 

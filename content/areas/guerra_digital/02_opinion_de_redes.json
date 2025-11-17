@@ -1,0 +1,14 @@
+{
+  "id": "02_opinion_de_redes",
+  "area_id": "guerra_digital",
+  "title": "“En redes dicen que las aseguradoras nunca pagan”",
+  "label": "Cuando hablas con todos los fantasmas de internet a la vez",
+  "question": "El cliente comenta: “En redes, mucha gente dice que las aseguradoras solo quieren cobrar y que nunca pagan. ¿Por qué tendría que confiar en esto?”. ¿Qué responderías, desde tu forma de ver el mundo?",
+  "tension": "desconfianza_redes",
+  "contexto": "Cliente con desconfianza alimentada por redes sociales y experiencias ajenas.",
+  "meta": {
+    "tipo_cliente": "escéptico",
+    "canal": "digital o presencial",
+    "emocion_base": "desconfianza / miedo a ser engañado"
+  }
+}

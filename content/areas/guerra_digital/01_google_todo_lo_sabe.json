@@ -1,0 +1,14 @@
+{
+  "id": "01_google_todo_lo_sabe",
+  "area_id": "guerra_digital",
+  "title": "“En internet vi algo muy diferente”",
+  "label": "Cuando la pantalla interrumpe tu criterio",
+  "question": "El cliente, con el celular en la mano, te dice: “En internet vi una póliza diferente, más barata y con más cosas. ¿Por qué la tuya es así?”. ¿Cómo respondes, de verdad?",
+  "tension": "comparacion_online",
+  "contexto": "Cliente con información parcial de comparadores online, percibiendo que tú ofreces menos.",
+  "meta": {
+    "tipo_cliente": "informado",
+    "canal": "presencial o videollamada",
+    "emocion_base": "desconfianza comparativa"
+  }
+}

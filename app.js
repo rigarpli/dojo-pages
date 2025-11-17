@@ -332,6 +332,49 @@
         runPlay(sc, userResponse);
         return;
       }
+            // Copiar revelación
+      if (t.closest("#p5-copy")) {
+        const escTitle = qs('#esc-title');
+        const txt = `Polizarium — ${S.areaTitle}\nEscenario: ${escTitle?.textContent || "-"}\n\nRevelación:\n${S.lastFrase || "-"}`;
+        copy(txt);
+        return;
+      }
+
+      // Descargar .txt
+      if (t.closest("#p5-dl")) {
+        const escTitle = qs('#esc-title');
+        const txt = `Polizarium — ${S.areaTitle}\nEscenario: ${escTitle?.textContent || "-"}\n\nRevelación:\n${S.lastFrase || "-"}`;
+        const blob = new Blob([txt], {type: "text/plain;charset=utf-8"});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `polizarium-${slug(S.areaId || 'area')}-${slug(S.scenId || 'escenario')}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+          URL.revokeObjectURL(url);
+          a.remove();
+        }, 0);
+        return;
+      }
+
+      // Compartir por WhatsApp
+      if (t.closest("#btn-wa")) {
+        const escTitle = qs('#esc-title');
+        const msg = `Polizarium — ${S.areaTitle}\nEscenario: ${escTitle?.textContent || "-"}\n\nRevelación:\n${S.lastFrase || "-"}`;
+        window.open("https://wa.me/?text=" + encodeURIComponent(msg), "_blank");
+        return;
+      }
+
+      // Finalizar sesión
+      if (t.closest("#finish")) {
+        const thanksName = qs("#thanks-name");
+        const thanksArea = qs("#thanks-area");
+        if (thanksName) thanksName.textContent = S.nombre || "Profesional";
+        if (thanksArea) thanksArea.textContent = S.areaTitle || "tu área";
+        go("p9");
+        return;
+      }
     });
   }
 

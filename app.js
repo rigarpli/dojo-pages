@@ -418,6 +418,10 @@ function go(id){
     qs("#start")?.addEventListener("click", ()=>{
       S.nombre = qs("#nombre").value.trim();
       S.cliente = qs("#cliente").value.trim();
+      trackEvent("session_start", {
+    area_id: null,
+    scenario_id: null
+  });
       go("p1");
       if(!contentReady){
         startFetchContent();

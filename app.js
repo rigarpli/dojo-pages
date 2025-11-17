@@ -505,14 +505,17 @@ function go(id){
       }
 
       // Revelar ADN
-      if(t.id === "reveal-adn"){
-        const userResponse = qs("#user-response").value.trim();
-        if(!userResponse){ alert("Escribe tu respuesta"); return; }
-        const sc = S.scenarios.find(x=>x.id===S.scenId);
-        if (!sc) return;
-        runPlay(sc, userResponse);
-        return;
-      }
+     if(t.id === "reveal-adn"){
+  const userResponse = qs("#user-response").value.trim();
+  if (userResponse.length < 15) {
+    alert("Dale un poco más de contexto a tu respuesta. Una o dos frases bastan.");
+    return;
+  }
+  const sc = S.scenarios.find(x=>x.id===S.scenId);
+  if (!sc) return;
+  runPlay(sc, userResponse);
+  return;
+}
 
       // Copiar revelación
       if (t.closest("#p5-copy")) {

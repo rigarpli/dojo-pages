@@ -6,7 +6,7 @@
 (function(){
   "use strict";
 
-  console.log("🔥 Polizarium PRO — app.js conectado al Loader de contenido");
+  console.log("🔥 Polizarium PRO — app.js conectado al Loader de contenido (con Guía + banners + imágenes)");
 
   // ================================
   // CONFIG
@@ -86,9 +86,12 @@
   let currentStep = "p0";
   function go(id){
     qsa(".step").forEach(x=>x.classList.remove("active"));
-    qs(`#${id}`)?.classList.add("active");
-    currentStep = id;
-    window.scrollTo({top:0, behavior:"smooth"});
+    const target = qs(`#${id}`);
+    if (target) {
+      target.classList.add("active");
+      currentStep = id;
+      window.scrollTo({top:0, behavior:"smooth"});
+    }
   }
 
   // ================================
@@ -110,7 +113,7 @@
       .finally(()=> contentFetching=false);
   }
 
-    function buildAreas(){
+  function buildAreas(){
     const grid = qs("#areas-grid"); 
     if(!grid) return;
     const areas = S.content?.areas || [];
@@ -118,15 +121,18 @@
 
     areas.forEach(a=>{
       const d = document.createElement("div");
-      d.className="area-card";
-      d.dataset.area=a.id;
-      d.classList.add(`bg-${a.id}`); // 🔹 clase para el bg de esa área
-      d.innerHTML=`<div class='area-title'>${a.icon||"📌"} ${esc(a.title)}</div>`;
+      d.className = "area-card";
+      d.dataset.area = a.id;
+      // clase para bg según área (usa tus CSS .area-card.bg-<id>)
+      d.classList.add(`bg-${a.id}`);
+      d.innerHTML = `
+        <div class='area-title'>${a.icon || "📌"} ${esc(a.title)}</div>
+      `;
       grid.appendChild(d);
     });
   }
 
-    async function buildScenarios(){
+  async function buildScenarios(){
     if(!S.areaId) return;
     const url = `${LOADER_BASE}/areas/${S.areaId}`;
 
@@ -143,7 +149,7 @@
       grid.innerHTML="";
       S.scenarios.forEach(sc=>{
         const d = document.createElement("div");
-        d.className="sc-card";
+        d.className = "sc-card";
         d.dataset.scenario = sc.id;
         d.innerHTML = `
           <div class='sc-title'>${esc(sc.title)}</div>
@@ -158,13 +164,18 @@
       const bannerSubtitle = qs("#area-banner-subtitle");
 
       if (banner && bannerTitle && bannerSubtitle) {
-        banner.className = "area-banner"; // reset
+        banner.className = "area-banner"; // reset classes
         banner.classList.add(`bg-${S.areaId}`);
         banner.style.display = "flex";
 
         const area = S.content.areas.find(a => a.id === S.areaId);
-        bannerTitle.textContent = area ? area.title : "";
-        bannerSubtitle.textContent = area ? area.desc : "";
+        if (area) {
+          bannerTitle.textContent = area.title;
+          bannerSubtitle.textContent = area.desc;
+        } else {
+          bannerTitle.textContent = "";
+          bannerSubtitle.textContent = "";
+        }
       }
 
     } catch (err) {
@@ -181,7 +192,10 @@
 
     const box = qs("#esc-options");
     box.innerHTML = `
-      <textarea id='user-response' rows='4' placeholder='Escribe tu respuesta real...'></textarea>
+      <textarea id='user-response' 
+                rows='4' 
+                placeholder='Escribe tu respuesta real...' 
+                style="width:100%; padding:12px; border-radius:12px; border:1px solid var(--stroke); background:#16252a; color:#e8f1f3; margin-bottom:16px;"></textarea>
       <button class='btn primary' id='reveal-adn'>Revelar mi ADN</button>
     `;
   }
@@ -219,79 +233,84 @@
   // EVENTOS
   // ================================
   function wireEvents(){
-  qs("#start")?.addEventListener("click", ()=>{
-    S.nombre = qs("#nombre").value.trim();
-    S.cliente = qs("#cliente").value.trim();
-    go("p1");
-    if(!contentReady){
-      startFetchContent();
-    }
-  });
-
-  // ← Volver
-  qs("#btn-back")?.addEventListener("click", ()=>{
-    if(currentStep === "p3"){
+    // Botón de inicio
+    qs("#start")?.addEventListener("click", ()=>{
+      S.nombre = qs("#nombre").value.trim();
+      S.cliente = qs("#cliente").value.trim();
       go("p1");
-    } else if(currentStep === "p4"){
-      go("p3");
-    } else {
-      go("p0");
-    }
-  });
-
-    // Botón "Áreas" y "Guía"
-  qsa("[data-nav]").forEach(btn=>{
-    btn.addEventListener("click", ()=>{
-      const nav = btn.getAttribute("data-nav");
-      if (nav === "areas") {
-        go("p1");
-      } else if (nav === "guia") {
-        go("p8");
+      if(!contentReady){
+        startFetchContent();
       }
     });
-  });
 
-  // Toggle lista / grid en escenarios
-  qs("#toggle-view")?.addEventListener("click", ()=>{
-    const grid = qs("#scen-grid");
-    if(!grid) return;
-    const isList = grid.classList.toggle("list-view");
-    const btn = qs("#toggle-view");
-    if (btn) {
-      btn.textContent = isList ? "🔳 Ver como tarjetas" : "📋 Ver como lista";
-    }
-  });
+    // ← Volver
+    qs("#btn-back")?.addEventListener("click", ()=>{
+      if(currentStep === "p3"){
+        go("p1");
+      } else if(currentStep === "p4"){
+        go("p3");
+      } else {
+        go("p0");
+      }
+    });
 
-  document.addEventListener("click", e=>{
-    const t = e.target;
+    // Botones "Áreas" y "Guía"
+    qsa("[data-nav]").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const nav = btn.getAttribute("data-nav");
+        if (nav === "areas") {
+          go("p1");
+        } else if (nav === "guia") {
+          go("p8");
+        }
+      });
+    });
 
-    if(t.closest(".area-card")){
-      const id = t.closest(".area-card").dataset.area;
-      const area = S.content.areas.find(a=>a.id===id);
-      S.areaId = id;
-      S.areaTitle = area.title;
-      buildScenarios();
-      go("p3");
-      return;
-    }
+    // Toggle lista / grid en escenarios
+    qs("#toggle-view")?.addEventListener("click", ()=>{
+      const grid = qs("#scen-grid");
+      if(!grid) return;
+      const isList = grid.classList.toggle("list-view");
+      const btn = qs("#toggle-view");
+      if (btn) {
+        btn.textContent = isList ? "🔳 Ver como tarjetas" : "📋 Ver como lista";
+      }
+    });
 
-    if(t.closest(".sc-card")){
-      const id = t.closest(".sc-card").dataset.scenario;
-      S.scenId = id;
-      buildScenarioView(id);
-      go("p4");
-      return;
-    }
+    // Clicks en tarjetas de áreas, escenarios y botón Revelar
+    document.addEventListener("click", e=>{
+      const t = e.target;
 
-    if(t.id === "reveal-adn"){
-      const userResponse = qs("#user-response").value.trim();
-      if(!userResponse){ alert("Escribe tu respuesta"); return; }
-      const sc = S.scenarios.find(x=>x.id===S.scenId);
-      runPlay(sc, userResponse);
-      return;
-    }
-  });
-}
+      if(t.closest(".area-card")){
+        const id = t.closest(".area-card").dataset.area;
+        const area = S.content.areas.find(a=>a.id===id);
+        if (!area) return;
+        S.areaId = id;
+        S.areaTitle = area.title;
+        buildScenarios();
+        go("p3");
+        return;
+      }
+
+      if(t.closest(".sc-card")){
+        const id = t.closest(".sc-card").dataset.scenario;
+        S.scenId = id;
+        buildScenarioView(id);
+        go("p4");
+        return;
+      }
+
+      if(t.id === "reveal-adn"){
+        const userResponse = qs("#user-response").value.trim();
+        if(!userResponse){ alert("Escribe tu respuesta"); return; }
+        const sc = S.scenarios.find(x=>x.id===S.scenId);
+        if (!sc) return;
+        runPlay(sc, userResponse);
+        return;
+      }
+    });
+  }
+
   // ================================
   // INIT
   // ================================

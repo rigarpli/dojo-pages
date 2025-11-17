@@ -66,28 +66,27 @@
 </section>
 
       <section class="step" id="p4">
-        <span class="badge" id="esc-badge">Escenario</span>
-        <h1 id="esc-title">Título del Escenario</h1>
-        <p class="muted" id="esc-question">Pregunta del escenario.</p>
+  <span class="badge" id="esc-badge">Escenario</span>
+  <h1 id="esc-title">Título del Escenario</h1>
+  <p class="muted" id="esc-question">Pregunta del escenario.</p>
 
-        <!-- ✅ CAMBIO CLAVE: TEXTAREA LIBRE EN VEZ DE BOTONES -->
-        <div id="esc-options">
-          <textarea id="user-response" 
-                    placeholder="¿Cómo responderías TÚ? Escribe con tus propias palabras..." 
-                    rows="4"
-                    style="width:100%; padding:12px; border-radius:12px; border:1px solid var(--stroke); background:#16252a; color:#e8f1f3; margin-bottom:16px;"></textarea>
-          <button class="btn primary" id="reveal-adn" type="button">Revelar mi ADN conversacional</button>
-        </div>
+  <div id="esc-options">
+    <textarea id="user-response" ...></textarea>
+    <button class="btn primary" id="reveal-adn" type="button">Revelar mi ADN conversacional</button>
+  </div>
 
-        <div id="esc-answer" class="fb" style="display:none;"></div>
-
-        <div class="group" id="feedback-actions" style="display:none; margin-top: 20px;">
-          <button class="btn" id="p5-copy" type="button">Copiar revelación</button>
-          <button class="btn ghost" id="p5-dl" type="button">Descargar .txt</button>
-          <button class="btn" id="btn-wa" type="button">Compartir por WhatsApp</button>
-          <button class="btn primary" id="finish" type="button">Finalizar sesión</button>
-        </div>
-      </section>
+  <div id="esc-answer" class="fb" style="display:none;"></div>
+<p class="muted" id="post-feedback-hint" style="display:none; margin-top:12px;">
+  No necesitas memorizar nada. Solo pregúntate en silencio:<br>
+  <em>“¿Qué parte de esta revelación ya estaba en mí y no la estaba usando?”</em>
+</p>
+  <div class="group" id="feedback-actions" style="display:none; margin-top: 20px;">
+    <button class="btn" id="p5-copy" type="button">Copiar revelación</button>
+    <button class="btn ghost" id="p5-dl" type="button">Descargar .txt</button>
+    <button class="btn" id="btn-wa" type="button">Compartir por WhatsApp</button>
+    <button class="btn primary" id="finish" type="button">Finalizar sesión</button>
+  </div>
+</section>
 
       <section class="step" id="p8">
         <h1>Polizarium, en esencia</h1>
@@ -136,6 +135,12 @@
       </section>
 
       <button class="corner-guide" id="btn-guide-fab" type="button">Guía</button>
+      <p class="muted" id="post-feedback-options" style="display:none; margin-top:8px;">
+  Si quieres seguir afilando tu voz aquí mismo, puedes
+  <button class="btn ghost small-btn" id="retry-same" type="button">intentar otra vez este escenario</button>
+  o
+  <button class="btn ghost small-btn" id="explore-same-area" type="button">explorar otro escenario en esta área</button>.
+</p>
 
       <a class="corner-logo" href="https://polizar.com" target="_blank" rel="noopener">
         <img src="https://polizar.com/wp-content/uploads/2025/04/polizar-logo-b-scaled.webp" alt="Polizar">

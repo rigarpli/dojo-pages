@@ -1,0 +1,14 @@
+{
+  "id": "02_lo_veo_luego",
+  "area_id": "objeciones_clasicas",
+  "title": "“Lo veo luego, ahora no puedo decidir”",
+  "label": "Cuando la decisión se guarda en un cajón invisible",
+  "question": "El cliente mira el reloj y te dice: “Déjame verlo luego, ahora no puedo decidir”. ¿Qué dices tú en ese momento, sin disfrazar tu estilo?",
+  "tension": "postergacion",
+  "contexto": "Evasión suave del compromiso. No es un no, pero tampoco un sí.",
+  "meta": {
+    "tipo_cliente": "ocupado",
+    "canal": "presencial o telefónico",
+    "emocion_base": "saturación / evasión"
+  }
+}

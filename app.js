@@ -1,19 +1,19 @@
 // Versión PRO + LOADER de app.js — conectada al Worker Loader de contenido
 // - Áreas: se leen de https://polizarium-loader.../areas
 // - Escenarios: se leen de https://polizarium-loader.../areas/:areaId
-// - Feedback IA: sigue usando tu worker actual (index.rgarciaplicet.workers.dev)
+// - Feedback IA: usa el worker actual (index.rgarciaplicet.workers.dev)
 
 (function(){
   "use strict";
 
-  console.log("🔥 Polizarium PRO — app.js conectado al Loader de contenido (con Guía + banners + imágenes)");
+  console.log("🔥 Polizarium PRO — app.js conectado al Loader de contenido (con Guía + banners + imágenes + retry)");
 
   // ================================
   // CONFIG
   // ================================
   const LOADER_BASE = "https://polizarium-loader.rgarciaplicet.workers.dev";
   const CONTENT_URL = `${LOADER_BASE}/areas`; // lista de áreas (Loader)
-  const API = "https://index.rgarciaplicet.workers.dev/"; // Worker de feedback IA (sin cambios)
+  const API = "https://index.rgarciaplicet.workers.dev/"; // Worker de feedback IA
 
   // ================================
   // ESTADO GLOBAL
@@ -24,7 +24,7 @@
     areaId: "",
     areaTitle: "",
     scenId: "",
-    content: null,   // aquí guardamos { areas: [...] } del Loader
+    content: null,   // { areas: [...] } del Loader
     scenarios: [],
     lastFrase: "",
     pack: null
@@ -46,7 +46,43 @@
     "'": '&#39;'
   }[m]));
 
-    function copy(t) {
+  async function ai(payload){
+    const r = await fetch(API,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify(payload)
+    });
+    if(!r.ok) throw new Error("Worker error");
+    return await r.json();
+  }
+
+  function renderFeedback(text){
+    if(!text) return `<p class='muted'>⚠️ No se generó feedback</p>`;
+    let data;
+    try { 
+      data = JSON.parse(text); 
+    } catch(e) {
+      return `<p class='muted'>❌ JSON inválido</p>`;
+    }
+    const r = data.revelacion || {};
+    return `
+      <div class="feedback-animated">
+        <div class="feedback-section" style="animation-delay:0ms;">
+          <strong>✨ LO QUE TU FRASE YA CONTENÍA:</strong><br>
+          ${esc(r.lo_que_contenia || "")}
+        </div>
+        <div class="feedback-section" style="animation-delay:500ms;">
+          <strong>🗣️ TU MENSAJE, PERFECCIONADO:</strong><br>
+          “${esc(r.frase_afinada || "")}”
+        </div>
+        <div class="feedback-section" style="animation-delay:1000ms;">
+          <strong>🔑 TU SUPERPODER:</strong><br>
+          ${esc(r.llave_maestra || "")}
+        </div>
+      </div>`;
+  }
+
+  function copy(t) {
     t = t || "";
     if (navigator.clipboard && window.isSecureContext) {
       navigator.clipboard.writeText(t)
@@ -83,40 +119,6 @@
       .replace(/-+/g, "-")
       .replace(/^-|-$/g, "");
   }
-  
-  async function ai(payload){
-    const r = await fetch(API,{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body: JSON.stringify(payload)
-    });
-    if(!r.ok) throw new Error("Worker error");
-    return await r.json();
-  }
-
-  function render(text){
-    if(!text) return `<p class='muted'>⚠️ No se generó feedback</p>`;
-    let data;
-    try { data = JSON.parse(text); } catch(e) {
-      return `<p class='muted'>❌ JSON inválido</p>`;
-    }
-    const r = data.revelacion;
-    return `
-      <div class="feedback-animated">
-        <div class="feedback-section" style="animation-delay:0ms;">
-          <strong>✨ LO QUE TU FRASE YA CONTENÍA:</strong><br>
-          ${esc(r.lo_que_contenia)}
-        </div>
-        <div class="feedback-section" style="animation-delay:500ms;">
-          <strong>🗣️ TU MENSAJE, PERFECCIONADO:</strong><br>
-          “${esc(r.frase_afinada)}”
-        </div>
-        <div class="feedback-section" style="animation-delay:1000ms;">
-          <strong>🔑 TU SUPERPODER:</strong><br>
-          ${esc(r.llave_maestra)}
-        </div>
-      </div>`;
-  }
 
   // ================================
   // NAVEGACIÓN
@@ -151,7 +153,7 @@
       .finally(()=> contentFetching=false);
   }
 
-    function buildAreas(){
+  function buildAreas(){
     const grid = qs("#areas-grid"); 
     if(!grid) return;
     const areas = S.content?.areas || [];
@@ -167,7 +169,7 @@
       d.className = "area-card";
       d.dataset.area = a.id;
 
-      // 💡 Fondo como antes: imagen por área + overlay suave
+      // Fondo como en la versión original: imagen por área + overlay suave
       const imagePath = `/images/${a.id}_bg.jpg`;
       d.style.backgroundImage = `linear-gradient(rgba(47, 67, 72, 0.05), rgba(47, 67, 72, 0.05)), url('${imagePath}')`;
 
@@ -203,12 +205,16 @@
         d.dataset.scenario = sc.id;
         d.innerHTML = `
           <div class='sc-title'>${esc(sc.title)}</div>
-          <p>${esc(sc.question)}</p>
+          <p class='sc-desc'>${esc(sc.question || "")}</p>
         `;
         grid.appendChild(d);
       });
 
-      // 🔹 Actualizar banner de área
+      // Actualizar título de área en p3
+      const titleEl = qs("#area-title");
+      if (titleEl) titleEl.textContent = S.areaTitle || "";
+
+      // Actualizar banner de área
       const banner = qs("#area-banner");
       const bannerTitle = qs("#area-banner-title");
       const bannerSubtitle = qs("#area-banner-subtitle");
@@ -218,7 +224,7 @@
         banner.classList.add(`bg-${S.areaId}`);
         banner.style.display = "flex";
 
-        const area = S.content.areas.find(a => a.id === S.areaId);
+        const area = (S.content?.areas || []).find(a => a.id === S.areaId);
         if (area) {
           bannerTitle.textContent = area.title;
           bannerSubtitle.textContent = area.desc;
@@ -237,17 +243,36 @@
     const sc = S.scenarios.find(x=>x.id===sid);
     if(!sc) return;
 
+    const escBadge = qs("#esc-badge");
+    if (escBadge) escBadge.textContent = "Área — " + (S.areaTitle || "");
+
     qs("#esc-title").textContent = sc.title;
-    qs("#esc-question").textContent = sc.question;
+    qs("#esc-question").textContent = sc.question || ("Cliente: " + sc.title + ". ¿Cómo respondes?");
 
     const box = qs("#esc-options");
     box.innerHTML = `
       <textarea id='user-response' 
                 rows='4' 
-                placeholder='Escribe tu respuesta real...' 
+                placeholder='¿Cómo responderías TÚ? Escribe con tus propias palabras...' 
                 style="width:100%; padding:12px; border-radius:12px; border:1px solid var(--stroke); background:#16252a; color:#e8f1f3; margin-bottom:16px;"></textarea>
-      <button class='btn primary' id='reveal-adn'>Revelar mi ADN</button>
+      <button class='btn primary' id='reveal-adn'>Revelar mi ADN conversacional</button>
     `;
+
+    const ans = qs("#esc-answer");
+    if (ans) {
+      ans.innerHTML = "";
+      ans.style.display = "none";
+      ans.classList.remove("show");
+    }
+
+    const actions = qs("#feedback-actions");
+    if (actions) actions.style.display = "none";
+
+    const hint = qs("#post-feedback-hint");
+    if (hint) hint.style.display = "none";
+
+    const options = qs("#post-feedback-options");
+    if (options) options.style.display = "none";
   }
 
   // ================================
@@ -268,13 +293,14 @@
       });
 
       S.pack = pack;
-      S.lastFrase = fraseUsuario; // guardamos lo que el corredor escribió
-      
+      S.lastFrase = fraseUsuario;
+
       ans.innerHTML = renderFeedback(pack.feedback);
       ans.classList.add("show");
 
       const actions = qs("#feedback-actions");
       if (actions) actions.style.display = "flex";
+
       const hint = qs("#post-feedback-hint");
       if (hint) hint.style.display = "block";
 
@@ -304,14 +330,14 @@
     qs("#btn-back")?.addEventListener("click", ()=>{
       if(currentStep === "p3"){
         go("p1");
-      } else if(currentStep === "p4"){
+      } else if (currentStep === "p4"){
         go("p3");
       } else {
         go("p0");
       }
     });
 
-    // Botones "Áreas" y "Guía"
+    // Botones "Áreas" y "Guía" (topnav y cierre)
     qsa("[data-nav]").forEach(btn=>{
       btn.addEventListener("click", ()=>{
         const nav = btn.getAttribute("data-nav");
@@ -321,6 +347,11 @@
           go("p8");
         }
       });
+    });
+
+    // FAB "Guía" (esquina inferior)
+    qs("#btn-guide-fab")?.addEventListener("click", () => {
+      go("p8");
     });
 
     // Toggle lista / grid en escenarios
@@ -333,17 +364,12 @@
         btn.textContent = isList ? "🔳 Ver como tarjetas" : "📋 Ver como lista";
       }
     });
-        
-    // FAB "Guía" (botón abajo junto al logo Polizar)
-    qs("#btn-guide-fab")?.addEventListener("click", () => {
-      go("p8");  // sección de Guía
-    });
 
-    // Clicks en tarjetas de áreas, escenarios y botón Revelar
+    // Clicks globales
     document.addEventListener("click", e=>{
       const t = e.target;
 
-            // Click en botón "Entrar" dentro de la tarjeta de área
+      // Click en botón "Entrar" dentro de la tarjeta de área
       if (t.closest(".area-card .btn")) {
         const btn = t.closest(".area-card .btn");
         const id = btn.dataset.area;
@@ -361,6 +387,7 @@
         return;
       }
 
+      // Click en tarjeta de escenario
       if(t.closest(".sc-card")){
         const id = t.closest(".sc-card").dataset.scenario;
         S.scenId = id;
@@ -369,6 +396,7 @@
         return;
       }
 
+      // Revelar ADN
       if(t.id === "reveal-adn"){
         const userResponse = qs("#user-response").value.trim();
         if(!userResponse){ alert("Escribe tu respuesta"); return; }
@@ -377,7 +405,8 @@
         runPlay(sc, userResponse);
         return;
       }
-            // Copiar revelación
+
+      // Copiar revelación
       if (t.closest("#p5-copy")) {
         const escTitle = qs('#esc-title');
         const txt = `Polizarium — ${S.areaTitle}\nEscenario: ${escTitle?.textContent || "-"}\n\nRevelación:\n${S.lastFrase || "-"}`;
@@ -420,7 +449,8 @@
         go("p9");
         return;
       }
-            // Reintentar el mismo escenario con otra respuesta
+
+      // Reintentar el mismo escenario con otra respuesta
       if (t.id === "retry-same") {
         const box = qs("#esc-options");
         if (box) {
@@ -436,6 +466,7 @@
         if (ans) {
           ans.innerHTML = "";
           ans.style.display = "none";
+          ans.classList.remove("show");
         }
         const actions = qs("#feedback-actions");
         if (actions) actions.style.display = "none";

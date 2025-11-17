@@ -1,0 +1,14 @@
+{
+  "id": "01_muy_caro",
+  "area_id": "objeciones_clasicas",
+  "title": "“Eso está demasiado caro”",
+  "label": "Cuando el precio tapa todo lo demás",
+  "question": "El cliente, con tono sincero pero firme, te dice: “Eso está demasiado caro, no puedo pagarlo”. ¿Qué responderías tú, con tus palabras reales?",
+  "tension": "precio",
+  "contexto": "Objeción típica cuando el seguro se percibe como carga y no como protección.",
+  "meta": {
+    "tipo_cliente": "práctico",
+    "canal": "presencial",
+    "emocion_base": "preocupación económica"
+  }
+}

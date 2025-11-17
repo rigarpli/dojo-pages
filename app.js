@@ -38,7 +38,13 @@
   // ================================
   const qs = (s, sc=document) => sc.querySelector(s);
   const qsa = (s, sc=document) => Array.from(sc.querySelectorAll(s));
-  const esc = (s="") => s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]);
+  const esc = (s = "") => s.replace(/[&<>"']/g, m => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[m]));
 
   async function ai(payload){
     const r = await fetch(API,{
@@ -105,7 +111,7 @@
   }
 
   function buildAreas(){
-    const grid = qs("#areas-grid"); 
+    const grid = qs("#areas-grid");
     if(!grid) return;
     const areas = S.content?.areas || [];
     grid.innerHTML = "";
@@ -186,7 +192,6 @@
       ans.innerHTML = renderFeedback(pack.feedback);
       ans.classList.add("show");
 
-      // Mostrar acciones de feedback si existen
       const actions = qs("#feedback-actions");
       if (actions) actions.style.display = "flex";
     } catch(e){
@@ -203,8 +208,6 @@
       S.nombre = qs("#nombre").value.trim();
       S.cliente = qs("#cliente").value.trim();
       go("p1");
-      // Si el contenido ya está listo, buildAreas ya se ejecutó.
-      // Si no, startFetchContent se encargará.
       if(!contentReady){
         startFetchContent();
       }
@@ -245,7 +248,6 @@
   // INIT
   // ================================
   function init(){
-    // Empezamos a precargar las áreas desde el Loader
     startFetchContent();
     wireEvents();
     go("p0");

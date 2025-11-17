@@ -94,7 +94,7 @@
     return await r.json();
   }
 
-  function renderFeedback(text){
+  function render(text){
     if(!text) return `<p class='muted'>⚠️ No se generó feedback</p>`;
     let data;
     try { data = JSON.parse(text); } catch(e) {
@@ -275,6 +275,11 @@
 
       const actions = qs("#feedback-actions");
       if (actions) actions.style.display = "flex";
+      const hint = qs("#post-feedback-hint");
+      if (hint) hint.style.display = "block";
+
+      const options = qs("#post-feedback-options");
+      if (options) options.style.display = "block";
     } catch(e){
       console.error("Error en runPlay:", e);
       ans.innerHTML = `<p class='muted'>❌ Error generando</p>`;
@@ -413,6 +418,38 @@
         if (thanksName) thanksName.textContent = S.nombre || "Profesional";
         if (thanksArea) thanksArea.textContent = S.areaTitle || "tu área";
         go("p9");
+        return;
+      }
+            // Reintentar el mismo escenario con otra respuesta
+      if (t.id === "retry-same") {
+        const box = qs("#esc-options");
+        if (box) {
+          box.innerHTML = `
+            <textarea id='user-response' 
+                      rows='4' 
+                      placeholder='Escribe otra forma en que responderías...' 
+                      style="width:100%; padding:12px; border-radius:12px; border:1px solid var(--stroke); background:#16252a; color:#e8f1f3; margin-bottom:16px;"></textarea>
+            <button class='btn primary' id='reveal-adn'>Revelar mi ADN conversacional</button>
+          `;
+        }
+        const ans = qs("#esc-answer");
+        if (ans) {
+          ans.innerHTML = "";
+          ans.style.display = "none";
+        }
+        const actions = qs("#feedback-actions");
+        if (actions) actions.style.display = "none";
+        const hint = qs("#post-feedback-hint");
+        if (hint) hint.style.display = "none";
+        const options = qs("#post-feedback-options");
+        if (options) options.style.display = "none";
+        return;
+      }
+
+      // Explorar otro escenario en la misma área
+      if (t.id === "explore-same-area") {
+        buildScenarios();
+        go("p3");
         return;
       }
     });

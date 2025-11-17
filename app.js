@@ -204,46 +204,74 @@
   // EVENTOS
   // ================================
   function wireEvents(){
-    qs("#start")?.addEventListener("click", ()=>{
-      S.nombre = qs("#nombre").value.trim();
-      S.cliente = qs("#cliente").value.trim();
+  qs("#start")?.addEventListener("click", ()=>{
+    S.nombre = qs("#nombre").value.trim();
+    S.cliente = qs("#cliente").value.trim();
+    go("p1");
+    if(!contentReady){
+      startFetchContent();
+    }
+  });
+
+  // ← Volver
+  qs("#btn-back")?.addEventListener("click", ()=>{
+    if(currentStep === "p3"){
       go("p1");
-      if(!contentReady){
-        startFetchContent();
-      }
+    } else if(currentStep === "p4"){
+      go("p3");
+    } else {
+      go("p0");
+    }
+  });
+
+  // Botón "Áreas"
+  qsa("[data-nav='areas']").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      go("p1");
     });
+  });
 
-    document.addEventListener("click", e=>{
-      const t = e.target;
+  // Toggle lista / grid en escenarios
+  qs("#toggle-view")?.addEventListener("click", ()=>{
+    const grid = qs("#scen-grid");
+    if(!grid) return;
+    const isList = grid.classList.toggle("list-view");
+    const btn = qs("#toggle-view");
+    if (btn) {
+      btn.textContent = isList ? "🔳 Ver como tarjetas" : "📋 Ver como lista";
+    }
+  });
 
-      if(t.closest(".area-card")){
-        const id = t.closest(".area-card").dataset.area;
-        const area = S.content.areas.find(a=>a.id===id);
-        S.areaId = id;
-        S.areaTitle = area.title;
-        buildScenarios();
-        go("p3");
-        return;
-      }
+  document.addEventListener("click", e=>{
+    const t = e.target;
 
-      if(t.closest(".sc-card")){
-        const id = t.closest(".sc-card").dataset.scenario;
-        S.scenId = id;
-        buildScenarioView(id);
-        go("p4");
-        return;
-      }
+    if(t.closest(".area-card")){
+      const id = t.closest(".area-card").dataset.area;
+      const area = S.content.areas.find(a=>a.id===id);
+      S.areaId = id;
+      S.areaTitle = area.title;
+      buildScenarios();
+      go("p3");
+      return;
+    }
 
-      if(t.id === "reveal-adn"){
-        const userResponse = qs("#user-response").value.trim();
-        if(!userResponse){ alert("Escribe tu respuesta"); return; }
-        const sc = S.scenarios.find(x=>x.id===S.scenId);
-        runPlay(sc, userResponse);
-        return;
-      }
-    });
-  }
+    if(t.closest(".sc-card")){
+      const id = t.closest(".sc-card").dataset.scenario;
+      S.scenId = id;
+      buildScenarioView(id);
+      go("p4");
+      return;
+    }
 
+    if(t.id === "reveal-adn"){
+      const userResponse = qs("#user-response").value.trim();
+      if(!userResponse){ alert("Escribe tu respuesta"); return; }
+      const sc = S.scenarios.find(x=>x.id===S.scenId);
+      runPlay(sc, userResponse);
+      return;
+    }
+  });
+}
   // ================================
   // INIT
   // ================================

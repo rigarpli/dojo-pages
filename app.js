@@ -288,6 +288,11 @@
         btn.textContent = isList ? "🔳 Ver como tarjetas" : "📋 Ver como lista";
       }
     });
+        
+    // FAB "Guía" (botón abajo junto al logo Polizar)
+    qs("#btn-guide-fab")?.addEventListener("click", () => {
+      go("p8");  // sección de Guía
+    });
 
     // Clicks en tarjetas de áreas, escenarios y botón Revelar
     document.addEventListener("click", e=>{

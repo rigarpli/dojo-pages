@@ -352,6 +352,18 @@ function go(id){
 
       const options = qs("#post-feedback-options");
       if (options) options.style.display = "block";
+
+      // Auto-scroll al feedback (especialmente útil en móvil)
+      setTimeout(() => {
+        const feedbackSection = qs("#esc-answer");
+        if (feedbackSection) {
+          const rect = feedbackSection.getBoundingClientRect();
+          const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+          const offsetTop = rect.top + scrollTop - 80; // margen superior
+          window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+        }
+      }, 300);
+      
     } catch(e){
       console.error("Error en runPlay:", e);
       ans.innerHTML = `<p class='muted'>❌ Error generando</p>`;

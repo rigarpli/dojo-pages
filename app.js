@@ -110,8 +110,8 @@
       .finally(()=> contentFetching=false);
   }
 
-  function buildAreas(){
-    const grid = qs("#areas-grid");
+    function buildAreas(){
+    const grid = qs("#areas-grid"); 
     if(!grid) return;
     const areas = S.content?.areas || [];
     grid.innerHTML = "";
@@ -120,13 +120,13 @@
       const d = document.createElement("div");
       d.className="area-card";
       d.dataset.area=a.id;
+      d.classList.add(`bg-${a.id}`); // 🔹 clase para el bg de esa área
       d.innerHTML=`<div class='area-title'>${a.icon||"📌"} ${esc(a.title)}</div>`;
       grid.appendChild(d);
     });
   }
 
-  async function buildScenarios(){
-    // Ahora llamamos al Loader: GET /areas/:areaId
+    async function buildScenarios(){
     if(!S.areaId) return;
     const url = `${LOADER_BASE}/areas/${S.areaId}`;
 
@@ -137,7 +137,6 @@
         return;
       }
       const data = await res.json();
-      // data = { area_id, title, escenarios: [...] }
       S.scenarios = data.escenarios || [];
 
       const grid = qs("#scen-grid");
@@ -152,6 +151,22 @@
         `;
         grid.appendChild(d);
       });
+
+      // 🔹 Actualizar banner de área
+      const banner = qs("#area-banner");
+      const bannerTitle = qs("#area-banner-title");
+      const bannerSubtitle = qs("#area-banner-subtitle");
+
+      if (banner && bannerTitle && bannerSubtitle) {
+        banner.className = "area-banner"; // reset
+        banner.classList.add(`bg-${S.areaId}`);
+        banner.style.display = "flex";
+
+        const area = S.content.areas.find(a => a.id === S.areaId);
+        bannerTitle.textContent = area ? area.title : "";
+        bannerSubtitle.textContent = area ? area.desc : "";
+      }
+
     } catch (err) {
       console.error("Error en buildScenarios con Loader:", err);
     }

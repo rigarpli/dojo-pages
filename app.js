@@ -46,6 +46,41 @@
     "'": '&#39;'
   }[m]));
 
+    // ================================
+  // SESSION & METRICS HELPERS
+  // ================================
+  function generateSessionId() {
+    // UUID v4 simple
+    return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+      (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+    );
+  }
+
+  function getSessionId() {
+    let sid = localStorage.getItem("polizarium_session_id");
+    if (!sid) {
+      sid = generateSessionId();
+      localStorage.setItem("polizarium_session_id", sid);
+    }
+    return sid;
+  }
+
+  function trackEvent(type, extra = {}) {
+    const sessionId = getSessionId();
+    const payload = {
+      type,
+      session_id: sessionId,
+      timestamp: Date.now(),
+      ...extra
+    };
+    // NO bloquear la UX si falla
+    fetch("https://polizarium-metrics.rgarciaplicet.workers.dev/event", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(payload)
+    }).catch(()=>{});
+  }
+
   async function ai(payload){
     const r = await fetch(API,{
       method:"POST",
@@ -341,6 +376,11 @@ function go(id){
       S.pack = pack;
       S.lastFrase = fraseUsuario;
 
+      trackEvent("play_feedback", {
+        area_id: S.areaId,
+        scenario_id: S.scenId
+      });
+
       ans.innerHTML = renderFeedback(pack.feedback);
       ans.classList.add("show");
 
@@ -449,6 +489,12 @@ function go(id){
       if(t.closest(".sc-card")){
         const id = t.closest(".sc-card").dataset.scenario;
         S.scenId = id;
+
+        trackEvent("select_scenario", {
+          area_id: S.areaId,
+          scenario_id: S.scenId
+        });
+        
         buildScenarioView(id);
         go("p4");
         return;

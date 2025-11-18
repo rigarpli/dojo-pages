@@ -537,7 +537,16 @@ d.innerHTML = `
         go("p3");
         return;
       }
-
+// Botón "Practicar este escenario" dentro de la tarjeta (funciona en grid y lista)
+      if (t.closest(".sc-practice-btn")) {
+        const card = t.closest(".sc-card");
+        if (!card) return;
+        const id = card.dataset.scenario;
+        S.scenId = id;
+        buildScenarioView(id);
+        go("p4");
+        return;
+      }
       // Click en tarjeta de escenario
       if (t.closest(".sc-card")) {
         const card = t.closest(".sc-card");
@@ -555,16 +564,7 @@ d.innerHTML = `
           card.classList.toggle("expanded");
           return; // 👈 IMPORTANTE: no seguir a p4
         }
-        // Botón "Practicar este escenario" dentro de la tarjeta (funciona en grid y lista)
-      if (t.closest(".sc-practice-btn")) {
-        const card = t.closest(".sc-card");
-        if (!card) return;
-        const id = card.dataset.scenario;
-        S.scenId = id;
-        buildScenarioView(id);
-        go("p4");
-        return;
-      }
+        
         // Si estamos en modo grid normal → ir a p4 como siempre
         buildScenarioView(id);
         go("p4");

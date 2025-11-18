@@ -508,7 +508,7 @@ function go(id){
      if(t.id === "reveal-adn"){
   const userResponse = qs("#user-response").value.trim();
   if (userResponse.length < 15) {
-    alert("Dale un poco más de contexto a tu respuesta. Una o dos frases bastan.");
+    alert("Par revelarte tu ADN falta darle un poco más de contexto a tu respuesta.");
     return;
   }
   const sc = S.scenarios.find(x=>x.id===S.scenId);

@@ -535,15 +535,32 @@ function go(id){
       }
 
       // Click en tarjeta de escenario
-      if(t.closest(".sc-card")){
+       if(t.closest(".sc-card")){
         const id = t.closest(".sc-card").dataset.scenario;
         S.scenId = id;
+        buildScenarioView(id);
+        go("p4");
+        return;
+      }
 
-        trackEvent("select_scenario", {
-          area_id: S.areaId,
-          scenario_id: S.scenId
-        });
-        
+if(t.closest(".sc-card")){
+        const card = t.closest(".sc-card");
+        const grid = qs("#scen-grid");
+        const id = card.dataset.scenario;
+        S.scenId = id;
+
+        // Si estamos en modo lista (acordeón)
+        if (grid && grid.classList.contains("list-view")) {
+          // Cerrar cualquier otra tarjeta expandida
+          qsa(".sc-grid.list-view .sc-card.expanded").forEach(c => {
+            if (c !== card) c.classList.remove("expanded");
+          });
+          // Alternar expansión de la tarjeta actual
+          card.classList.toggle("expanded");
+          return;
+        }
+
+        // Si estamos en modo grid normal → ir a p4 como siempre
         buildScenarioView(id);
         go("p4");
         return;

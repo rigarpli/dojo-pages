@@ -15,6 +15,11 @@
   const CONTENT_URL = `${LOADER_BASE}/areas`; // lista de áreas (Loader)
   const API = "https://index.rgarciaplicet.workers.dev/"; // Worker de feedback IA
 
+    const DAILY_RECO = {
+    area_id: "objeciones_clasicas",
+    scenario_id: "01_muy_caro"
+  };
+
   // ================================
   // ESTADO GLOBAL
   // ================================
@@ -229,6 +234,7 @@ function go(id){
         S.content = data;
         contentReady = true;
         buildAreas();
+        loadDailyReco();
       })
       .catch(err => console.error("Error cargando contenido desde Loader", err))
       .finally(()=> contentFetching=false);
@@ -265,6 +271,45 @@ function go(id){
     });
   }
 
+    async function loadDailyReco(){
+    const box = qs("#daily-reco");
+    const titleEl = qs("#daily-reco-title");
+    const areaEl = qs("#daily-reco-area");
+    const btn = qs("#daily-reco-play");
+
+    if (!box || !titleEl || !areaEl || !btn) return;
+
+    try {
+      // Cargar info del área recomendada
+      const resArea = await fetch(`${LOADER_BASE}/areas/${DAILY_RECO.area_id}`);
+      if (!resArea.ok) {
+        console.warn("No se pudo cargar área para daily reco");
+        return;
+      }
+      const dataArea = await resArea.json();
+      const escenarios = dataArea.escenarios || [];
+      const reco = escenarios.find(sc => sc.id === DAILY_RECO.scenario_id);
+
+      if (!reco) {
+        console.warn("Escenario recomendado no encontrado");
+        return;
+      }
+
+      const area = (S.content?.areas || []).find(a => a.id === DAILY_RECO.area_id);
+
+      titleEl.textContent = reco.title;
+      areaEl.textContent = `Área: ${area ? area.title : DAILY_RECO.area_id}`;
+
+      // Guardamos para usar luego en el click
+      box.dataset.areaId = DAILY_RECO.area_id;
+      box.dataset.scenarioId = DAILY_RECO.scenario_id;
+
+      box.style.display = "block";
+    } catch (e) {
+      console.error("Error cargando daily reco:", e);
+    }
+  }
+  
   async function buildScenarios(){
     if(!S.areaId) return;
     const url = `${LOADER_BASE}/areas/${S.areaId}`;
@@ -592,6 +637,41 @@ function go(id){
       if (t.id === "explore-same-area") {
         buildScenarios();
         go("p3");
+        return;
+      }
+            // Practicar el escenario recomendado desde p1
+      if (t.id === "daily-reco-play") {
+        const box = qs("#daily-reco");
+        if (!box) return;
+
+        const areaId = box.dataset.areaId;
+        const scenId = box.dataset.scenarioId;
+        if (!areaId || !scenId) return;
+
+        // Simular la selección de área y escenario recomendados
+        const area = (S.content?.areas || []).find(a => a.id === areaId);
+        if (!area) return;
+
+        S.areaId = areaId;
+        S.areaTitle = area.title || "";
+
+        const ctx = qs("#area-title");
+        if (ctx) ctx.textContent = S.areaTitle || "—";
+
+        // Cargar escenarios del área
+        buildScenarios().then(() => {
+          // Buscar el escenario recomendado dentro de S.scenarios
+          const sc = S.scenarios.find(x => x.id === scenId);
+          if (sc) {
+            S.scenId = scenId;
+            buildScenarioView(scenId);
+            go("p4");
+          } else {
+            // Si no se encuentra, al menos mostrar lista de escenarios del área
+            go("p3");
+          }
+        });
+
         return;
       }
     });

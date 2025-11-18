@@ -325,17 +325,21 @@ function go(id){
 
       const grid = qs("#scen-grid");
       grid.innerHTML="";
-      S.scenarios.forEach(sc=>{
+      
+             S.scenarios.forEach(sc=>{
         const d = document.createElement("div");
         d.className = "sc-card";
         d.dataset.scenario = sc.id;
         d.innerHTML = `
           <div class='sc-title'>${esc(sc.title)}</div>
           <p class='sc-desc'>${esc(sc.question || "")}</p>
+          <div class="group" style="margin-top:8px;">
+            <button class="btn small-btn sc-practice-btn" type="button">Practicar este escenario</button>
+          </div>
         `;
         grid.appendChild(d);
       });
-
+        
       // Actualizar título de área en p3
       const titleEl = qs("#area-title");
       if (titleEl) titleEl.textContent = S.areaTitle || "";
@@ -551,7 +555,16 @@ function go(id){
           card.classList.toggle("expanded");
           return; // 👈 IMPORTANTE: no seguir a p4
         }
-
+        // Botón "Practicar este escenario" dentro de la tarjeta (funciona en grid y lista)
+      if (t.closest(".sc-practice-btn")) {
+        const card = t.closest(".sc-card");
+        if (!card) return;
+        const id = card.dataset.scenario;
+        S.scenId = id;
+        buildScenarioView(id);
+        go("p4");
+        return;
+      }
         // Si estamos en modo grid normal → ir a p4 como siempre
         buildScenarioView(id);
         go("p4");

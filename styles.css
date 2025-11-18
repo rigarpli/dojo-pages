@@ -629,6 +629,18 @@ p {
   gap: 12px !important;
 }
 
+/* Modo lista tipo acordeón */
+.sc-grid.list-view .sc-desc {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.25s ease;
+}
+
+/* Cuando está expandido, mostrar contenido */
+.sc-grid.list-view .sc-card.expanded .sc-desc {
+  max-height: 200px; /* suficiente para 2–3 líneas, ajustable */
+}
+
 .sc-grid.list-view .sc-card {
   display: flex;
   flex-direction: column;

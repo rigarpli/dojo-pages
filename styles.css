@@ -771,3 +771,29 @@ p {
     text-align: center;
   }
 }
+/* Layout p1: título+texto a la izquierda, sugerido a la derecha en desktop */
+.p1-header-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.p1-header-left {
+  flex: 1 1 240px;
+}
+
+.p1-header-right {
+  flex: 0 0 320px;
+}
+
+/* En mobile, se apilan en columna (ya por flex-wrap) */
+@media (max-width: 768px) {
+  .p1-header-grid {
+    flex-direction: column;
+  }
+  .p1-header-right {
+    flex: 1 1 auto;
+  }
+}

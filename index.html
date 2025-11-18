@@ -49,15 +49,21 @@
 
       <section class="step" id="p1">
   <span class="badge">Paso 1</span>
-  <h1>Elige un área para explorar</h1>
-  <p class="muted">Cada área contiene escenarios reales para practicar sin juicio.</p>
 
-  <!-- 🔹 Escenario recomendado hoy -->
-  <div class="fb" id="daily-reco" style="display:none; margin-bottom:16px;">
-    <p class="muted" style="margin-bottom:4px;">Si no sabes por dónde empezar, prueba con este:</p>
-    <h3 id="daily-reco-title" style="margin:0 0 4px 0;">—</h3>
-    <p class="muted" id="daily-reco-area" style="margin:0 0 8px 0;">Área: —</p>
-    <button class="btn small-btn" id="daily-reco-play" type="button">Practicar ahora</button>
+  <div class="p1-header-grid">
+    <div class="p1-header-left">
+      <h1>Elige un área para explorar</h1>
+      <p class="muted">Cada área contiene escenarios reales para practicar sin juicio.</p>
+    </div>
+    <div class="p1-header-right">
+      <!-- Escenario recomendado hoy -->
+      <div class="fb" id="daily-reco" style="display:none; margin-bottom:16px;">
+        <p class="muted" style="margin-bottom:4px;">Si no sabes por dónde empezar, prueba con este:</p>
+        <h3 id="daily-reco-title" style="margin:0 0 4px 0;">—</h3>
+        <p class="muted" id="daily-reco-area" style="margin:0 0 8px 0;">Área: —</p>
+        <button class="btn small-btn" id="daily-reco-play" type="button">Practicar ahora</button>
+      </div>
+    </div>
   </div>
 
   <div class="area-grid three-col" id="areas-grid"></div>

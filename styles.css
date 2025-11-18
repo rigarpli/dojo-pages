@@ -347,7 +347,7 @@ p {
   background: #16252a;
   border: 1px solid var(--stroke);
   border-radius: 14px;
-  padding: 16px;
+  padding: 16px 50px;
   margin-top: 14px;
 }
 

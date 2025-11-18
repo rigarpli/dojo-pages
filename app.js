@@ -543,7 +543,8 @@ function go(id){
         return;
       }
 
-if(t.closest(".sc-card")){
+      // Click en tarjeta de escenario
+      if (t.closest(".sc-card")) {
         const card = t.closest(".sc-card");
         const grid = qs("#scen-grid");
         const id = card.dataset.scenario;
@@ -557,7 +558,7 @@ if(t.closest(".sc-card")){
           });
           // Alternar expansión de la tarjeta actual
           card.classList.toggle("expanded");
-          return;
+          return; // 👈 IMPORTANTE: no seguir a p4
         }
 
         // Si estamos en modo grid normal → ir a p4 como siempre

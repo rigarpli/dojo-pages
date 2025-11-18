@@ -535,15 +535,6 @@ function go(id){
       }
 
       // Click en tarjeta de escenario
-       if(t.closest(".sc-card")){
-        const id = t.closest(".sc-card").dataset.scenario;
-        S.scenId = id;
-        buildScenarioView(id);
-        go("p4");
-        return;
-      }
-
-      // Click en tarjeta de escenario
       if (t.closest(".sc-card")) {
         const card = t.closest(".sc-card");
         const grid = qs("#scen-grid");

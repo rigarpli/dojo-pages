@@ -330,13 +330,13 @@ function go(id){
         const d = document.createElement("div");
         d.className = "sc-card";
         d.dataset.scenario = sc.id;
-        d.innerHTML = `
-          <div class='sc-title'>${esc(sc.title)}</div>
-          <p class='sc-desc'>${esc(sc.question || "")}</p>
-          <div class="group" style="margin-top:8px;">
-            <button class="btn small-btn sc-practice-btn" type="button">Practicar este escenario</button>
-          </div>
-        `;
+d.innerHTML = `
+  <div class='sc-title'>${esc(sc.title)}</div>
+  <p class='sc-desc'>${esc(sc.question || "")}</p>
+  <div class="group sc-extra" style="margin-top:8px;">
+    <button class="btn small-btn sc-practice-btn" type="button">Practicar este escenario</button>
+  </div>
+`;
         grid.appendChild(d);
       });
         

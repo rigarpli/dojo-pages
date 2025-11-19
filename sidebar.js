@@ -1,11 +1,30 @@
-// POLIZARIUM - SIDEBAR v1.1
-// Maneja expandir/contraer en desktop y overlay en móvil
+// POLIZARIUM - SIDEBAR v1.2
+// Desktop: barra fija, colapsable, empuja el dojoApp.
+// Móvil: barra overlay controlada por hamburguesa.
 
 (function(){
   "use strict";
 
   function isMobile() {
     return window.matchMedia("(max-width: 768px)").matches;
+  }
+
+  function applyLayoutAccordingSidebar(sidebar) {
+    const dojoApp = document.getElementById("dojoApp");
+    if (!dojoApp || !sidebar) return;
+
+    if (isMobile()) {
+      // En móvil, el contenido ocupa todo el ancho siempre
+      dojoApp.style.marginLeft = "0";
+      return;
+    }
+
+    // En desktop, ajustamos margen según estado colapsado/expandido
+    if (sidebar.classList.contains("collapsed")) {
+      dojoApp.style.marginLeft = "72px"; // coincide con .pz-sidebar.collapsed width
+    } else {
+      dojoApp.style.marginLeft = "260px"; // coincide con .pz-sidebar width
+    }
   }
 
   function initSidebar(){
@@ -19,6 +38,7 @@
 
     // Estado inicial: colapsado (desktop estrecho, mobile oculto)
     sidebar.classList.add("collapsed");
+    applyLayoutAccordingSidebar(sidebar);
 
     function toggleSidebar() {
       if (isMobile()) {
@@ -31,7 +51,10 @@
       } else {
         // Desktop: solo estrecho vs ancho
         sidebar.classList.toggle("collapsed");
+        // Nos aseguramos de que no tenga "expanded" sobrando
+        sidebar.classList.remove("expanded");
       }
+      applyLayoutAccordingSidebar(sidebar);
     }
 
     // Toggle interno (en la propia sidebar)
@@ -47,6 +70,11 @@
     // Modo invitado
     if (avatar) avatar.textContent = "?";
     if (label) label.textContent = "Modo invitado";
+
+    // Reajustar layout si el viewport cambia (por ej. rotación)
+    window.addEventListener("resize", ()=>{
+      applyLayoutAccordingSidebar(sidebar);
+    });
   }
 
   if (document.readyState === "loading") {

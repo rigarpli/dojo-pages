@@ -999,9 +999,19 @@ p {
   }
 }
 #pz-header-toggle {
-  margin-right: 8px;
+  position: absolute;
+  top: 8px;
+  left: 12px;
+  z-index: 10;
+  background: rgba(0,0,0,0.35);
+  border: 1px solid var(--stroke);
+  border-radius: 999px;
+  padding: 6px 10px;
+  color: var(--text);
+  font-size: 16px;
+  cursor: pointer;
+  display: none; /* por defecto oculto, se muestra en móvil */
 }
-
 /* Desktop: ocultar el botón de header */
 @media (min-width: 769px) {
   #pz-header-toggle {

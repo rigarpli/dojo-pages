@@ -833,8 +833,8 @@ p {
 }
 /* Estado colapsado */
 .pz-sidebar.collapsed {
-  width: 120px;     /* antes 56px, un poco más ancho para transiciones más suaves */
-  min-width: 120px;
+  width: 80px;     /* antes 56px, un poco más ancho para transiciones más suaves */
+  min-width: 80px;
   padding: 16px 4px;
 }
 

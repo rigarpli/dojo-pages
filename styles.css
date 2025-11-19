@@ -998,3 +998,22 @@ p {
     margin-left: 0;
   }
 }
+#pz-header-toggle {
+  margin-right: 8px;
+}
+
+/* Desktop: ocultar el botón de header */
+@media (min-width: 769px) {
+  #pz-header-toggle {
+    display: none !important;
+  }
+}
+
+/* Móvil: mostrar el botón y usarlo para abrir la sidebar */
+@media (max-width: 768px) {
+  #pz-header-toggle {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+  }
+}

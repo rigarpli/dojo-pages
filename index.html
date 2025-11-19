@@ -10,8 +10,46 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div id="dojoApp">
-    <div class="card">
+  <div id="polizarium-shell">
+    <!-- Sidebar lateral -->
+    <aside id="pz-sidebar" class="pz-sidebar collapsed">
+      <div class="pz-sidebar-toggle" id="pz-sidebar-toggle">
+        <!-- Icono de expandir/comprimir -->
+        <span class="pz-toggle-icon">☰</span>
+      </div>
+
+      <div class="pz-sidebar-top">
+        <!-- Icono Polizarium (puede ser una versión compacta) -->
+        <div class="pz-logo-mini">
+          <img src="https://dojo-pages.pages.dev/images/polizariumlogo.png" alt="Polizarium" />
+        </div>
+        <div class="pz-product-label">
+          Tu dojo conversacional
+        </div>
+      </div>
+
+      <div class="pz-sidebar-middle">
+        <!-- Lugar para historial / enlaces (por ahora placeholder) -->
+        <div class="pz-section-title">Hoy has practicado</div>
+        <ul class="pz-history-list" id="pz-history-list">
+          <!-- Más adelante: últimos escenarios practicados -->
+          <li class="pz-history-empty">Aquí verás tus escenarios recientes.</li>
+        </ul>
+      </div>
+
+      <div class="pz-sidebar-bottom">
+        <!-- Identidad de usuario / modo invitado -->
+        <div class="pz-user-avatar" id="pz-user-avatar">?</div>
+        <div class="pz-user-info">
+          <div class="pz-user-label" id="pz-user-label">Modo invitado</div>
+          <!-- Futuro: correo / nombre -->
+        </div>
+      </div>
+    </aside>
+
+    <!-- Contenido principal del dojo -->
+    <div id="dojoApp">
+      <div class="card">
       <header id="dojo-header">
   <div class="brand">
     <img src="https://dojo-pages.pages.dev/images/polizariumlogo.png" alt="Logotipo de Polizarium" class="logo-image">
@@ -192,8 +230,12 @@
       <a class="corner-logo" href="https://polizar.com" target="_blank" rel="noopener">
         <img src="https://polizar.com/wp-content/uploads/2025/04/polizar-logo-b-scaled.webp" alt="Polizar">
       </a>
+    
+      </div>
     </div>
   </div>
+
+  <script src="./sidebar.js" charset="utf-8" defer></script>
   <script src="./app.js?v=polizarium1" charset="utf-8" defer></script>
 </body>
 </html>

@@ -833,8 +833,8 @@ p {
 }
 /* Estado colapsado */
 .pz-sidebar.collapsed {
-  width: 72px;     /* antes 56px, un poco más ancho para transiciones más suaves */
-  min-width: 72px;
+  width: 100px;     /* antes 56px, un poco más ancho para transiciones más suaves */
+  min-width: 100px;
   padding: 16px 4px;
 }
 
@@ -964,6 +964,7 @@ p {
 #dojoApp {
   flex: 1 1 auto;
    margin-left: 260px;
+   transition: margin-left 0.25s ease;
 }
 
 /* Modo móvil: sidebar como overlay */

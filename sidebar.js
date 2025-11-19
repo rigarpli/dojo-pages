@@ -33,7 +33,7 @@
     const headerToggle  = document.getElementById("pz-header-toggle");
     const avatar       = document.getElementById("pz-user-avatar");
     const label        = document.getElementById("pz-user-label");
-    const guideBtn     = document.getElementById("pz-sidebar-guide");
+    const guideBtn     = document.getElementById("pz-action-guide");
 
     if (!sidebar) return;
 

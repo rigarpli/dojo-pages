@@ -163,7 +163,8 @@
   // ================================
   // NAVEGACIÓN
   // ================================
-  let currentStep = "p0";
+let currentStep = "p0";
+
 function go(id){
   qsa(".step").forEach(x=>x.classList.remove("active"));
   const target = qs(`#${id}`);
@@ -172,6 +173,10 @@ function go(id){
     currentStep = id;
     window.scrollTo({top:0, behavior:"smooth"});
   }
+}
+
+// Exponer go en window para que sidebar pueda usarlo
+window.go = go;
 
   // Control de botones de navegación según la pantalla
   const topnav = qs(".topnav");

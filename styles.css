@@ -1006,7 +1006,7 @@ p.muted1 {
     padding: 16px 12px;
     box-shadow: 4px 0 20px rgba(0,0,0,0.4);
     transition: transform 0.25s ease;
-    z-index: 11;
+    z-index: 61;
   }
 
   .pz-sidebar.collapsed {

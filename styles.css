@@ -314,7 +314,7 @@ p.muted1 {
    .area-card {
    background-size: cover;
   background-repeat: no-repeat;
-  background-position: top;
+  background-position: center;
 }
 }
    

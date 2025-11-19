@@ -150,6 +150,22 @@ p {
   margin-top: 20px;
 }
 
+p.muted1 {
+    font-size: 11px;
+    padding: 2px 15px;
+    background: #3A4D51;
+    border-radius: 5px;
+    text-align: center;
+}
+@media (max-width: 820px) {
+   p.muted1 {
+    font-size: 12px;
+    border-radius: 15px;
+    background: #3A4D51;
+    padding: 1px 10px;
+}
+}
+
 #p1 p.muted {
   margin-bottom: 20px;
 }
@@ -792,7 +808,7 @@ p {
 }
 
 .p1-header-right {
-  flex: 0 0 320px;
+  flex: 0 0 32.5%;
 }
 
 /* En mobile, se apilan en columna (ya por flex-wrap) */
@@ -984,6 +1000,7 @@ p {
     padding: 16px 12px;
     box-shadow: 4px 0 20px rgba(0,0,0,0.4);
     transition: transform 0.25s ease;
+    z-index: 11;
   }
 
   .pz-sidebar.collapsed {

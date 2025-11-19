@@ -21,18 +21,19 @@
 
     // En desktop, ajustamos margen según estado colapsado/expandido
     if (sidebar.classList.contains("collapsed")) {
-      dojoApp.style.marginLeft = "120px"; // coincide con .pz-sidebar.collapsed width
+      dojoApp.style.marginLeft = "72px"; // coincide con .pz-sidebar.collapsed width
     } else {
       dojoApp.style.marginLeft = "260px"; // coincide con .pz-sidebar width
     }
   }
 
   function initSidebar(){
-    const sidebar = document.getElementById("pz-sidebar");
+    const sidebar      = document.getElementById("pz-sidebar");
     const sidebarToggle = document.getElementById("pz-sidebar-toggle");
-    const headerToggle = document.getElementById("pz-header-toggle");
-    const avatar = document.getElementById("pz-user-avatar");
-    const label = document.getElementById("pz-user-label");
+    const headerToggle  = document.getElementById("pz-header-toggle");
+    const avatar       = document.getElementById("pz-user-avatar");
+    const label        = document.getElementById("pz-user-label");
+    const guideBtn     = document.getElementById("pz-sidebar-guide");
 
     if (!sidebar) return;
 
@@ -51,7 +52,6 @@
       } else {
         // Desktop: solo estrecho vs ancho
         sidebar.classList.toggle("collapsed");
-        // Nos aseguramos de que no tenga "expanded" sobrando
         sidebar.classList.remove("expanded");
       }
       applyLayoutAccordingSidebar(sidebar);
@@ -65,6 +65,26 @@
     // Toggle desde el header (hamburguesa)
     if (headerToggle) {
       headerToggle.addEventListener("click", toggleSidebar);
+    }
+
+    // Enlace a Guía del dojo
+    if (guideBtn) {
+      guideBtn.addEventListener("click", ()=>{
+        // Usar go("p8") expuesto en window desde app.js
+        if (typeof window.go === "function") {
+          window.go("p8");
+        } else {
+          // Fallback simple: cambiar el hash
+          location.hash = "#p8";
+        }
+
+        // En móvil, si la barra está overlay, la cerramos al ir a Guía
+        if (isMobile() && sidebar.classList.contains("expanded")) {
+          sidebar.classList.remove("expanded");
+          sidebar.classList.add("collapsed");
+          applyLayoutAccordingSidebar(sidebar);
+        }
+      });
     }
 
     // Modo invitado

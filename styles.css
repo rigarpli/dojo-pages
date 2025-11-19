@@ -815,7 +815,9 @@ p {
 
 /* Sidebar contenedor */
 .pz-sidebar {
-  position: relative;
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
   background: #1b2a2f;
   border-right: 1px solid var(--stroke);
   color: var(--text);
@@ -826,13 +828,14 @@ p {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  transition: width 0.25s ease;
+  transition: width 0.25s ease, padding 0.25s ease;
+  z-index: 5;
 }
-
 /* Estado colapsado */
 .pz-sidebar.collapsed {
-  width: 56px;
-  min-width: 56px;
+  width: 72px;     /* antes 56px, un poco más ancho para transiciones más suaves */
+  min-width: 72px;
+  padding: 16px 4px;
 }
 
 /* Toggle superior */
@@ -960,4 +963,45 @@ p {
 /* Ajuste del contenido principal cuando hay sidebar */
 #dojoApp {
   flex: 1 1 auto;
+}
+/* Modo móvil: sidebar como overlay */
+@media (max-width: 768px) {
+  #polizarium-shell {
+    display: block;
+  }
+
+  .pz-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    transform: translateX(-100%); /* oculta fuera de pantalla */
+    width: 260px;
+    min-width: 260px;
+    box-shadow: 4px 0 20px rgba(0,0,0,0.4);
+    transition: transform 0.25s ease;
+  }
+
+  .pz-sidebar.collapsed {
+    /* en móvil colapsado = totalmente escondido */
+    transform: translateX(-100%);
+    width: 260px;
+    min-width: 260px;
+    padding: 16px 12px;
+  }
+
+  .pz-sidebar.expanded {
+    transform: translateX(0); /* visible */
+  }
+
+  /* El dojoApp recupera el ancho completo en móvil */
+  #dojoApp {
+    max-width: 100%;
+    margin: 0;
+  }
+
+  /* Ocultar el toggle dentro de la sidebar, mover el control al header principal si quieres */
+  .pz-sidebar-toggle {
+    justify-content: flex-start;
+  }
 }

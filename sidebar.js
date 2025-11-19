@@ -21,7 +21,7 @@
 
     // En desktop, ajustamos margen según estado colapsado/expandido
     if (sidebar.classList.contains("collapsed")) {
-      dojoApp.style.marginLeft = "72px"; // coincide con .pz-sidebar.collapsed width
+      dojoApp.style.marginLeft = "100px"; // coincide con .pz-sidebar.collapsed width
     } else {
       dojoApp.style.marginLeft = "260px"; // coincide con .pz-sidebar width
     }

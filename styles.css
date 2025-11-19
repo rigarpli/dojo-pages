@@ -815,14 +815,14 @@ p {
 
 /* Sidebar contenedor */
 .pz-sidebar {
-  position: sticky;
+  position: fixed;
   top: 0;
-  align-self: flex-start;
+  left: 0;
+  bottom: 0;            /* ocupa toda la altura */
   background: #1b2a2f;
   border-right: 1px solid var(--stroke);
   color: var(--text);
   width: 260px;
-  min-width: 260px;
   padding: 16px 12px;
   box-sizing: border-box;
   display: flex;
@@ -963,7 +963,9 @@ p {
 /* Ajuste del contenido principal cuando hay sidebar */
 #dojoApp {
   flex: 1 1 auto;
+   margin-left: 260px;
 }
+
 /* Modo móvil: sidebar como overlay */
 @media (max-width: 768px) {
   #polizarium-shell {
@@ -974,34 +976,25 @@ p {
     position: fixed;
     top: 0;
     left: 0;
+    bottom: 0;
     height: 100vh;
     transform: translateX(-100%); /* oculta fuera de pantalla */
     width: 260px;
-    min-width: 260px;
+    padding: 16px 12px;
     box-shadow: 4px 0 20px rgba(0,0,0,0.4);
     transition: transform 0.25s ease;
   }
 
   .pz-sidebar.collapsed {
-    /* en móvil colapsado = totalmente escondido */
     transform: translateX(-100%);
-    width: 260px;
-    min-width: 260px;
-    padding: 16px 12px;
   }
 
   .pz-sidebar.expanded {
-    transform: translateX(0); /* visible */
+    transform: translateX(0);
   }
 
-  /* El dojoApp recupera el ancho completo en móvil */
+  /* En móvil, el contenido ocupa toda la anchura */
   #dojoApp {
-    max-width: 100%;
-    margin: 0;
-  }
-
-  /* Ocultar el toggle dentro de la sidebar, mover el control al header principal si quieres */
-  .pz-sidebar-toggle {
-    justify-content: flex-start;
+    margin-left: 0;
   }
 }

@@ -1083,3 +1083,56 @@ p.muted1 {
   border-color: var(--stroke-2);
   transform: translateY(-1px);
 }
+/* Acciones principales en la barra lateral */
+.pz-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.pz-action-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 1px solid var(--stroke);
+  border-radius: 10px;
+  padding: 8px 10px;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s ease, transform 0.18s ease, border-color 0.18s ease;
+}
+
+.pz-action-item:hover {
+  background: rgba(255,255,255,0.06);
+  border-color: var(--stroke-2);
+  transform: translateY(-1px);
+}
+
+.pz-action-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px; /* o el tamaño que prefieras para tu SVG */
+  width: 22px;
+  height: 22px;
+}
+
+.pz-action-label {
+  white-space: nowrap;
+}
+
+/* En colapsado: solo mostrar icono, ocultar texto */
+.pz-sidebar.collapsed .pz-actions .pz-action-label {
+  display: none;
+}
+
+/* En colapsado: centrar iconos */
+.pz-sidebar.collapsed .pz-actions .pz-action-item {
+  justify-content: center;
+  padding: 8px;
+}

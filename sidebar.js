@@ -10,20 +10,18 @@
 
   function initSidebar(){
     const sidebar = document.getElementById("pz-sidebar");
-    const toggle = document.getElementById("pz-sidebar-toggle");
+    const sidebarToggle = document.getElementById("pz-sidebar-toggle");
+    const headerToggle = document.getElementById("pz-header-toggle");
     const avatar = document.getElementById("pz-user-avatar");
     const label = document.getElementById("pz-user-label");
 
-    if (!sidebar || !toggle) return;
+    if (!sidebar) return;
 
-    // Estado inicial:
-    // - Desktop: colapsado (estrecho)
-    // - Mobile: colapsado (oculto fuera de la pantalla)
+    // Estado inicial: colapsado (desktop estrecho, mobile oculto)
     sidebar.classList.add("collapsed");
 
-    toggle.addEventListener("click", ()=>{
+    function toggleSidebar() {
       if (isMobile()) {
-        // En móvil, togglear "expanded" para overlay
         const isExpanded = sidebar.classList.toggle("expanded");
         if (isExpanded) {
           sidebar.classList.remove("collapsed");
@@ -31,18 +29,24 @@
           sidebar.classList.add("collapsed");
         }
       } else {
-        // En desktop, solo togglear "collapsed" (estrecho vs ancho)
+        // Desktop: solo estrecho vs ancho
         sidebar.classList.toggle("collapsed");
       }
-    });
+    }
 
-    // Modo invitado por ahora
+    // Toggle interno (en la propia sidebar)
+    if (sidebarToggle) {
+      sidebarToggle.addEventListener("click", toggleSidebar);
+    }
+
+    // Toggle desde el header (hamburguesa)
+    if (headerToggle) {
+      headerToggle.addEventListener("click", toggleSidebar);
+    }
+
+    // Modo invitado
     if (avatar) avatar.textContent = "?";
     if (label) label.textContent = "Modo invitado";
-
-    // TODO futuro:
-    // - Si hay login, actualizar avatar (inicial) y label (correo/nombre)
-    // - Si hay historial, rellenar #pz-history-list
   }
 
   if (document.readyState === "loading") {

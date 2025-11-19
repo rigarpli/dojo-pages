@@ -1051,3 +1051,26 @@ p.muted1 {
     justify-content: center;
   }
 }
+.pz-sidebar-link {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: 1px solid var(--stroke);
+  border-radius: 10px;
+  padding: 8px 10px;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.18s ease, transform 0.18s ease, border-color 0.18s ease;
+}
+
+.pz-sidebar-link:hover {
+  background: rgba(255,255,255,0.06);
+  border-color: var(--stroke-2);
+  transform: translateY(-1px);
+}

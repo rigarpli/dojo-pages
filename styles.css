@@ -310,6 +310,15 @@ p.muted1 {
   z-index: 2;
 }
 
+@media screen and (max-width: 767px) {
+   .area-card {
+   background-size: cover;
+  background-repeat: no-repeat;
+  background-position: top;
+}
+}
+   
+
 .area-title {
   text-shadow: 1px 1px 4px black;
 }

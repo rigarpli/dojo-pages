@@ -1000,7 +1000,7 @@ p.muted1 {
     top: 0;
     left: 0;
     bottom: 0;
-    height: 100vh;
+    height: 100%;
     transform: translateX(-100%); /* oculta fuera de pantalla */
     width: 260px;
     padding: 16px 12px;

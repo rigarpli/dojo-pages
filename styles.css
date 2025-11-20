@@ -1121,6 +1121,9 @@ p.muted1 {
   width: 22px;
   height: 22px;
 }
+.pz-action-icon img {
+    width: 100%;
+}
 
 .pz-action-label {
   white-space: nowrap;

@@ -1097,7 +1097,7 @@ p.muted1 {
   align-items: center;
   gap: 8px;
   background: transparent;
-  border: 1px solid var(--stroke);
+  border: 0px solid var(--stroke);
   border-radius: 10px;
   padding: 8px 10px;
   color: var(--text);
@@ -1112,7 +1112,10 @@ p.muted1 {
   border-color: var(--stroke-2);
   transform: translateY(-1px);
 }
-
+@media (max-width: 820px) {
+   .pz-action-item {
+      border: 0px solid var(--stroke);
+   }}
 .pz-action-icon {
   display: inline-flex;
   align-items: center;

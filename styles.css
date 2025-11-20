@@ -440,7 +440,7 @@ p.muted1 {
   filter: brightness(1.2);
 }
 
-@media (max-width: 820px) {
+@media screen and (max-width: 767px) {
   #dojoApp {
     padding: 10px;
   }

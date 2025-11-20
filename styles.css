@@ -45,7 +45,7 @@ body {
   padding: 24px;
   padding-bottom: calc(24px + 90px);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-  min-height: 100vh;
+  min-height: 90vh;
   display: flex;
   flex-direction: column;
 }

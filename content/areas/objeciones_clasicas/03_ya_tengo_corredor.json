@@ -1,0 +1,14 @@
+{
+  "id": "03_ya_tengo_corredor",
+  "area_id": "objeciones_clasicas",
+  "title": "“Ya tengo mi corredor de confianza”",
+  "label": "Cuando entras en territorio de otro sin romper el respeto",
+  "question": "El cliente te dice con firmeza tranquila: “Mira, ya tengo mi corredor de confianza, él me ve todo”. ¿Qué responderías tú, sin sonar desesperado ni irrespetuoso?",
+  "tension": "lealtad_a_otro_corredor",
+  "contexto": "El cliente siente compromiso con otro corredor y teme traicionar esa relación.",
+  "meta": {
+    "tipo_cliente": "leal",
+    "canal": "presencial_o_videollamada",
+    "emocion_base": "fidelidad_y_culpabilidad_potencial"
+  }
+}

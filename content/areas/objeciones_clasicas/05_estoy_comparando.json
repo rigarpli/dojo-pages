@@ -1,0 +1,14 @@
+{
+  "id": "05_estoy_comparando",
+  "area_id": "objeciones_clasicas",
+  "title": "“Estoy comparando con otras opciones”",
+  "label": "Cuando el comparador mental no se apaga",
+  "question": "El cliente te dice: “Estoy comparando con otras opciones, déjame ver qué me ofrecen y te aviso”. ¿Qué responderías tú, sin sonar a presión pero sin desaparecer de la conversación?",
+  "tension": "comparacion",
+  "contexto": "Cliente que usa la comparación como excusa para no comprometerse todavía.",
+  "meta": {
+    "tipo_cliente": "analitico",
+    "canal": "digital_o_presencial",
+    "emocion_base": "incertidumbre_y_miedo_a_elegir_mal"
+  }
+}

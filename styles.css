@@ -951,15 +951,15 @@ p.muted1 {
 }
 
 .pz-user-avatar {
-  width: 28px;
-  height: 28px;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
   background: var(--accent2);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 14px;
+  font-size: 25px;
   margin-top: 15px;
   margin-left: 6px;
 }

@@ -1180,3 +1180,11 @@ p.muted1 {
 .pz-sidebar.collapsed .pz-account-link {
   display: none;
 }
+/* En colapsado, ocultar el texto de Cuenta/Equipo y centrar solo el icono */
+.pz-sidebar.collapsed .pz-action-account .pz-action-label {
+  display: none;
+}
+
+.pz-sidebar.collapsed .pz-action-account {
+  justify-content: center;
+}

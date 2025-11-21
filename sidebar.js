@@ -88,7 +88,7 @@
     }
 
     // Modo invitado
-    if (avatar) avatar.textContent = "?";
+    if (avatar) avatar.textContent = "🐨";
     if (label) label.textContent = "Modo invitado";
 
     // Reajustar layout si el viewport cambia (por ej. rotación)

@@ -980,7 +980,7 @@ p.muted1 {
 /* Comportamiento en colapsado */
 .pz-sidebar.collapsed .pz-product-label,
 .pz-sidebar.collapsed .pz-section-title,
-.pz-sidebar.collapsed .pz-history-list,
+.pz-sidebar.collapsed .pz-history-list
  {
   display: none;
 }

@@ -1,0 +1,14 @@
+{
+  "id": "04_nunca_me_ha_pasado_nada",
+  "area_id": "objeciones_clasicas",
+  "title": "“Nunca me ha pasado nada”",
+  "label": "Cuando la buena suerte parece ser el plan financiero",
+  "question": "El cliente, medio sonriente, te dice: “Toda la vida he estado sin seguro y nunca me ha pasado nada”. ¿Qué responderías tú, realmente, desde tu forma de ver la protección?",
+  "tension": "sobreconfianza",
+  "contexto": "El cliente confunde experiencia pasada con garantía futura y usa eso para evitar decidir.",
+  "meta": {
+    "tipo_cliente": "optimista",
+    "canal": "presencial_o_telefonico",
+    "emocion_base": "sensacion_de_invulnerabilidad"
+  }
+}

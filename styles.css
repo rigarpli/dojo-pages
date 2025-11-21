@@ -943,7 +943,7 @@ p.muted1 {
 
 /* Bottom: usuario */
 .pz-sidebar-bottom {
-  display: flex;
+  display: 1 1 auto;
   align-items: center;
   gap: 8px;
   padding-top: 8px;

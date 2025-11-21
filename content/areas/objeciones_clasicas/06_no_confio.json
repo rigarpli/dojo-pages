@@ -1,0 +1,14 @@
+{
+  "id": "06_no_confio",
+  "area_id": "objeciones_clasicas",
+  "title": "“No confío en las aseguradoras”",
+  "label": "Cuando hablas con todos los fantasmas de malas experiencias a la vez",
+  "question": "El cliente te dice: “La verdad, no confío en las aseguradoras; siempre buscan no pagar”. ¿Qué responderías tú, desde tu propia experiencia, sin ponerte a la defensiva?",
+  "tension": "desconfianza_aseguradoras",
+  "contexto": "Cliente cargado de historias negativas (propias o ajenas) que contaminan su percepción.",
+  "meta": {
+    "tipo_cliente": "esceptico",
+    "canal": "presencial_o_videollamada",
+    "emocion_base": "desconfianza_y_miedo_a_ser_enganiado"
+  }
+}

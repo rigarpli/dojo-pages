@@ -1,0 +1,14 @@
+{
+  "id": "07_no_tengo_tiempo",
+  "area_id": "objeciones_clasicas",
+  "title": "“No tengo tiempo para esto ahora”",
+  "label": "Cuando el reloj se vuelve el verdadero interlocutor",
+  "question": "El cliente, mirando su celular o el reloj, te dice: “No tengo tiempo para esto ahora”. ¿Qué responderías tú, sin rogar por atención pero sin entregar la conversación del todo?",
+  "tension": "falta_de_tiempo",
+  "contexto": "Cliente saturado de tareas, que usa el tiempo como barrera legítima o excusa.",
+  "meta": {
+    "tipo_cliente": "estresado",
+    "canal": "presencial_o_telefonico",
+    "emocion_base": "agotamiento_y_saturacion"
+  }
+}

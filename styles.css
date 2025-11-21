@@ -967,8 +967,12 @@ p.muted1 {
 .pz-user-info {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 10px;
   align-items: center;
+}
+
+.pz-sidebar.collapsed .pz-user-info {
+    gap: 15px;
 }
 
 .pz-user-label {

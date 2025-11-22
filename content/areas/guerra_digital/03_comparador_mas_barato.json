@@ -1,0 +1,14 @@
+{
+  "id": "03_comparador_mas_barato",
+  "area_id": "guerra_digital",
+  "title": "“En un comparador vi algo más barato y mejor”",
+  "label": "Cuando el algoritmo parece tu competencia directa",
+  "question": "El cliente te muestra la pantalla y dice: “En este comparador me sale una póliza más barata y con más coberturas. Explícame por qué debería quedarme contigo”. ¿Qué responderías tú, realmente, sin entrar en pelea con la pantalla?",
+  "tension": "comparador_online",
+  "contexto": "Cliente que confía más en el comparador que en el criterio profesional del corredor.",
+  "meta": {
+    "tipo_cliente": "tecnologico",
+    "canal": "digital_presencial_o_videollamada",
+    "emocion_base": "confianza_en_algoritmo_duda_en_persona"
+  }
+}

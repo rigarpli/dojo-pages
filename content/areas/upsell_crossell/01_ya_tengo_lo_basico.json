@@ -1,0 +1,14 @@
+{
+  "id": "01_ya_tengo_lo_basico",
+  "area_id": "upsell_crossell",
+  "title": "“Con lo básico estoy bien”",
+  "label": "Cuando el mínimo se vuelve excusa para no ver el resto",
+  "question": "En una revisión, el cliente te dice: “Con lo básico estoy bien, no necesito más coberturas ni pólizas”. ¿Qué le dirías tú, sin sonar a vendedor insistente pero abriendo espacio para mostrarle otras protecciones posibles?",
+  "tension": "resistencia_a_ampliar",
+  "contexto": "Cliente que percibe que ya tiene lo mínimo necesario y no ve valor en ampliar.",
+  "meta": {
+    "tipo_cliente": "conservador",
+    "canal": "presencial_o_videollamada",
+    "emocion_base": "sensacion_de_suficiencia_minima"
+  }
+}

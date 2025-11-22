@@ -1,0 +1,14 @@
+{
+  "id": "03_me_siento_enganado",
+  "area_id": "situaciones_limite",
+  "title": "“Siento que me engañaste”",
+  "label": "Cuando la palabra 'engaño' flota en el aire",
+  "question": "El cliente te dice frontalmente: “Siento que me engañaste; esto no fue lo que entendí cuando firmé”. ¿Qué responderías tú, sin ponerte a la defensiva pero sin tragar una culpa que no es tuya?",
+  "tension": "sensacion_de_engano",
+  "contexto": "Cliente que percibe una distancia entre lo que entendió al contratar y la realidad de la póliza o del servicio.",
+  "meta": {
+    "tipo_cliente": "resentido",
+    "canal": "presencial_o_llamada",
+    "emocion_base": "traicion_y_confusion"
+  }
+}

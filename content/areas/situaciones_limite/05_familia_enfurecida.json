@@ -1,0 +1,14 @@
+{
+  "id": "05_familia_enfurecida",
+  "area_id": "situaciones_limite",
+  "title": "“Mi familia está furiosa con esta aseguradora”",
+  "label": "Cuando no solo hablas con tu cliente, sino con toda su casa",
+  "question": "El cliente te dice: “Mi familia está furiosa con esta aseguradora, todos me dicen que cancele y que busque otra cosa”. ¿Qué responderías tú, sabiendo que estás negociando con voces que no están en la llamada?",
+  "tension": "presion_familiar",
+  "contexto": "Cliente rodeado de familiares molestos por una experiencia con la póliza o la aseguradora.",
+  "meta": {
+    "tipo_cliente": "presionado_por_familia",
+    "canal": "telefonico_o_presencial",
+    "emocion_base": "tension_familiar_y_duda_personal"
+  }
+}

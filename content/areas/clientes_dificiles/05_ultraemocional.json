@@ -1,0 +1,14 @@
+{
+  "id": "05_ultraemocional",
+  "area_id": "clientes_dificiles",
+  "title": "Cliente muy emocional: “Estoy aterrado de que algo pase”",
+  "label": "Cuando la conversación se llena de miedo puro",
+  "question": "En una conversación, el cliente se quiebra y te dice: “Estoy aterrado de que algo pase y mi familia quede mal. No duermo bien por esto”. ¿Qué responderías tú, sin minimizar su miedo ni aprovecharlo para vender más?",
+  "tension": "cliente_ultraemocional",
+  "contexto": "Cliente que se queda atrapado en escenarios catastróficos, con alta carga de ansiedad y miedo.",
+  "meta": {
+    "tipo_cliente": "muy_emocional",
+    "canal": "presencial_o_videollamada",
+    "emocion_base": "miedo_y_ansiedad"
+  }
+}

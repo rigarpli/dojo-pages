@@ -1,0 +1,14 @@
+{
+  "id": "02_este_ano_quiero_bajar_coberturas",
+  "area_id": "renovaciones",
+  "title": "“Este año quiero bajar las coberturas”",
+  "label": "Cuando la renovación viene con tijeras en la mano",
+  "question": "En la renovación, el cliente te dice: “Este año quiero bajar las coberturas, estoy pagando demasiado”. ¿Qué responderías tú para entender si es un ajuste sano o una decisión por miedo o presión económica?",
+  "tension": "bajar_coberturas",
+  "contexto": "Cliente que quiere reducir coberturas en renovación por percepción de costo alto o cambios en su situación.",
+  "meta": {
+    "tipo_cliente": "ajustando_presupuesto",
+    "canal": "presencial_o_videollamada",
+    "emocion_base": "presion_economica_y_miedo_a_exceso_de_gasto"
+  }
+}

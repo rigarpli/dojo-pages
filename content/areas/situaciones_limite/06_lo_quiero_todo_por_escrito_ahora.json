@@ -1,0 +1,14 @@
+{
+  "id": "06_lo_quiero_todo_por_escrito_ahora",
+  "area_id": "situaciones_limite",
+  "title": "“Lo quiero TODO por escrito, ahora mismo”",
+  "label": "Cuando la desconfianza toma la forma de exigencia",
+  "question": "El cliente, con tono frío, te dice: “Lo quiero TODO por escrito, ahora mismo. No firmo ni renuevo nada hasta que todo esté detallado”. ¿Qué responderías tú para no romper la relación pero tampoco prometer lo imposible?",
+  "tension": "exigencia_total_transparencia",
+  "contexto": "Cliente que ha perdido confianza y busca seguridad absoluta en documentos detallados.",
+  "meta": {
+    "tipo_cliente": "hiper_precavido",
+    "canal": "digital_o_presencial",
+    "emocion_base": "miedo_a_ser_enganiado_de_nuevo"
+  }
+}

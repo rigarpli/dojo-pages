@@ -1,0 +1,14 @@
+{
+  "id": "06_me_da_miedo_comprometerme_a_largo_plazo",
+  "area_id": "cierre_ventas",
+  "title": "“Me da miedo comprometerme a largo plazo”",
+  "label": "Cuando el cierre toca el nervio del compromiso profundo",
+  "question": "Al acercarse al cierre, el cliente te dice: “La verdad, me da miedo comprometerme a largo plazo con un pago mensual más”. ¿Qué responderías tú para no minimizar ese miedo y, a la vez, mostrar el valor de la protección sostenida?",
+  "tension": "miedo_a_compromiso_largo_plazo",
+  "contexto": "Cliente que siente peso emocional y financiero ante un compromiso de largo plazo.",
+  "meta": {
+    "tipo_cliente": "sensibilizado_por_finanzas_personales",
+    "canal": "presencial_o_digital",
+    "emocion_base": "temor_a_ataduras_financieras"
+  }
+}

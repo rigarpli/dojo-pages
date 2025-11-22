@@ -1,0 +1,14 @@
+{
+  "id": "04_solo_empresa_no_personal",
+  "area_id": "upsell_crossell",
+  "title": "Empresario que solo asegura su empresa, no su vida personal",
+  "label": "Cuando la empresa tiene paraguas y la persona está a la intemperie",
+  "question": "Tu cliente empresario tiene muy bien asegurada su empresa, pero casi nada en su plano personal (vida, salud, ingresos). ¿Qué le dirías tú para invitarlo a mirar su propia protección sin que lo sienta como una carga más?",
+  "tension": "empresa_cubierta_persona_desnuda",
+  "contexto": "Cliente empresario que prioriza la protección del negocio y descuida su protección personal.",
+  "meta": {
+    "tipo_cliente": "empresario",
+    "canal": "presencial_o_videollamada",
+    "emocion_base": "foco_en_negocio_no_en_si_mismo"
+  }
+}

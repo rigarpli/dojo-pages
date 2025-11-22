@@ -1,0 +1,14 @@
+{
+  "id": "04_aumento_brutal_renovacion",
+  "area_id": "situaciones_limite",
+  "title": "“¿Cómo es posible que me suban tanto?”",
+  "label": "Cuando el aumento se siente como una traición",
+  "question": "En renovación, el cliente te dice: “¿Cómo es posible que me suban tanto la prima? Esto es un abuso”. ¿Qué responderías tú en ese primer impacto, para que la conversación no explote?",
+  "tension": "aumento_renovacion",
+  "contexto": "Cliente sorprendido por un incremento fuerte en la renovación y que lo asocia a abuso o falta de cuidado del corredor.",
+  "meta": {
+    "tipo_cliente": "sensibile_al_precio",
+    "canal": "telefonico_o_presencial",
+    "emocion_base": "rabia_por_injusticia_percibida"
+  }
+}

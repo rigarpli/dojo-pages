@@ -1,0 +1,14 @@
+{
+  "id": "07_me_voy_con_otro_corredor",
+  "area_id": "situaciones_limite",
+  "title": "“Voy a probar con otro corredor”",
+  "label": "Cuando el adiós suena educado pero definitivo",
+  "question": "El cliente te dice: “Voy a probar con otro corredor, gracias por todo hasta aquí”. ¿Qué responderías tú en ese momento, sin suplicar, sin atacar, pero sin cerrar la puerta para siempre?",
+  "tension": "cambio_de_corredor",
+  "contexto": "Cliente que ha decidido, o está a punto de decidir, cambiar de corredor de seguros.",
+  "meta": {
+    "tipo_cliente": "decidido_o_cansado",
+    "canal": "whatsapp_o_presencial",
+    "emocion_base": "desgaste_y_buscando_nueva_confianza"
+  }
+}

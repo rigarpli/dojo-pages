@@ -1,0 +1,14 @@
+{
+  "id": "01_agresivo_directo",
+  "area_id": "clientes_dificiles",
+  "title": "Cliente agresivo: “Explícame rápido, no tengo tiempo para tonterías”",
+  "label": "Cuando el volumen del cliente sube y el tuyo no puede perderse",
+  "question": "El cliente te recibe con tono duro: “Explícame esto rápido, no tengo tiempo para tonterías. Si empiezas con rodeos, corto”. ¿Qué responderías tú en ese primer momento, con tu voz real?",
+  "tension": "cliente_agresivo",
+  "contexto": "Cliente que usa agresividad y presión de tiempo para tomar control de la interacción.",
+  "meta": {
+    "tipo_cliente": "agresivo_directo",
+    "canal": "presencial_o_llamada",
+    "emocion_base": "frustracion_y_necesidad_de_control"
+  }
+}

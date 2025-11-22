@@ -1,11 +1,11 @@
 {
-  "areaId": "cierre_ventas",
-  "title": "Cierre de Ventas",
   "scenarioIds": [
-    "miedo_a_decidir",
-    "necesito_pensarlo",
-    "comparando_con_otro",
-    "cierre_sutil",
-    "cliente_indeciso"
+    "01_necesito_pensarlo_un_poco_mas",
+    "02_tengo_que_hablarlo_con_mi_pareja",
+    "03_si_dejamos_asi_por_ahora",
+    "04_si_me_baja_un_poco_cierro",
+    "05_quiero_otra_reunion_para_decidir",
+    "06_me_da_miedo_comprometerme_a_largo_plazo",
+    "07_silencio_incomodo_al_momento_de_cerrar"
   ]
 }

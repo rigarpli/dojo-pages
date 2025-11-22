@@ -1,0 +1,14 @@
+{
+  "id": "06_chatgpt_me_dijo_otro_monto",
+  "area_id": "guerra_digital",
+  "title": "“Le pregunté a una IA y me dio otro monto”",
+  "label": "Cuando tu criterio humano se sienta frente a otra IA",
+  "question": "El cliente te dice: “Le pregunté a una inteligencia artificial y me dio un monto muy diferente al que tú me estás dando”. ¿Qué responderías, sin ponerte a pelear con la tecnología pero sin entregar tu criterio?",
+  "tension": "ia_vs_corredor",
+  "contexto": "Cliente que compara la propuesta del corredor con respuestas generadas por IA generalista.",
+  "meta": {
+    "tipo_cliente": "curioso_tecnologico",
+    "canal": "digital_o_presencial",
+    "emocion_base": "duda_entre_humano_y_maquina"
+  }
+}

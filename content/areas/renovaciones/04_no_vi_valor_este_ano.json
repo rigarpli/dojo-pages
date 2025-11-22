@@ -1,0 +1,14 @@
+{
+  "id": "04_no_vi_valor_este_ano",
+  "area_id": "renovaciones",
+  "title": "“Este año no vi valor en la póliza”",
+  "label": "Cuando ausencia de siniestros se malinterpreta como dinero tirado",
+  "question": "Al hablar de renovación, el cliente te dice: “La verdad, este año no vi valor en la póliza, pagué y no usé nada”. ¿Qué responderías tú, sin sonar a discurso de manual, para resignificar lo que pasó?",
+  "tension": "no_vi_valor",
+  "contexto": "Cliente que interpreta la ausencia de siniestros como falta de valor en la póliza.",
+  "meta": {
+    "tipo_cliente": "practico_economico",
+    "canal": "telefonico_o_presencial",
+    "emocion_base": "duda_sobre_utilidad_real"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "id": "06_frio_indiferente",
+  "area_id": "clientes_dificiles",
+  "title": "Cliente frío: “Haz lo que tú veas, todo me da igual”",
+  "label": "Cuando la indiferencia es la verdadera barrera",
+  "question": "El cliente te dice: “Haz lo que tú veas, todo me da igual, solo que no sea caro”. ¿Qué responderías tú para no quedarte sin información real, pero sin forzar una conexión que no quiere tener?",
+  "tension": "cliente_indiferente",
+  "contexto": "Cliente que evita implicarse emocionalmente, deja todas las decisiones al corredor pero luego puede culparlo.",
+  "meta": {
+    "tipo_cliente": "indiferente",
+    "canal": "telefonico_o_digital",
+    "emocion_base": "desconexion_o_defensa_emocional"
+  }
+}

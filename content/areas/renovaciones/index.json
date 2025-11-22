@@ -1,11 +1,11 @@
 {
-  "areaId": "renovaciones",
-  "title": "Renovaciones",
   "scenarioIds": [
-    "subida_precio",
-    "cliente_duda_renovar",
-    "todo_bien_no_ve_valor",
-    "renovacion_ultima_hora",
-    "comparacion_competencia"
+    "01_me_lo_renuevan_solo_en_el_banco",
+    "02_este_ano_quiero_bajar_coberturas",
+    "03_otra_compania_me_ofrecio_mejor",
+    "04_no_vi_valor_este_ano",
+    "05_fue_un_ano_duro_no_puedo_pagar_igual",
+    "06_renuevo_pero_no_quiero_que_me_llamen",
+    "07_renuevo_solo_por_compromiso"
   ]
 }

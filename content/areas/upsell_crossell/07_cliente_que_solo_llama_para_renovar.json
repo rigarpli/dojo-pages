@@ -1,0 +1,14 @@
+{
+  "id": "07_cliente_que_solo_llama_para_renovar",
+  "area_id": "upsell_crossell",
+  "title": "Cliente que solo dice: “Renueva lo mismo de siempre”",
+  "label": "Cuando la rutina es tan fuerte que tapa cualquier oportunidad",
+  "question": "Tienes un cliente que cada año dice lo mismo: “Renueva lo mismo de siempre, no tengo tiempo para revisar nada”. ¿Qué le dirías tú para abrir una pequeña ventana a revisar si hay áreas desprotegidas, sin romper la confianza que ya tienen?",
+  "tension": "renovacion_mecanica",
+  "contexto": "Cliente que confía en el corredor pero no se detiene a revisar si su vida y sus riesgos cambiaron.",
+  "meta": {
+    "tipo_cliente": "practico_confiado",
+    "canal": "telefonico_o_whatsapp",
+    "emocion_base": "comodidad_y_confianza_mecanica"
+  }
+}

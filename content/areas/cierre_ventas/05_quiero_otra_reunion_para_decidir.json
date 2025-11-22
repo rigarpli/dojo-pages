@@ -1,0 +1,14 @@
+{
+  "id": "05_quiero_otra_reunion_para_decidir",
+  "area_id": "cierre_ventas",
+  "title": "“Quiero otra reunión antes de decidir”",
+  "label": "Cuando el cierre se estira más de lo sano",
+  "question": "Tras una reunión profunda, el cliente dice: “Quiero otra reunión antes de decidir, siento que todavía me falta algo”. ¿Qué responderías tú para cuidar su necesidad de claridad sin entrar en eternas vueltas?",
+  "tension": "demanda_de_mas_reuniones",
+  "contexto": "Cliente que pospone el cierre a través de nuevas reuniones, a veces por duda genuina, a veces por miedo a decidir.",
+  "meta": {
+    "tipo_cliente": "analitico_inseguro",
+    "canal": "presencial_o_videollamada",
+    "emocion_base": "sensacion_de_incompletitud_y_miedo_a_errar"
+  }
+}

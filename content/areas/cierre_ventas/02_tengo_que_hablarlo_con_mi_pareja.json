@@ -1,0 +1,14 @@
+{
+  "id": "02_tengo_que_hablarlo_con_mi_pareja",
+  "area_id": "cierre_ventas",
+  "title": "“Tengo que hablarlo con mi pareja”",
+  "label": "Cuando el verdadero cierre ocurre en otra sala",
+  "question": "Al momento de cerrar, el cliente te dice: “Quiero hablarlo con mi pareja antes de decidir, no quiero tomar esto solo”. ¿Qué responderías tú para honrar esa decisión compartida sin perder el impulso del cierre?",
+  "tension": "decision_en_pareja",
+  "contexto": "Cliente que no toma decisiones importantes sin consultar a su pareja, lo cual puede ser una pausa sana o una excusa.",
+  "meta": {
+    "tipo_cliente": "familiar_o_pareja_centrada",
+    "canal": "presencial_o_videollamada",
+    "emocion_base": "voluntad_de_consenso_y_miedo_a_desacuerdo_interno"
+  }
+}

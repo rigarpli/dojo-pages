@@ -1,0 +1,14 @@
+{
+  "id": "05_me_mandaron_un_cotizador_online",
+  "area_id": "guerra_digital",
+  "title": "“Me mandaron un cotizador por WhatsApp”",
+  "label": "Cuando tu propuesta compite con un PDF sin contexto",
+  "question": "El cliente te dice: “Un amigo me mandó por WhatsApp un cotizador de otra compañía que le llegó por internet. ¿Por qué no tomo ese?”. ¿Qué responderías tú para no sonar a 'ven aquí que te explico todo' pero tampoco desaparecer?",
+  "tension": "oferta_pasada_por_whatsapp",
+  "contexto": "Cliente expuesto a propuestas frías enviadas por otros corredores o plataformas, sin explicación profesional.",
+  "meta": {
+    "tipo_cliente": "influenciable_por_amigos",
+    "canal": "whatsapp",
+    "emocion_base": "curiosidad_y_miedo_a_perder_una_oferta_mejor"
+  }
+}

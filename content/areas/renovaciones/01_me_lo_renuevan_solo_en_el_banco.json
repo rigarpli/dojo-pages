@@ -1,0 +1,14 @@
+{
+  "id": "01_me_lo_renuevan_solo_en_el_banco",
+  "area_id": "renovaciones",
+  "title": "“El banco ya me lo renueva solo”",
+  "label": "Cuando la renovación automática parece más cómoda que tu llamado",
+  "question": "En renovación, el cliente te dice: “No te preocupes, el banco ya me renueva el seguro automático con el préstamo, es más fácil así”. ¿Qué responderías tú, sin atacar al banco pero dejando claro tu valor?",
+  "tension": "renovacion_automatica_banco",
+  "contexto": "Cliente que percibe la renovación automática del banco como suficiente y más cómoda que la gestión con el corredor.",
+  "meta": {
+    "tipo_cliente": "comodon",
+    "canal": "telefonico_o_whatsapp",
+    "emocion_base": "busqueda_de_comodidad"
+  }
+}

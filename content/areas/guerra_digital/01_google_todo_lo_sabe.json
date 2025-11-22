@@ -8,7 +8,7 @@
   "contexto": "Cliente con información parcial de comparadores online, percibiendo que tú ofreces menos.",
   "meta": {
     "tipo_cliente": "informado",
-    "canal": "presencial o videollamada",
-    "emocion_base": "desconfianza comparativa"
+    "canal": "presencial_o_videollamada",
+    "emocion_base": "desconfianza_comparativa"
   }
 }

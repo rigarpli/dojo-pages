@@ -1,11 +1,11 @@
 {
-  "areaId": "clientes_dificiles",
-  "title": "Clientes Difíciles",
   "scenarioIds": [
-    "cliente_hostil",
-    "cliente_desconfiado",
-    "cliente_saturado",
-    "cliente_que_interrumpe",
-    "cliente_impulsivo"
+    "01_agresivo_directo",
+    "02_pasivo_evasivo",
+    "03_sabelotodo_controlador",
+    "04_hiperdesconfiado",
+    "05_ultraemocional",
+    "06_frio_indiferente",
+    "07_hiperexigente_correcciones"
   ]
 }

@@ -1,0 +1,14 @@
+{
+  "id": "01_necesito_pensarlo_un_poco_mas",
+  "area_id": "cierre_ventas",
+  "title": "“Necesito pensarlo un poco más”",
+  "label": "Cuando el casi-sí se esconde detrás de tiempo extra",
+  "question": "Después de revisar todo, el cliente te dice: “Necesito pensarlo un poco más, no quiero decidir hoy”. ¿Qué responderías tú en ese momento de cierre, sin presionarlo pero sin soltar completamente la decisión?",
+  "tension": "postergacion_en_cierre",
+  "contexto": "Cliente que está cerca del sí pero usa tiempo extra como defensa ante el compromiso.",
+  "meta": {
+    "tipo_cliente": "prudente_o_miedoso",
+    "canal": "presencial_o_videollamada",
+    "emocion_base": "miedo_a_equivocarse_en_la_decision_final"
+  }
+}

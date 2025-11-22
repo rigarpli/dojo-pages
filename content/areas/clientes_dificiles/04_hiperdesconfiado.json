@@ -1,0 +1,14 @@
+{
+  "id": "04_hiperdesconfiado",
+  "area_id": "clientes_dificiles",
+  "title": "Cliente hiperdesconfiado: “¿Dónde está la letra pequeña?”",
+  "label": "Cuando cada palabra tuya pasa por un detector de mentiras interno",
+  "question": "El cliente te dice: “Todo eso suena muy bonito, pero ¿dónde está la letra pequeña? Porque siempre hay algo que ustedes no cuentan”. ¿Qué responderías tú en ese momento?",
+  "tension": "cliente_hiperdesconfiado",
+  "contexto": "Cliente con historial de malas experiencias o creencias fuertes sobre engaños en seguros.",
+  "meta": {
+    "tipo_cliente": "desconfiado_extremo",
+    "canal": "presencial_o_digital",
+    "emocion_base": "miedo_a_ser_enganiado"
+  }
+}

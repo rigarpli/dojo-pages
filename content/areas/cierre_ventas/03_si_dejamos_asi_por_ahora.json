@@ -1,0 +1,14 @@
+{
+  "id": "03_si_dejamos_asi_por_ahora",
+  "area_id": "cierre_ventas",
+  "title": "“Si lo dejamos así por ahora…”",
+  "label": "Cuando el cliente quiere un cierre tímido para no sentir riesgo",
+  "question": "Justo al cerrar, el cliente te dice: “Si lo dejamos así por ahora, con algo básico, y después vemos si ampliamos”. ¿Qué responderías tú para que ese cierre sea sólido y no una bomba de tiempo frágil?",
+  "tension": "cierre_minimo_por_miedo",
+  "contexto": "Cliente que busca un cierre de bajo compromiso para sentir menos riesgo, aunque quede subprotegido.",
+  "meta": {
+    "tipo_cliente": "precavido_con_miedo",
+    "canal": "presencial_o_telefonico",
+    "emocion_base": "necesidad_de_seguridad_en_pasos_pequenos"
+  }
+}

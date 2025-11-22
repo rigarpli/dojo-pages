@@ -1,0 +1,14 @@
+{
+  "id": "03_otra_compania_me_ofrecio_mejor",
+  "area_id": "renovaciones",
+  "title": "“Otra compañía me ofreció algo mejor para renovar”",
+  "label": "Cuando la renovación se vuelve una subasta silenciosa",
+  "question": "En pleno proceso de renovación, el cliente te dice: “Otra compañía me ofreció algo mejor para renovar, más barato y con más beneficios”. ¿Qué responderías tú para no entrar en guerra de precios sin sentido?",
+  "tension": "competencia_en_renovacion",
+  "contexto": "Cliente que recibe propuestas de otras compañías justo en el momento de renovar.",
+  "meta": {
+    "tipo_cliente": "comparador",
+    "canal": "whatsapp_o_presencial",
+    "emocion_base": "miedo_a_perder_una_oferta_mejor"
+  }
+}

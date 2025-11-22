@@ -1,0 +1,14 @@
+{
+  "id": "07_silencio_incomodo_al_momento_de_cerrar",
+  "area_id": "cierre_ventas",
+  "title": "Silencio incómodo justo cuando planteas el cierre",
+  "label": "Cuando el no dicho pesa más que cualquier objeción",
+  "question": "Después de presentar la propuesta y preguntar algo como: “¿Te hace sentido que avancemos así?”, el cliente se queda en silencio, mira hacia otro lado o cambia de tema. ¿Qué dirías tú en ese momento, con tus palabras reales?",
+  "tension": "silencio_en_cierre",
+  "contexto": "Momento de cierre donde el cliente no verbaliza objeciones pero tampoco da un sí claro.",
+  "meta": {
+    "tipo_cliente": "evita_confrontacion",
+    "canal": "presencial_o_videollamada",
+    "emocion_base": "incomodidad_y_duda_no_verbalizada"
+  }
+}

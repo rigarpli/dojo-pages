@@ -1,0 +1,14 @@
+{
+  "id": "06_aprovechar_siniestro_reciente",
+  "area_id": "upsell_crossell",
+  "title": "Después de un siniestro, ver otras vulnerabilidades",
+  "label": "Cuando la experiencia abre una puerta que antes estaba cerrada",
+  "question": "Tu cliente acaba de vivir un siniestro cubierto (por ejemplo, de auto) y te dice: “Menos mal que tenía esto, no me había dado cuenta de lo importante que era”. ¿Qué le dirías tú en ese momento para sugerir otra área de protección (vida, salud, negocio) sin sonar oportunista?",
+  "tension": "momento_post_siniestro",
+  "contexto": "Cliente sensibilizado tras un siniestro, más abierto a reflexionar sobre otras posibles pérdidas.",
+  "meta": {
+    "tipo_cliente": "reciente_siniestro",
+    "canal": "telefonico_o_presencial",
+    "emocion_base": "gratitud_y_mayor_consciencia_de_riesgos"
+  }
+}

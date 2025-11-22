@@ -1,0 +1,14 @@
+{
+  "id": "04_si_me_baja_un_poco_cierro",
+  "area_id": "cierre_ventas",
+  "title": "“Si me baja un poco, cierro”",
+  "label": "Cuando el cierre se pone a negociar el último centavo",
+  "question": "El cliente te dice: “Si me bajas un poco la prima, cerramos ya mismo”. ¿Qué responderías tú para manejar ese último tramo de negociación sin regalar tu trabajo ni romper la relación?",
+  "tension": "negociacion_final_precio",
+  "contexto": "Cliente que usa el último minuto para intentar mejorar precio como condición de cierre.",
+  "meta": {
+    "tipo_cliente": "negociador",
+    "canal": "presencial_o_videollamada",
+    "emocion_base": "deseo_de_sentir_que_gano_en_la_negociacion"
+  }
+}

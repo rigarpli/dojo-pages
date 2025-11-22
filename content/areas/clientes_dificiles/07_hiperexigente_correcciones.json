@@ -1,0 +1,14 @@
+{
+  "id": "07_hiperexigente_correcciones",
+  "area_id": "clientes_dificiles",
+  "title": "Cliente hiperexigente: “Eso no es exactamente lo que pedí”",
+  "label": "Cuando cada detalle se convierte en examen",
+  "question": "El cliente revisa todo con lupa y te dice: “Eso no es exactamente lo que pedí, hay que corregir esta palabra, este monto, este plazo…”. ¿Qué responderías tú para mantener la calma y la relación, sin ceder a exigencias imposibles?",
+  "tension": "cliente_hiperexigente",
+  "contexto": "Cliente que corrige todo y está atento a cada mínimo detalle, generando mucha presión sobre el corredor.",
+  "meta": {
+    "tipo_cliente": "perfeccionista_exigente",
+    "canal": "digital_o_presencial",
+    "emocion_base": "necesidad_de_control_y_miedo_a_errores"
+  }
+}

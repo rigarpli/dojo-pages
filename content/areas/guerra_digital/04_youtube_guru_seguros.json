@@ -1,0 +1,14 @@
+{
+  "id": "04_youtube_guru_seguros",
+  "area_id": "guerra_digital",
+  "title": "“En YouTube un experto dijo que eso no sirve”",
+  "label": "Cuando compites con el gurú de la miniatura amarilla",
+  "question": "El cliente te dice: “En YouTube vi un experto que dijo que ese tipo de póliza no sirve, que es tirar el dinero”. ¿Qué responderías tú, sin burlarte ni descalificar a la otra persona?",
+  "tension": "autoridad_en_youtube",
+  "contexto": "Cliente influenciado por contenido de 'expertos' que generalizan y simplifican la realidad de los seguros.",
+  "meta": {
+    "tipo_cliente": "seguidor_de_contenido",
+    "canal": "digital_o_presencial",
+    "emocion_base": "confusion_por_mensajes_contradictorios"
+  }
+}

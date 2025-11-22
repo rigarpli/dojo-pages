@@ -7,8 +7,8 @@
   "tension": "desconfianza_redes",
   "contexto": "Cliente con desconfianza alimentada por redes sociales y experiencias ajenas.",
   "meta": {
-    "tipo_cliente": "escéptico",
-    "canal": "digital o presencial",
-    "emocion_base": "desconfianza / miedo a ser engañado"
+    "tipo_cliente": "esceptico",
+    "canal": "digital_o_presencial",
+    "emocion_base": "desconfianza_miedo_a_ser_enganiado"
   }
 }

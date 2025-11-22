@@ -1,0 +1,14 @@
+{
+  "id": "05_fue_un_ano_duro_no_puedo_pagar_igual",
+  "area_id": "renovaciones",
+  "title": "“Fue un año duro, no puedo pagar lo mismo”",
+  "label": "Cuando la vida financiera del cliente cambió, pero la póliza no",
+  "question": "En la renovación, el cliente te dice: “Este año fue muy duro, no puedo seguir pagando lo mismo por el seguro”. ¿Qué responderías tú, desde la empatía y la claridad, sin minimizar su realidad?",
+  "tension": "dificultad_financiera_en_renovacion",
+  "contexto": "Cliente con cambios económicos fuertes que ponen en duda la continuidad de la póliza en el mismo nivel.",
+  "meta": {
+    "tipo_cliente": "estresado_financieramente",
+    "canal": "telefonico_o_videollamada",
+    "emocion_base": "angustia_y_priorizacion_de_gastos"
+  }
+}

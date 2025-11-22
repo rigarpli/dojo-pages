@@ -1,0 +1,14 @@
+{
+  "id": "01_a_punto_de_cancelar",
+  "area_id": "situaciones_limite",
+  "title": "“Quiero cancelar todo ya mismo”",
+  "label": "Cuando el cliente está con un pie fuera de la puerta",
+  "question": "El cliente te llama molesto y te dice: “Quiero cancelar todas mis pólizas ya mismo, no quiero saber más nada de esto”. ¿Qué dirías tú en ese momento, con tu voz real, antes de que corte?",
+  "tension": "cancelacion_inminente",
+  "contexto": "Momento crítico donde el cliente quiere cortar toda relación y cancelar pólizas, muchas veces por acumulación de frustraciones.",
+  "meta": {
+    "tipo_cliente": "frustrado",
+    "canal": "telefonico_o_whatsapp_llamada",
+    "emocion_base": "enojo_y_decepcion"
+  }
+}

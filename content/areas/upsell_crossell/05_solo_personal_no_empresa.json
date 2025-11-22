@@ -1,0 +1,14 @@
+{
+  "id": "05_solo_personal_no_empresa",
+  "area_id": "upsell_crossell",
+  "title": "Persona muy cubierta, negocio desprotegido",
+  "label": "Cuando la vida está asegurada pero el negocio camina en la cuerda floja",
+  "question": "Tu cliente tiene vida y salud muy bien cubiertas, pero su pequeño negocio (o emprendimiento) no tiene casi protección. ¿Qué le dirías tú para mostrarle el riesgo empresarial sin asustarlo ni sonar a catástrofe?",
+  "tension": "persona_cubierta_negocio_vulnerable",
+  "contexto": "Cliente que cuida su bienestar personal, pero no ha pensado en las consecuencias de un golpe al negocio.",
+  "meta": {
+    "tipo_cliente": "emprendedor",
+    "canal": "presencial_o_telefonico",
+    "emocion_base": "foco_en_familia_mas_que_en_empresa"
+  }
+}

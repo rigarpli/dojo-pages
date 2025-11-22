@@ -1,0 +1,14 @@
+{
+  "id": "06_renuevo_pero_no_quiero_que_me_llamen",
+  "area_id": "renovaciones",
+  "title": "“Renuevo, pero no quiero que me llamen más”",
+  "label": "Cuando el sí viene acompañado de un muro",
+  "question": "El cliente te dice: “Está bien, renuevo, pero no quiero que me estén llamando ni molestando en todo el año”. ¿Qué responderías tú para respetar su espacio sin desaparecer como asesor?",
+  "tension": "renovacion_con_distancia",
+  "contexto": "Cliente que acepta renovar pero está saturado de comunicaciones y quiere marcar límites.",
+  "meta": {
+    "tipo_cliente": "saturado_de_contacto",
+    "canal": "telefonico_o_whatsapp",
+    "emocion_base": "cansancio_y_necesidad_de_espacio"
+  }
+}

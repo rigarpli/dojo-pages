@@ -1,0 +1,14 @@
+{
+  "id": "02_pasivo_evasivo",
+  "area_id": "clientes_dificiles",
+  "title": "Cliente evasivo: “Sí, sí… luego vemos, avísame”",
+  "label": "Cuando todo parece amabilidad, pero nunca pasa nada",
+  "question": "Tienes un cliente que siempre te dice: “Sí, sí… luego vemos, avísame por WhatsApp”, pero nunca concreta ni responde. Esta vez te dice lo mismo. ¿Qué le responderías tú para salir del bucle sin ser agresivo?",
+  "tension": "cliente_evasivo",
+  "contexto": "Cliente que evita tomar decisiones directas, se escurre con frases vagas y pospone eternamente.",
+  "meta": {
+    "tipo_cliente": "pasivo_evasivo",
+    "canal": "whatsapp_o_telefonico",
+    "emocion_base": "incomodidad_con_decisiones_y_miedo_a_decir_que_no"
+  }
+}

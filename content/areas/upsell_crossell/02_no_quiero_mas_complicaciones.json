@@ -1,0 +1,14 @@
+{
+  "id": "02_no_quiero_mas_complicaciones",
+  "area_id": "upsell_crossell",
+  "title": "“No quiero más complicaciones de papeles”",
+  "label": "Cuando el miedo no es el dinero, sino la carga administrativa",
+  "question": "El cliente te dice: “No quiero más complicaciones de papeles, ya con lo que tengo es suficiente lío”. ¿Qué responderías tú si ves una oportunidad clara de sumar una póliza más que realmente le protegería?",
+  "tension": "rechazo_a_mas_tramites",
+  "contexto": "Cliente saturado de papeleo que rechaza nuevas pólizas por miedo a burocracia, más que por precio.",
+  "meta": {
+    "tipo_cliente": "saturado_de_tramites",
+    "canal": "telefonico_o_presencial",
+    "emocion_base": "agotamiento_y_evitar_burocracia"
+  }
+}

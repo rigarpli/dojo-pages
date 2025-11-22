@@ -1,0 +1,14 @@
+{
+  "id": "07_amigo_de_grupo_whatsapp",
+  "area_id": "guerra_digital",
+  "title": "“En el grupo de WhatsApp dicen que es mejor otra cosa”",
+  "label": "Cuando negocias con el grupo, no con una sola persona",
+  "question": "El cliente te dice: “En el grupo de WhatsApp donde estoy, varios dicen que es mejor no asegurar eso, que hay otras opciones mejores”. ¿Qué responderías tú, sabiendo que no estás solo hablando con él, sino con su grupo entero en su cabeza?",
+  "tension": "influencia_grupo",
+  "contexto": "Cliente muy influenciado por opiniones de grupo (WhatsApp, Telegram) que funcionan como 'tribu' de referencia.",
+  "meta": {
+    "tipo_cliente": "gregario",
+    "canal": "whatsapp_o_telegram",
+    "emocion_base": "miedo_a_ir_contra_el_grupo"
+  }
+}

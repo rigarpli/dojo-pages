@@ -1,11 +1,11 @@
 {
-  "areaId": "situaciones_limite",
-  "title": "Situaciones Límite",
   "scenarioIds": [
-    "accidente_reciente",
-    "pago_vencido_estres",
-    "cliente_llorando",
-    "amenaza_cancelacion",
-    "cliente_enojado"
+    "01_a_punto_de_cancelar",
+    "02_siniestro_mal_manejado",
+    "03_me_siento_enganado",
+    "04_aumento_brutal_renovacion",
+    "05_familia_enfurecida",
+    "06_lo_quiero_todo_por_escrito_ahora",
+    "07_me_voy_con_otro_corredor"
   ]
 }

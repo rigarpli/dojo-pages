@@ -1,0 +1,14 @@
+{
+  "id": "07_renuevo_solo_por_compromiso",
+  "area_id": "renovaciones",
+  "title": "“Renuevo solo por compromiso”",
+  "label": "Cuando la póliza vive de una promesa, no de una convicción",
+  "question": "El cliente te dice: “Renuevo, pero la verdad lo hago solo por compromiso, por mi familia / por el banco / por ti”. ¿Qué responderías tú para que esa renovación no sea una bomba de tiempo para el próximo año?",
+  "tension": "renovacion_por_compromiso",
+  "contexto": "Cliente que continúa con la póliza más por compromiso externo que por una convicción interna de valor.",
+  "meta": {
+    "tipo_cliente": "ambivalente",
+    "canal": "presencial_o_videollamada",
+    "emocion_base": "mezcla_de_lealtad_y_duda"
+  }
+}

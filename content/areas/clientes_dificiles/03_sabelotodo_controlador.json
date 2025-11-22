@@ -1,0 +1,14 @@
+{
+  "id": "03_sabelotodo_controlador",
+  "area_id": "clientes_dificiles",
+  "title": "Cliente controlador: “Yo ya sé cómo funciona todo esto”",
+  "label": "Cuando tu explicación compite con el ego del cliente",
+  "question": "El cliente te interrumpe y dice: “Yo ya sé cómo funciona todo esto, he tenido seguros toda la vida. Solo dime si lo que me das es mejor o peor que lo que ya tengo”. ¿Qué responderías tú, sin entrar en lucha de egos?",
+  "tension": "cliente_sabelotodo",
+  "contexto": "Cliente que se percibe experto y busca validar su propia visión, no aprender de cero.",
+  "meta": {
+    "tipo_cliente": "controlador_sabelotodo",
+    "canal": "presencial_o_videollamada",
+    "emocion_base": "necesidad_de_superioridad_y_control"
+  }
+}

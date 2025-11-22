@@ -1,0 +1,14 @@
+{
+  "id": "02_siniestro_mal_manejado",
+  "area_id": "situaciones_limite",
+  "title": "“Cuando los necesité, no respondieron”",
+  "label": "Cuando el pasado se vuelve un juicio contra ti",
+  "question": "El cliente, con dolor en la voz, te dice: “Cuando tuve el siniestro, nadie me respondió, me dejaron solo. ¿Para qué quiero este seguro?”. ¿Qué responderías tú, sabiendo que está hablando desde una herida real?",
+  "tension": "siniestro_mal_experimentado",
+  "contexto": "Cliente que vivió (o percibió) una mala experiencia en un siniestro y generaliza esa sensación.",
+  "meta": {
+    "tipo_cliente": "herido",
+    "canal": "presencial_o_videollamada",
+    "emocion_base": "dolor_y_desconfianza"
+  }
+}

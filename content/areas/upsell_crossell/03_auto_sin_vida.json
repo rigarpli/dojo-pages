@@ -1,0 +1,14 @@
+{
+  "id": "03_auto_sin_vida",
+  "area_id": "upsell_crossell",
+  "title": "Cliente con auto asegurado, pero sin vida ni ingresos protegidos",
+  "label": "Cuando el auto está cubierto pero la persona no",
+  "question": "Estás revisando la póliza de auto de un cliente que cuida mucho su vehículo, pero no tiene ningún seguro de vida ni de ingresos. ¿Qué le dirías tú para abrir la conversación sin sonar a “te voy a vender algo más”?",
+  "tension": "desbalance_auto_vs_persona",
+  "contexto": "Cliente que prioriza la protección de bienes materiales (auto) sobre su propia vida o ingresos.",
+  "meta": {
+    "tipo_cliente": "enfocado_en_activos",
+    "canal": "presencial_o_videollamada",
+    "emocion_base": "proteccion_selectiva"
+  }
+}

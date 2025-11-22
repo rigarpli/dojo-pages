@@ -1,12 +1,11 @@
 {
-  "areaId": "objeciones_clasicas",
-  "title": "Objeciones Clásicas",
   "scenarioIds": [
-    "muy_caro",
-    "lo_tengo_con_otro",
-    "lo_veo_luego",
-    "no_creo_necesitarlo",
-    "ahora_no_puedo"
+    "01_muy_caro",
+    "02_lo_veo_luego",
+    "03_ya_tengo_corredor",
+    "04_nunca_me_ha_pasado_nada",
+    "05_estoy_comparando",
+    "06_no_confio",
+    "07_no_tengo_tiempo"
   ]
 }
-

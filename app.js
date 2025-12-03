@@ -43,13 +43,17 @@
   // ================================
   const qs = (s, sc=document) => sc.querySelector(s);
   const qsa = (s, sc=document) => Array.from(sc.querySelectorAll(s));
-  const esc = (s = "") => s.replace(/[&<>"']/g, m => ({
+  const esc = (s = "") => {
+  if (s === null || s === undefined) s = "";
+  s = String(s); // asegura que sea string siempre
+  return s.replace(/[&<>"']/g, m => ({
     '&': '&amp;',
     '<': '&lt;',
     '>': '&gt;',
     '"': '&quot;',
     "'": '&#39;'
   }[m]));
+};
 
     // ================================
   // SESSION & METRICS HELPERS
@@ -97,30 +101,49 @@
   }
 
   function renderFeedback(text){
-    if(!text) return `<p class='muted'>⚠️ No se generó feedback</p>`;
-    let data;
-    try { 
-      data = JSON.parse(text); 
-    } catch(e) {
-      return `<p class='muted'>❌ JSON inválido</p>`;
-    }
-    const r = data.revelacion || {};
-    return `
-      <div class="feedback-animated">
-        <div class="feedback-section" style="animation-delay:0ms;">
-          <strong>✨ LO QUE TU FRASE YA CONTENÍA:</strong><br>
-          ${esc(r.lo_que_contenia || "")}
-        </div>
-        <div class="feedback-section" style="animation-delay:500ms;">
-          <strong>🗣️ TU MENSAJE, PERFECCIONADO:</strong><br>
-          “${esc(r.frase_afinada || "")}”
-        </div>
-        <div class="feedback-section" style="animation-delay:1000ms;">
-          <strong>🔑 TU SUPERPODER:</strong><br>
-          ${esc(r.llave_maestra || "")}
-        </div>
-      </div>`;
+  if (!text) {
+    return `<p class='muted'>⚠️ No se generó feedback</p>`;
   }
+
+  let data;
+  try {
+    if (typeof text === "string") {
+      data = JSON.parse(text);
+    } else {
+      // por si en algún caso viene ya como objeto
+      data = text;
+    }
+  } catch (e) {
+    console.error("JSON inválido en feedback:", e, text);
+    return `<p class='muted'>❌ JSON inválido en feedback</p>`;
+  }
+
+  if (!data || typeof data !== "object") {
+    console.error("Formato de feedback inesperado:", data);
+    return `<p class='muted'>❌ Formato de feedback inesperado</p>`;
+  }
+
+  const r = data.revelacion || {};
+  const loQue = r.lo_que_contenia ?? "";
+  const afinada = r.frase_afinada ?? "";
+  const llave = r.llave_maestra ?? "";
+
+  return `
+    <div class="feedback-animated">
+      <div class="feedback-section" style="animation-delay:0ms;">
+        <strong>✨ LO QUE TU FRASE YA CONTENÍA:</strong><br>
+        ${esc(loQue)}
+      </div>
+      <div class="feedback-section" style="animation-delay:500ms;">
+        <strong>🗣️ TU MENSAJE, PERFECCIONADO:</strong><br>
+        “${esc(afinada)}”
+      </div>
+      <div class="feedback-section" style="animation-delay:1000ms;">
+        <strong>🔑 TU SUPERPODER:</strong><br>
+        ${esc(llave)}
+      </div>
+    </div>`;
+}
 
   function copy(t) {
     t = t || "";

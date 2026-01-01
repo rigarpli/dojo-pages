@@ -15,7 +15,7 @@
   const CONTENT_URL = `${LOADER_BASE}/areas`; // lista de áreas (Loader)
   const API = "https://index.rgarciaplicet.workers.dev/"; // Worker de feedback IA
 
-    const DAILY_RECO = {
+  const DAILY_RECO = {
     area_id: "objeciones_clasicas",
     scenario_id: "01_muy_caro"
   };
@@ -44,18 +44,75 @@
   const qs = (s, sc=document) => sc.querySelector(s);
   const qsa = (s, sc=document) => Array.from(sc.querySelectorAll(s));
   const esc = (s = "") => {
-  if (s === null || s === undefined) s = "";
-  s = String(s); // asegura que sea string siempre
-  return s.replace(/[&<>"']/g, m => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;'
-  }[m]));
-};
+    if (s === null || s === undefined) s = "";
+    s = String(s); // asegura que sea string siempre
+    return s.replace(/[&<>"']/g, m => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    }[m]));
+  };
 
-    // ================================
+  // ================================
+  // HISTORIAL DE ESCENARIOS (v1)
+  // ================================
+  const HISTORY_KEY = "polizarium_history_v1";
+
+  function loadHistory() {
+    try {
+      const raw = localStorage.getItem(HISTORY_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveHistory(list) {
+    try {
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(list));
+    } catch (e) {
+      // silencio; si falla, no rompemos la UX
+    }
+  }
+
+  function renderHistory(list) {
+    const ul = document.getElementById("pz-history-list");
+    if (!ul) return;
+
+    ul.innerHTML = "";
+    if (!list.length) {
+      ul.innerHTML = `<li class="pz-history-empty">Aquí verás tus escenarios recientes.</li>`;
+      return;
+    }
+
+    list.forEach(h => {
+      const li = document.createElement("li");
+      li.className = "pz-history-item";
+      li.dataset.areaId = h.areaId;
+      li.dataset.scenId = h.scenId;
+      li.innerHTML = `
+        <div class="pz-history-title">${esc(h.scenTitle || "")}</div>
+        <div class="pz-history-sub">${esc(h.areaTitle || "")}</div>
+      `;
+      ul.appendChild(li);
+    });
+  }
+
+  function addToHistory(item) {
+    const history = loadHistory();
+    // evitar duplicado inmediato del mismo escenario
+    if (history.length && history[0].scenId === item.scenId && history[0].areaId === item.areaId) {
+      return;
+    }
+    history.unshift(item);
+    const trimmed = history.slice(0, 10); // máximo 10
+    saveHistory(trimmed);
+    renderHistory(trimmed);
+  }
+
+  // ================================
   // SESSION & METRICS HELPERS
   // ================================
   function generateSessionId() {
@@ -101,49 +158,49 @@
   }
 
   function renderFeedback(text){
-  if (!text) {
-    return `<p class='muted'>⚠️ No se generó feedback</p>`;
-  }
-
-  let data;
-  try {
-    if (typeof text === "string") {
-      data = JSON.parse(text);
-    } else {
-      // por si en algún caso viene ya como objeto
-      data = text;
+    if (!text) {
+      return `<p class='muted'>⚠️ No se generó feedback</p>`;
     }
-  } catch (e) {
-    console.error("JSON inválido en feedback:", e, text);
-    return `<p class='muted'>❌ JSON inválido en feedback</p>`;
+
+    let data;
+    try {
+      if (typeof text === "string") {
+        data = JSON.parse(text);
+      } else {
+        // por si en algún caso viene ya como objeto
+        data = text;
+      }
+    } catch (e) {
+      console.error("JSON inválido en feedback:", e, text);
+      return `<p class='muted'>❌ JSON inválido en feedback</p>`;
+    }
+
+    if (!data || typeof data !== "object") {
+      console.error("Formato de feedback inesperado:", data);
+      return `<p class='muted'>❌ Formato de feedback inesperado</p>`;
+    }
+
+    const r = data.revelacion || {};
+    const loQue = r.lo_que_contenia ?? "";
+    const afinada = r.frase_afinada ?? "";
+    const llave = r.llave_maestra ?? "";
+
+    return `
+      <div class="feedback-animated">
+        <div class="feedback-section" style="animation-delay:0ms;">
+          <strong>✨ LO QUE TU FRASE YA CONTENÍA:</strong><br>
+          ${esc(loQue)}
+        </div>
+        <div class="feedback-section" style="animation-delay:500ms;">
+          <strong>🗣️ TU MENSAJE, PERFECCIONADO:</strong><br>
+          “${esc(afinada)}”
+        </div>
+        <div class="feedback-section" style="animation-delay:1000ms;">
+          <strong>🔑 TU SUPERPODER:</strong><br>
+          ${esc(llave)}
+        </div>
+      </div>`;
   }
-
-  if (!data || typeof data !== "object") {
-    console.error("Formato de feedback inesperado:", data);
-    return `<p class='muted'>❌ Formato de feedback inesperado</p>`;
-  }
-
-  const r = data.revelacion || {};
-  const loQue = r.lo_que_contenia ?? "";
-  const afinada = r.frase_afinada ?? "";
-  const llave = r.llave_maestra ?? "";
-
-  return `
-    <div class="feedback-animated">
-      <div class="feedback-section" style="animation-delay:0ms;">
-        <strong>✨ LO QUE TU FRASE YA CONTENÍA:</strong><br>
-        ${esc(loQue)}
-      </div>
-      <div class="feedback-section" style="animation-delay:500ms;">
-        <strong>🗣️ TU MENSAJE, PERFECCIONADO:</strong><br>
-        “${esc(afinada)}”
-      </div>
-      <div class="feedback-section" style="animation-delay:1000ms;">
-        <strong>🔑 TU SUPERPODER:</strong><br>
-        ${esc(llave)}
-      </div>
-    </div>`;
-}
 
   function copy(t) {
     t = t || "";
@@ -180,10 +237,11 @@
     return s.toLowerCase()
       .replace(/[^\w]+/g, "-")
       .replace(/-+/g, "-")
+      .replace(/-+/g, "-")
       .replace(/^-|-$/g, "");
   }
 
-    // ================================
+  // ================================
   // NAVEGACIÓN
   // ================================
   let currentStep = "p0";
@@ -290,7 +348,7 @@
     });
   }
 
-    async function loadDailyReco(){
+  async function loadDailyReco(){
     const box = qs("#daily-reco");
     const titleEl = qs("#daily-reco-title");
     const areaEl = qs("#daily-reco-area");
@@ -345,17 +403,17 @@
       const grid = qs("#scen-grid");
       grid.innerHTML="";
       
-             S.scenarios.forEach(sc=>{
+      S.scenarios.forEach(sc=>{
         const d = document.createElement("div");
         d.className = "sc-card";
         d.dataset.scenario = sc.id;
-d.innerHTML = `
-  <div class='sc-title'>${esc(sc.title)}</div>
-  <p class='sc-desc'>${esc(sc.question || "")}</p>
-  <div class="group sc-extra" style="margin-top:8px;">
-    <button class="btn small-btn sc-practice-btn" type="button">Practicar este escenario</button>
-  </div>
-`;
+        d.innerHTML = `
+          <div class='sc-title'>${esc(sc.title)}</div>
+          <p class='sc-desc'>${esc(sc.question || "")}</p>
+          <div class="group sc-extra" style="margin-top:8px;">
+            <button class="btn small-btn sc-practice-btn" type="button">Practicar este escenario</button>
+          </div>
+        `;
         grid.appendChild(d);
       });
         
@@ -449,6 +507,15 @@ d.innerHTML = `
         scenario_id: S.scenId
       });
 
+      // Añadir al historial local
+      addToHistory({
+        timestamp: Date.now(),
+        areaId: S.areaId,
+        areaTitle: S.areaTitle,
+        scenId: S.scenId,
+        scenTitle: sc.title
+      });
+
       ans.innerHTML = renderFeedback(pack.feedback);
       ans.classList.add("show");
 
@@ -487,9 +554,9 @@ d.innerHTML = `
       S.nombre = qs("#nombre").value.trim();
       S.cliente = qs("#cliente").value.trim();
       trackEvent("session_start", {
-    area_id: null,
-    scenario_id: null
-  });
+        area_id: null,
+        scenario_id: null
+      });
       go("p1");
       if(!contentReady){
         startFetchContent();
@@ -551,7 +618,8 @@ d.innerHTML = `
         go("p3");
         return;
       }
-// Botón "Practicar este escenario" dentro de la tarjeta (funciona en grid y lista)
+
+      // Botón "Practicar este escenario" dentro de la tarjeta (funciona en grid y lista)
       if (t.closest(".sc-practice-btn")) {
         const card = t.closest(".sc-card");
         if (!card) return;
@@ -561,6 +629,7 @@ d.innerHTML = `
         go("p4");
         return;
       }
+
       // Click en tarjeta de escenario
       if (t.closest(".sc-card")) {
         const card = t.closest(".sc-card");
@@ -585,18 +654,44 @@ d.innerHTML = `
         return;
       }
 
+      // Click en elemento de historial
+      if (t.closest(".pz-history-item")) {
+        const li = t.closest(".pz-history-item");
+        const areaId = li.dataset.areaId;
+        const scenId = li.dataset.scenId;
+
+        // Buscar el área en el contenido ya cargado
+        const area = (S.content?.areas || []).find(a => a.id === areaId);
+        if (!area) return;
+
+        S.areaId = areaId;
+        S.areaTitle = area.title || "";
+
+        const ctx = qs("#area-title");
+        if (ctx) ctx.textContent = S.areaTitle || "—";
+
+        // Cargar los escenarios del área y luego abrir el escenario en p4
+        buildScenarios().then(() => {
+          S.scenId = scenId;
+          buildScenarioView(scenId);
+          go("p4");
+        });
+
+        return;
+      }
+
       // Revelar ADN
-     if(t.id === "reveal-adn"){
-  const userResponse = qs("#user-response").value.trim();
-  if (userResponse.length < 15) {
-    alert("Par revelarte tu ADN falta darle un poco más de contexto a tu respuesta.");
-    return;
-  }
-  const sc = S.scenarios.find(x=>x.id===S.scenId);
-  if (!sc) return;
-  runPlay(sc, userResponse);
-  return;
-}
+      if(t.id === "reveal-adn"){
+        const userResponse = qs("#user-response").value.trim();
+        if (userResponse.length < 15) {
+          alert("Par revelarte tu ADN falta darle un poco más de contexto a tu respuesta.");
+          return;
+        }
+        const sc = S.scenarios.find(x=>x.id===S.scenId);
+        if (!sc) return;
+        runPlay(sc, userResponse);
+        return;
+      }
 
       // Copiar revelación
       if (t.closest("#p5-copy")) {
@@ -675,7 +770,8 @@ d.innerHTML = `
         go("p3");
         return;
       }
-            // Practicar el escenario recomendado desde p1
+
+      // Practicar el escenario recomendado desde p1
       if (t.id === "daily-reco-play") {
         const box = qs("#daily-reco");
         if (!box) return;
@@ -719,6 +815,7 @@ d.innerHTML = `
   function init(){
     startFetchContent();
     wireEvents();
+    renderHistory(loadHistory()); // pintar historial al cargar
     go("p0");
   }
 

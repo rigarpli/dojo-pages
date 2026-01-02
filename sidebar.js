@@ -34,6 +34,8 @@
     const avatar       = document.getElementById("pz-user-avatar");
     const label        = document.getElementById("pz-user-label");
     const guideBtn     = document.getElementById("pz-action-guide");
+    const historyBtn   = document.getElementById("pz-action-history");
+
 
     if (!sidebar) return;
 
@@ -66,6 +68,17 @@
     if (headerToggle) {
       headerToggle.addEventListener("click", toggleSidebar);
     }
+
+    // Click en Historial: si la barra está colapsada, expandirla
+if (historyBtn) {
+  historyBtn.addEventListener("click", () => {
+    // En móvil o desktop, usar el mismo toggle
+    if (sidebar.classList.contains("collapsed")) {
+      toggleSidebar(); // expandirá la barra y ajustará layout
+    }
+    // (Opcionalmente en el futuro podríamos hacer scroll al bloque de historial)
+  });
+}
 
     // Enlace a Guía del dojo
     if (guideBtn) {
